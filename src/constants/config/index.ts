@@ -1,3 +1,5 @@
+import { AiFillHome } from "react-icons/ai";
+
 export const MAXIMUM_FILE = 10; //MB
 
 export const allowFiles = [
@@ -20,9 +22,15 @@ export interface Imenu {
   title: string;
   group?: Imenu[];
   path?: string;
+  Icon?: any;
 }
 
 export const menu: Imenu[] = [
+  {
+    title: "Trang chủ",
+    path: "/",
+    Icon: AiFillHome,
+  },
   {
     title: "Trồng trọt",
     group: [

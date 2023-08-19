@@ -1,5 +1,6 @@
 import {
   AiFillCaretRight,
+  AiFillFile,
   AiTwotoneFolderAdd,
   AiTwotoneFolderOpen,
 } from "react-icons/ai";
@@ -36,9 +37,7 @@ function Item({ data }: { data: Imenu }) {
             [styles.active]: data?.path == pathname,
           })}
         >
-          <i>
-            <AiFillCaretRight />
-          </i>
+          <i>{data?.Icon ? data?.Icon() : <AiFillFile />}</i>
           {data.title}
         </Link>
       ) : (

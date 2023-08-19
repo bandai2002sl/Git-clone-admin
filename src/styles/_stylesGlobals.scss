@@ -1,0 +1,150 @@
+* {
+	font-family: SF-Pro, sans-serif;
+}
+
+@font-face {
+	font-family: 'SF-Pro';
+	src: url('../../public/static/fonts/SF-Pro-Display-Black.otf');
+	font-weight: 800;
+}
+
+@font-face {
+	font-family: 'SF-Pro';
+	src: url('../../public/static/fonts/SF-Pro-Display-Heavy.otf');
+	font-weight: 700;
+}
+
+@font-face {
+	font-family: 'SF-Pro';
+	src: url('../../public/static/fonts/SF-Pro-Display-Bold.otf');
+	font-weight: 600;
+}
+
+@font-face {
+	font-family: 'SF-Pro';
+	src: url('../../public/static/fonts/SF-Pro-Display-Medium.otf');
+	font-weight: 500;
+}
+
+@font-face {
+	font-family: 'SF-Pro';
+	src: url('../../public/static/fonts/SF-Pro-Display-Regular.otf');
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: 'SF-Pro';
+	src: url('../../public/static/fonts/SF-Pro-Display-Thin.otf');
+	font-weight: 300;
+}
+
+html *::-webkit-scrollbar {
+	border-radius: 0;
+	width: 4px;
+}
+
+html *::-webkit-scrollbar-thumb {
+	border-radius: 4px;
+	background-color: rgba(0, 0, 0, 0.15);
+}
+
+html *::-webkit-scrollbar-track {
+	border-radius: 0;
+	background-color: rgba(255, 183, 0, 0);
+}
+
+body {
+	text-rendering: optimizeLegibility;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+	overflow-y: overlay;
+	overscroll-behavior: none;
+	touch-action: manipulation;
+	-webkit-user-drag: none;
+}
+
+.banner-home {
+	border-radius: 10px;
+
+	.slick-dots {
+		display: flex !important;
+		justify-content: center;
+
+		li {
+			width: max-content;
+		}
+		button {
+			height: 0.7vw;
+			width: 0.7vw;
+			padding: 0;
+			border-radius: 10px;
+			background-color: var(--primary);
+			opacity: 0.3;
+
+			&::before {
+				display: none !important;
+			}
+		}
+
+		.slick-active {
+			button {
+				opacity: 1;
+			}
+		}
+	}
+
+	.slick-slide {
+		width: 110px !important;
+	}
+
+	.slick-prev,
+	.slick-next {
+		width: 30px !important;
+		height: 30px !important;
+		background-color: var(--light)-grey !important;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 50%;
+		z-index: 10000 !important;
+
+		&::before {
+			display: none !important;
+		}
+	}
+}
+
+.popup-content {
+	margin: auto;
+	background: transparent !important;
+	width: auto !important;
+	padding: 0 !important;
+	border: none !important;
+}
+
+.recharts-cartesian-axis-tick {
+	font-size: 14px;
+}
+
+.modal {
+	position: relative;
+	z-index: 10000;
+}
+
+.full-height {
+	min-height: 100%;
+}
+
+.hover_text:hover {
+	transition: 0.3s;
+	color: #0071ce;
+}
+
+.btn-close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	cursor: pointer;
+	user-select: none;
+	font-size: 28px;
+}

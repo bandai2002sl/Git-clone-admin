@@ -1,0 +1,20 @@
+.container {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 500;
+	padding: 10px 16px;
+	cursor: pointer;
+	user-select: none;
+	font-size: 16px;
+	border: 1px solid var(--border-grey);
+	border-radius: 8px;
+
+	p {
+		color: #7d8c9e;
+	}
+
+	&.show {
+		background-color: #f4f4f4;
+	}
+}

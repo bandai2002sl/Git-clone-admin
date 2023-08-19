@@ -1,0 +1,78 @@
+.tippy {
+	width: 100%;
+}
+
+.container {
+	flex: 1;
+}
+
+.select {
+	position: relative;
+	user-select: none;
+}
+
+.value {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	font-size: 16px;
+	padding: 10px 16px;
+	border: 1px solid var(--border-grey);
+	color: rgb(0, 0, 0);
+	border-radius: 8px;
+	cursor: pointer;
+	background-color: var(--light);
+
+	.text {
+		margin: 0;
+
+		&.placeholder {
+			color: rgb(122, 122, 122);
+		}
+	}
+
+	.icon {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transition: all 0.3s;
+	}
+
+	&.active {
+		border: 1px solid var(--light-primary);
+
+		.icon {
+			color: var(--light-primary);
+			transform: rotate(180deg);
+		}
+	}
+}
+
+.containerOption {
+	margin-top: 6px;
+	position: absolute;
+	width: 100%;
+	color: #fff;
+	border-radius: 8px;
+	z-index: 15;
+	padding: 10px;
+	transform: scaleY(0);
+	transform-origin: top center;
+	visibility: hidden;
+	opacity: 0;
+	transition: 0.15s;
+	border: 1px solid var(--light-primary);
+	background-color: var(--light);
+
+	&.overflow {
+		max-height: 360px;
+		overflow: scroll;
+	}
+
+	&.active {
+		visibility: visible;
+		opacity: 1;
+		transform: scaleY(1);
+	}
+}

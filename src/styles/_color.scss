@@ -1,0 +1,25 @@
+.global-color {
+  --primary: #2a85ff;
+  --light-primary: rgba(42, 133, 255, 0.1);
+
+  --purple: rgba(203, 54, 255, 1);
+  --dark-purple: rgba(142, 89, 255, 1);
+  --light-purple: rgba(203, 54, 255, 0.1);
+
+  --warning: rgba(251, 165, 0, 1);
+  --light-warning: rgba(251, 165, 0, 0.1);
+
+  --danger: #ff3b5c;
+  --light-danger: rgba(242, 77, 77, 0.1);
+
+  --green: rgba(11, 204, 111, 1);
+  --light-green: rgba(11, 204, 111, 0.1);
+
+  --light: #ffffff;
+  --dark: #000000;
+
+  --grey: #7d8c9e;
+  --grey-2: #c2c2c2;
+
+  --light-grey: #f8f8fc;
+}

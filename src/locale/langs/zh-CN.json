@@ -1,0 +1,13 @@
+{
+  "Login": {
+    "login": "登录",
+    "welcome": "欢迎回到系统",
+    "note": "立即登录体验服务",
+    "username": "登录账号",
+    "password": "密码",
+    "required": "请填写此字段"
+  },
+  "Home": {
+    "home": "首页"
+  }
+}

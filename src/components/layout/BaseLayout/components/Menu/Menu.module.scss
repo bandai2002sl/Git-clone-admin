@@ -1,0 +1,45 @@
+.container {
+  width: var(--menu-width);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-right: 1px solid var(--grey-2);
+  background-color: var(--light-grey);
+  margin-top: var(--header-height);
+  padding: 24px;
+  padding-left: 0;
+}
+
+.title {
+  user-select: none;
+  display: flex;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 6px 0;
+  border-radius: 6px;
+  font-weight: 500;
+
+  &:hover {
+    opacity: 0.8;
+    background-color: var(--light);
+  }
+
+  i {
+    color: var(--primary);
+    font-size: 22px;
+  }
+
+  &.active {
+    background-color: var(--primary);
+    color: var(--light);
+    i {
+      color: var(--light);
+    }
+  }
+}
+
+.item {
+  padding-left: 12px;
+}

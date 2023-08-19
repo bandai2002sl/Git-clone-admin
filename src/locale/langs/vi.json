@@ -1,0 +1,16 @@
+{
+  "Login": {
+    "login": "Đăng nhập",
+    "welcome": "Chào mừng trở lại hệ thống",
+    "note": "Đăng nhập ngay để trải nghiệm dịch vụ",
+    "username": "Tài khoản đăng nhập",
+    "password": "Mật khẩu",
+    "required": "Vui lòng nhập trường này"
+  },
+  "Home": {
+    "home": "Trang chủ"
+  },
+  "Farming": {
+    "farming": "Trồng trọt"
+  }
+}

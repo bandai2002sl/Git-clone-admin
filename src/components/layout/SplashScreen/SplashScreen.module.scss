@@ -1,0 +1,39 @@
+.container {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000000;
+	background-color: rgba(255, 255, 255);
+	backdrop-filter: blur(2px);
+
+	.logo {
+		position: relative;
+		min-width: 150px;
+		min-height: 35px;
+		max-width: 350px;
+		max-height: 60px;
+		width: 30vw;
+		height: 7vw;
+	}
+
+	&.close {
+		animation: close linear 0.2s 1.5s forwards;
+	}
+}
+
+@keyframes close {
+	0% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+		visibility: hidden;
+	}
+}

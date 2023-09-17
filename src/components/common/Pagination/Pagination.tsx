@@ -141,8 +141,7 @@ function Pagination({
       {!!total && total != 0 ? (
         <Fragment>
           <div className={style.text}>
-            {i18n.t("Home.display")} <b>1 - {pageSize}</b>{" "}
-            {i18n.t("Home.inTotal")} <b>{total}</b>
+            Hiển thị <b>1 - {pageSize}</b> trong tổng số <b>{total}</b>
           </div>
           <div className={style.page}>
             {total > pageSize ? (

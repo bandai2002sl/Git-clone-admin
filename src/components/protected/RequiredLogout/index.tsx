@@ -4,10 +4,10 @@
 
 import React, { useEffect } from "react";
 
-import { RootState } from "~/redux/store";
-import { useSelector } from "react-redux";
-import { useRouter } from "next/router";
 import { PATH } from "~/constants/config";
+import { RootState } from "~/redux/store";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 
 interface props {
   children: React.ReactNode;
@@ -19,7 +19,7 @@ function RequiredLogout({ children }: props) {
   const { loading } = useSelector((state: RootState) => state.site);
 
   useEffect(() => {
-    if (isLogin && !loading) replace(PATH.HOME);
+    if (isLogin && !loading) replace(PATH.Home);
   }, [isLogin, loading, replace]);
 
   if (!isLogin && !loading) {

@@ -19,6 +19,9 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use(async (config) => {
+  const token = store.getState().auth.token;
+  config.headers.Authorization = token ? "Bearer " + token : null;
+
   return config;
 });
 
@@ -60,19 +63,19 @@ export const httpRequest = async ({
     await delay(700);
     const res: any = await http;
 
-    if (!res?.code) {
+    if (!res?.statusCode) {
       return res;
     }
 
-    if (res.code === 0) {
+    if (res.statusCode === 200) {
       showMessageSuccess && toastSuccess({ msg: msgSuccess || res?.message });
-      return res;
+      return res?.data;
     } else {
       onError && onError();
       throw res?.message;
     }
   } catch (err: any) {
-    if (err?.code == 401 || err?.status == 401) {
+    if (err?.statusCode == 401 || err?.status == 401) {
       store.dispatch(logout());
       showMessageFailed && toastError({ msg: "Hết hạn đăng nhập" });
     } else if (typeof err == "string") {

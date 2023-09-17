@@ -11,6 +11,7 @@ import AppProvider from "~/contexts/AppProvider";
 import Head from "next/head";
 import { NextPage } from "next";
 import Script from "next/script";
+import SplashScreen from "~/components/layout/SplashScreen";
 import trans from "~/locale/i18n";
 import { useRouter } from "next/router";
 
@@ -38,6 +39,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         />
       </Head>
       <AppProvider pageProps={pageProps}>
+        <SplashScreen />
         {getLayout(<Component {...pageProps} />)}
       </AppProvider>
     </Fragment>

@@ -12,7 +12,7 @@ export const allowFiles = [
 
 export enum PATH {
   Home = "/",
-  Login = "/login",
+  Login = "/auth/login",
   Farming = "/trong-trot",
   Cooperative = "/trong-trot/hop-tac-xa",
   BusinessCategory = "/trong-trot/loai-kinh-doanh",

@@ -1,4 +1,3 @@
-// Trong header.module.scss
 
 .container {
   height: var(--header-height);
@@ -15,31 +14,28 @@
   padding: 0 20px; 
 }
 
-.section:nth-child(1) {
-  flex: 0.3; 
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  justify-content: space-between;
-  min-width: 50px;
-}
-.section:nth-child(2) {
-  flex: 1.2; 
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  justify-content: space-between;
-  text-align: left;
+//=====================================================================
+
+.section1, .section2, .section3, .section4, .section5 {
+  flex: 1;
+  text-align: center;
 }
 
-.icon {
-  background-image: url('/images/icon.png');
+.section1 {
+  flex: 0.3; 
+  max-width: 10%; 
+  min-width: 50px;
+}
+
+.logo {
   width: 40px; 
   height: 40px; 
-  background-size: contain;
-  background-repeat: no-repeat;
-  flex-shrink: 0;
   min-width: 20px;
+}
+
+//=====================================================================
+.section2 {
+  flex: 1.2;
 }
 
 .title {
@@ -48,31 +44,19 @@
   white-space: nowrap;
 padding-right: 5px;
 }
-
-@media (max-width: 1104px) {
-  .title {
-    display: none;
-    
-  }
-  .section:nth-child(2) {
-    flex: 0; 
-   display: none;
-  }
-}
-
-.section:nth-child(3) {
-  flex: 3; 
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-padding: auto;
-
+//=====================================================================
+.section3 {
+  flex: 3;
+  display: flex; /* Sử dụng CSS Flexbox */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  gap: 10px; /* Khoảng cách giữa các ô box */
+  padding:  0px 10px 0px 10px;;
 }
 
 .locationBox {
   position: relative;
   cursor: pointer;
-  border: 1px solid #000; 
+  border: 1cap solid #000; 
   border-radius: 4px; 
   min-width: 90px;
   align-items: center;
@@ -80,34 +64,26 @@ padding: auto;
   height: fit-content;
   width: 100%;
   height: 100%;
+  padding:  0px 20px 0px 20px;
+  display: block;
+  
 }
 
-.locationBox:hover {
-  opacity: 0.8; /* Làm mờ khi hover */
-}
-
-.locationList {
-  position: absolute;
-  top: 100%;
-  left: 0;
+.locationList{
   display: none;
-  list-style-type: none;
-  background-color: #fff; 
-  border: 1px solid #000; 
-  border-radius: 4px; 
-  padding: 5px;
-  min-width: 150px; 
 }
 
-.locationBox:hover .locationList {
-  display: block; /* Hiện danh sách khi hover */
+.locationTitle {
+  border: 1px solid #000;
+  border-radius: 7px; 
 }
 
-.section:nth-child(4) {
-  flex: 2; 
+//=====================================================================
+.section4 {
+  flex: 1.5; 
   display: flex;
   align-items: center;
-  padding-left: 20px; 
+  padding-left: 0px; 
   padding-right: 20px; 
 }
 
@@ -125,14 +101,15 @@ padding: auto;
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
+  background-color: rgba(190, 172, 172, 0.05);
 }
 
 .input {
-  width: 150%;
-  padding: 3px 35px 3px 35px; 
+  width: 350px;
+  padding: 3px 0px 3px 35px; 
   border: 1px solid #cbc0c0;
   border-radius: 4px; 
-  background-color: rgba(0, 0, 0, 0.1); 
+  background-color: rgba(212, 193, 193, 0.1); 
 }
 
 .input::placeholder {
@@ -140,6 +117,79 @@ padding: auto;
 }
 
 .input:focus {
-  outline: none; /* Loại bỏ đường viền focus */
-  background-color: rgba(0, 0, 0, 0.05); /* Màu nền mờ khi focus */
+  outline: none; 
+  background-color: rgba(239, 233, 233, 0.05); 
+}
+
+//=====================================================================
+.section5 {
+  flex: 0.2; 
+  max-width: 10%; 
+  min-width: 10px;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+}
+.settingsBox {
+  position: relative;
+}
+
+.settingsIcon {
+  height: 100%; 
+  width: 50px; 
+}
+
+.settingsList {
+  position: absolute;
+  top: 100%;
+  display: none;
+  list-style-type: none;
+  //background-color: #fff; 
+  border: 1px solid #000; 
+  border-radius: 4px; 
+  padding: 5px;
+  min-width: 150px; 
+  z-index: 1;
+  right: 0; 
+  background-color:white;
+  top: 100%; 
+}
+
+.settingsBox:hover .settingsList {
+  display: block; 
+}
+.settingsListOpen {
+  display: block;
+}
+
+.logout_button{
+  background-color: rgb(88, 88, 240); 
+  color: white;
+  border: none; 
+  padding: 5% 15%; 
+  border-radius: 30px; 
+  cursor: pointer;
+}
+
+.logout_button:hover {
+  background-color: rgb(29, 29, 212); 
+}
+
+
+//=====================================================================
+@media (max-width: 1104px) {
+  .section2{
+    display: none;
+  }
+
+  .section5{
+    display: none;
+  }
+  .input {
+    width: 200%;
+    padding: 3px 0px 3px 35px; 
+  }
+  .locationBox {
+    padding:  0px 0px 0px 0px;
+  }
 }

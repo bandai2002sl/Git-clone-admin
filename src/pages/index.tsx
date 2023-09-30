@@ -16,6 +16,10 @@ export default function Page() {
       <Head>
         <title>{i18n.t("Home.home")}</title>
       </Head>
+
+  
+      
+
     </Fragment>
   );
 }

@@ -4,8 +4,10 @@ import { PropsHeader } from "./interfaces";
 import styles from "./Header.module.scss";
 import React, { useState } from "react";
 import { Icon } from "iconsax-react";
+import { useDispatch } from "react-redux";
+import { setStateLogin, setToken } from "~/redux/reducer/auth";
 
-function Header({}: PropsHeader) {
+function Header({ }: PropsHeader) {
   const [showProvinces, setShowProvinces] = useState(false);
   const [showDistricts, setShowDistricts] = useState(false);
   const [showCommunities, setShowCommunities] = useState(false);
@@ -13,6 +15,16 @@ function Header({}: PropsHeader) {
   const toggleProvinces = () => setShowProvinces(!showProvinces);
   const toggleDistricts = () => setShowDistricts(!showDistricts);
   const toggleCommunities = () => setShowCommunities(!showCommunities);
+
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken')
+    dispatch(setToken(''));
+    dispatch(setStateLogin(false));
+
+    window.location.href = '/auth/auth/login';
+  }
 
   return (
     <div className={styles.container}>
@@ -24,18 +36,17 @@ function Header({}: PropsHeader) {
       </div>
 
       {/* Phần 2 */}
-        <div className={styles.section}>
-          <div className={`${styles.title} ${styles.bold}`}>
-            QUẢN LÝ NÔNG NGHIỆP NINH BÌNH
-          </div>
+      <div className={styles.section}>
+        <div className={`${styles.title} ${styles.bold}`}>
+          QUẢN LÝ NÔNG NGHIỆP
+        </div>
       </div>
 
       {/* Phần 3 */}
       <div className={styles.section}>
         <div
-          className={`${styles.locationBox} ${
-            showProvinces ? styles.active : ""
-          }`}
+          className={`${styles.locationBox} ${showProvinces ? styles.active : ""
+            }`}
           onClick={toggleProvinces}
         >
           Tỉnh▼
@@ -44,15 +55,14 @@ function Header({}: PropsHeader) {
               {/* Danh sách các tỉnh */}
               <li>Tỉnh 1</li>
               <li>Tỉnh 2</li>
-              
+
             </ul>
           )}
         </div>
 
         <div
-          className={`${styles.locationBox} ${
-            showDistricts ? styles.active : ""
-          }`}
+          className={`${styles.locationBox} ${showDistricts ? styles.active : ""
+            }`}
           onClick={toggleDistricts}
         >
           Huyện▼
@@ -66,9 +76,8 @@ function Header({}: PropsHeader) {
         </div>
 
         <div
-          className={`${styles.locationBox} ${
-            showCommunities ? styles.active : ""
-          }`}
+          className={`${styles.locationBox} ${showCommunities ? styles.active : ""
+            }`}
           onClick={toggleCommunities}
         >
           Xã▼
@@ -95,7 +104,10 @@ function Header({}: PropsHeader) {
           />
         </div>
       </div>
+      <button onClick={handleLogout}>Đăng Xuất</button>
     </div>
+
+
   );
 }
 

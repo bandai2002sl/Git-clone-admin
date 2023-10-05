@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <Fragment>
       <Head>
-        <title>{i18n.t("Farming.cooperative")}</title>
+        <title>{i18n.t("Farming.Cooperative")}</title>
       </Head>
     </Fragment>
   );

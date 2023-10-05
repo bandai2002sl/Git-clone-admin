@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <Fragment>
       <Head>
-        <title>{i18n.t("Farming.BusinessCategory")}</title>
+        <title>{i18n.t("CountrysideDevelopment.mechanization")}</title>
       </Head>
     </Fragment>
   );

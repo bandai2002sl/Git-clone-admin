@@ -1,6 +1,7 @@
 import { AiFillHome } from "react-icons/ai";
 export const MAXIMUM_FILE = 10; //MB
 
+
 export const allowFiles = [
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",

@@ -1,6 +1,6 @@
 import { AiFillHome } from "react-icons/ai";
-
 export const MAXIMUM_FILE = 10; //MB
+
 
 export const allowFiles = [
   "application/pdf",
@@ -9,6 +9,7 @@ export const allowFiles = [
   "image/jpg",
   "image/png",
 ];
+
 
 export enum PATH {
   Home = "/",
@@ -19,6 +20,7 @@ export enum PATH {
   Administrativeunitroad = "/don-vi-hanh-chinh/duong-don-vi-hanh-chinh",
 
   Farming = "/trong-trot",
+  Seafood = "/thuy-san",
   Cooperative = "/trong-trot/hop-tac-xa",
   BusinessCategory = "/trong-trot/loai-kinh-doanh",
   BusinessEstablishment = "/trong-trot/co-so-kinh-doanh",
@@ -47,7 +49,9 @@ export interface Imenu {
   group?: Imenu[];
   path?: string;
   Icon?: any;
+  selected?: boolean;
 }
+
 
 export const menu: Imenu[] = [
   {
@@ -75,7 +79,7 @@ export const menu: Imenu[] = [
   },
 
   {
-    title: "Trồng trọt",
+    title: "Quản lý trồng trọt",
     group: [
       {
         title: "Hợp tác xã",

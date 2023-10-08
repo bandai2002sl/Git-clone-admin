@@ -1,6 +1,7 @@
 import { PropsHeader } from "./interfaces";
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Header.module.scss";
+import Image from 'next/image';
 
 
 
@@ -103,7 +104,7 @@ const communesByDistrict: Record<string, string[]> = {
 
         
         <div className={styles.section1}>
-         <img
+         <Image
             className={styles.logo}
             src="/images/icon-logo.png"
             alt="Logo trang web"

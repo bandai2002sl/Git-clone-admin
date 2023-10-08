@@ -108,6 +108,8 @@ const communesByDistrict: Record<string, string[]> = {
             className={styles.logo}
             src="/images/icon-logo.png"
             alt="Logo trang web"
+            width={100}
+            height={100}
           />
         </div>
       

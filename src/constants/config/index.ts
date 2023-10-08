@@ -12,9 +12,9 @@ export const allowFiles = [
 
 export enum PATH {
   Home = "/",
-  Login = "/login",
+  Login = "/auth/login",
 
-  Administrativeunits = "/don-vi-hanh-chinh",
+  Administrativeunits = "/don-vi-hanh-chinh/don-vi-hanh-chinh",
   Administrativeunitregion = "/don-vi-hanh-chinh/vung-don-vi-hanh-chinh",
   Administrativeunitroad = "/don-vi-hanh-chinh/duong-don-vi-hanh-chinh",
 
@@ -26,7 +26,6 @@ export enum PATH {
   Crops = "/trong-trot/cay-trong",
   CultivationProduction = "/trong-trot/san-xuat-trong-trot",
   Hightechmodel = "/trong-trot/mo-hinh-cong-nghe-cao",
-  Enterprise = "/trong-trot/doanh-nghiep",
   Link = "/trong-trot/lien-ket",
   Plantdisease = "/trong-trot/benh-cay",
   Formoflandconversion = "/trong-trot/hinh-thuc-chuyen-doi-dat",
@@ -60,6 +59,10 @@ export const menu: Imenu[] = [
   {
     title: "Đơn vị hành chính",
     group: [
+      {
+        title: "Đơn vị hành chính",
+        path: PATH.Administrativeunits,
+      },
       {
         title: "Vùng đơn vị hành chính",
         path: PATH.Administrativeunitregion,
@@ -101,10 +104,6 @@ export const menu: Imenu[] = [
       {
         title: "Mô hình công nghệ cao",
         path: PATH.Hightechmodel,
-      },
-      {
-        title: "Doanh nghiệp",
-        path: PATH.Enterprise,
       },
       {
         title: "Liên kết",

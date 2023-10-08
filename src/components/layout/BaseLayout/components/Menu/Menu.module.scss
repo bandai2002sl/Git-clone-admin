@@ -9,6 +9,7 @@
   margin-top: var(--header-height);
   padding: 24px;
   padding-left: 0;
+  overflow: auto;
 }
 
 .title {
@@ -20,6 +21,8 @@
   padding: 6px;
   border-radius: 6px;
   font-weight: 500;
+  margin-bottom: 0;
+  text-decoration: none;
 
   &:hover {
     opacity: 0.8;
@@ -34,6 +37,7 @@
   &.active {
     background-color: var(--primary);
     color: var(--light);
+
     i {
       color: var(--light);
     }

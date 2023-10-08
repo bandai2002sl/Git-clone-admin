@@ -12,7 +12,7 @@ export default function Page() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/formoflandconversion-type`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/hinh-thuc-chuyen-doi-dat`, {
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }

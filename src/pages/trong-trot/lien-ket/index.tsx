@@ -12,7 +12,7 @@ export default function Page() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/link-type`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/lien-ket`, {
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }
@@ -34,8 +34,6 @@ export default function Page() {
             <table className={styles["customers"]}>
                 <thead>
                     <tr>
-                        <th>Doanh nghiệp:</th>
-                        <th>Cá nhân HTX:</th>
                         <th>Hình thức liên kết:</th>
                         <th>Ngày liên kết:</th>
                         <th>Trạng thái:</th>
@@ -45,8 +43,6 @@ export default function Page() {
                 <tbody>
                     {data.map((item: any) => (
                         <tr key={item.Id}>
-                            <td>{item.doanhNghiep}</td>
-                            <td>{item.caNhanHtx}</td>
                             <td>{item.hinhThucLienKet}</td>
                             <td>{item.ngayLienKet}</td>
                             <td>{item.trangThai}</td>

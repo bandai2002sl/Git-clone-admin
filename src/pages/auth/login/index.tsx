@@ -32,7 +32,7 @@ const Login = () => {
       const authToken = res?.access_token;
 
       localStorage.setItem('authToken', authToken);
-      
+
       store?.dispatch(setToken(res?.access_token));
       store?.dispatch(setStateLogin(true));
       store?.dispatch(setInfoUser(res));
@@ -80,9 +80,9 @@ const Login = () => {
         </div>
         <div
           className={styles.background}
-          // style={{
-          //   backgroundImage: `url(${background || backgrounds.login.src})`,
-          // }}
+        // style={{
+        //   backgroundImage: `url(${background || backgrounds.login.src})`,
+        // }}
         ></div>
       </div>
     </RequiredLogout>

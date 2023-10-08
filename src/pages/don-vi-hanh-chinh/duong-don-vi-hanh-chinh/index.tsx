@@ -12,7 +12,7 @@ export default function Page() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/administrativeunitroad-type`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/duong-don-vi-hanh-chinh`, {
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }
@@ -35,6 +35,7 @@ export default function Page() {
                 <thead>
                     <tr>
                         <th>Dường:</th>
+                        <th>Hoạt động:</th>
 
                     </tr>
                 </thead>

@@ -3,55 +3,57 @@ import BaseLayout from "~/components/layout/BaseLayout";
 import Head from "next/head";
 import i18n from "~/locale/i18n";
 import axios from "axios";
-import styles from "./cay-trong.module.scss"
+import styles from "./don-vi-hanh-chinh.module.scss"
 import AddNewItemModal from "./modalAddNew";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import ModalEdit from "./modalEdit";
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
 export default function Page() {
-    const [data, setData] = useState<any>([]);
-
-    const authToken = localStorage.getItem('authToken')
-
-    const [errCode, setErrCode] = useState(""); // Sử dụng state để lưu trữ giá trị errCode
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State để kiểm soát hiển thị modal thêm
+    const [data, setData] = useState<any>([]); // State để lưu trữ dữ liệu từ API
     const [newItem, setNewItem] = useState<any>({
-        name: "",
-        moTa: "",
-        image: "",
-        tamNgung: ""
+        maHanhChinh: "",
+        ten: "",
+        capHanhChinh: "",
+        tenVietTat: "",
+        toaDo: ""
     }); // State để lưu trữ thông tin bản ghi mới
+    const [editedData, setEditedData] = useState<any>({}); // State để lưu dữ liệu cần sửa
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State để kiểm soát hiển thị modal thêm
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State để kiểm soát hiển thị modal sửa
     const [apiMessage, setApiMessage] = useState<string | null>(null);
     const [inputError, setInputError] = useState<string | null>(null);
-
-    const [editedData, setEditedData] = useState<any>({}); // State để lưu dữ liệu cần sửa
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State để kiểm soát hiển thị modal sửa
+    const [errCode, setErrCode] = useState(""); // Sử dụng state để lưu trữ giá trị errCode
 
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
 
+
+    const authToken = localStorage.getItem('authToken'); // Lấy token từ localStorage
+
     useEffect(() => {
+        // Hàm fetchData để thực hiện cuộc gọi API
         async function fetchData() {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/crop-type`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/administrative-unit`, {
                     headers: {
-                        Authorization: `Bearer ${authToken}`
-                    }
-                })
+                        Authorization: `Bearer ${authToken}`, // Thêm mã thông báo xác thực vào yêu cầu
+                    },
+                });
                 const newData = response.data.data;
-                setData(newData);
+                setData(newData); // Lưu dữ liệu từ API vào state
             } catch (error) {
-                console.error(error)
+                console.error('Lỗi khi gọi API:', error);
             }
         }
-        fetchData()
-    }, [authToken])
+
+        fetchData(); // Gọi hàm fetchData khi component được tạo
+    }, [authToken]); // [] đảm bảo useEffect chỉ chạy một lần sau khi component được tạo
 
     const handleAdd = async () => {
         try {
             // Gửi newItem đến API để thêm bản ghi mới
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_CLIENT}/crop-type`, newItem, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_CLIENT}/administrative-unit`, newItem, {
                 headers: {
                     Authorization: `Bearer ${authToken}`,
                 },
@@ -62,11 +64,13 @@ export default function Page() {
                 setData([...data, response.data.data]);
                 setIsAddModalOpen(false);
                 setNewItem({
-                    name: "",
-                    moTa: "",
-                    image: "",
-                    tamNgung: ""
+                    maHanhChinh: "",
+                    ten: "",
+                    capHanhChinh: "",
+                    tenVietTat: "",
+                    toaDo: ""
                 });
+
                 setApiMessage(response.data.message);
                 setInputError(null); // Xóa thông báo lỗi
             } else if (response.data.statusCode === 0) {
@@ -77,6 +81,7 @@ export default function Page() {
         }
     };
 
+
     const handleEdit = (item: any) => {
         setEditedData(item);
         setIsEditModalOpen(true);
@@ -85,7 +90,7 @@ export default function Page() {
         try {
             // Gửi dữ liệu đã sửa đến API để cập nhật
             const response = await axios.put(
-                `${process.env.NEXT_PUBLIC_API_CLIENT}/crop-type/${editedItem.id}`,
+                `${process.env.NEXT_PUBLIC_API_CLIENT}/administrative-unit/${editedItem.id}`,
                 editedItem,
                 {
                     headers: {
@@ -113,11 +118,13 @@ export default function Page() {
         setItemToDelete(deleteItem);
         setIsConfirmDeleteOpen(true);
     };
+
+
     const handleConfirmDelete = async (deleteItem: any) => {
         try {
             // Gửi yêu cầu xóa item đến API
             const response = await axios.delete(
-                `${process.env.NEXT_PUBLIC_API_CLIENT}/crop-type/${deleteItem.id}`,
+                `${process.env.NEXT_PUBLIC_API_CLIENT}/administrative-unit/${deleteItem.id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -146,7 +153,7 @@ export default function Page() {
     return (
         <Fragment>
             <Head>
-                <title>{i18n.t("Farming.crops")}</title>
+                <title>{i18n.t("administrativeUnit.cooperative")}</title>
             </Head>
             <div>
                 <button onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</button>
@@ -163,26 +170,29 @@ export default function Page() {
                         onSubmit={handleAdd}
                         newItem={newItem}
                         setNewItem={setNewItem}
+                        data={data}
                     />
                 )}
             </div>
             <table className={styles["customers"]}>
                 <thead>
                     <tr>
-                        <th>Tên cây:</th>
-                        <th>Mô Tả</th>
-                        <th>Hình Ảnh</th>
-                        <th>Tam Ngừng</th>
-                        <th>Hoạt Động</th>
+                        <th>Mã hành chính</th>
+                        <th>Tên</th>
+                        <th>Cấp Hành Chính</th>
+                        <th>Tên viết tắt</th>
+                        <th>Tọa độ</th>
+                        <th>Hoạt động</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.map((item: any) => (
                         <tr key={item.id}>
-                            <td>{item.name}</td>
-                            <td>{item.moTa}</td>
-                            <td>{item.image}</td>
-                            <td>{item.tamNgung}</td>
+                            <td>{item.maHanhChinh}</td>
+                            <td>{item.ten}</td>
+                            <td>{item.capHanhChinh}</td>
+                            <td>{item.tenVietTat}</td>
+                            <td>{item.toaDo}</td>
                             <td>
                                 <button onClick={() => handleEdit(item)}>Sửa</button>
                                 {/* Render modal sửa chi tiết */}
@@ -224,7 +234,6 @@ export default function Page() {
         </Fragment>
     );
 }
-
 Page.getLayout = function (page: ReactElement) {
     return <BaseLayout>{page}</BaseLayout>;
 };

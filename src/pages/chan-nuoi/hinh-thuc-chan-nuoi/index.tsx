@@ -3,7 +3,7 @@ import BaseLayout from "~/components/layout/BaseLayout";
 import Head from "next/head";
 import i18n from "~/locale/i18n";
 import axios from "axios";
-import styles from "./mo-hinh-cong-nghe-cao.module.scss"
+import styles from "./hinh-thuc-chan-nuoi.module.scss"
 
 export default function Page() {
     const [data, setData] = useState<any>([]);
@@ -12,7 +12,7 @@ export default function Page() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/mo-hinh-cong-nghe-cao`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/hinh-thuc-chan-nuoi`, {
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }
@@ -29,26 +29,21 @@ export default function Page() {
     return (
         <Fragment>
             <Head>
-                <title>{i18n.t("Farming.hightechmodel")}</title>
+                <title>{i18n.t("Breed.formofanimalhusbandry")}</title>
             </Head>
             <table className={styles["customers"]}>
                 <thead>
                     <tr>
-                        <th>Mô tả:</th>
-                        <th>Diện tích:</th>
-                        <th>Công nghệ sử dụng:</th>
-                        <th>Trạng thái:</th>
-                        <th>Hoạt động:</th>
-
+                        <th>Tên hình thức:</th>
+                        <th>Tạm ngưng</th>
+                        <th>Hoạt Động</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.map((item: any) => (
-                        <tr key={item.Id}>
-                            <td>{item.moTa}</td>
-                            <td>{item.dienTich}</td>
-                            <td>{item.congNgheSuDung}</td>
-                            <td>{item.trangThai}</td>
+                        <tr key={item.id}>
+                            <td>{item.tenHinhThuc}</td>
+                            <td>{item.tamNgung}</td>
                             <td>
                                 <button>edit</button>
                                 <button>delete</button>

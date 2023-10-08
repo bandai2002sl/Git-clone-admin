@@ -12,7 +12,7 @@ export default function Page() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/businessEstablishment-type`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/co-so-kinh-doanh`, {
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }
@@ -39,21 +39,17 @@ export default function Page() {
                         <th>Đăng ký kinh doanh:</th>
                         <th>Sdt:</th>
                         <th>Trạng thái:</th>
-                        <th>Cá nhân HTX:</th>
-                        <th>Loại Kinh Doanh:</th>
                         <th>Hoạt động:</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.map((item: any) => (
-                        <tr key={item.Id}>
-                            <td>{item.diaChi}</td>
-                            <td>{item.image}</td>
+                        <tr key={item.id}>
+                            <td>{item.diaDiem}</td>
+                            <td>{item.hinhAnh}</td>
                             <td>{item.dangKyKinhDoanh}</td>
                             <td>{item.sdt}</td>
                             <td>{item.trangThai}</td>
-                            <td>{item.caNhanHtx}</td>
-                            <td>{item.loaiKinhDoanh}</td>
                             <td>
                                 <button>edit</button>
                                 <button>delete</button>

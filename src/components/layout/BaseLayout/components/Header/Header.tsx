@@ -23,7 +23,7 @@ function Header({ }: PropsHeader) {
     dispatch(setToken(''));
     dispatch(setStateLogin(false));
 
-    window.location.href = '/auth/auth/login';
+    window.location.reload();
   }
 
   return (
@@ -104,7 +104,10 @@ function Header({ }: PropsHeader) {
           />
         </div>
       </div>
-      <button onClick={handleLogout}>Đăng Xuất</button>
+      <div className={styles.logout}>
+        <button onClick={handleLogout}>Đăng Xuất</button>
+      </div>
+
     </div>
 
 

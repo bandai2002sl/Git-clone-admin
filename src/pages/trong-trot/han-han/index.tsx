@@ -12,7 +12,7 @@ export default function Page() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/drought-type`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/han-han`, {
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }
@@ -37,7 +37,6 @@ export default function Page() {
                         <th>Địa chỉ:</th>
                         <th>Diện tích:</th>
                         <th>Ngày ghi nhận:</th>
-                        <th>Loại cây</th>
                         <th>Hoạt động:</th>
                     </tr>
                 </thead>
@@ -47,7 +46,6 @@ export default function Page() {
                             <td>{item.diaChi}</td>
                             <td>{item.dienTich}</td>
                             <td>{item.ngayGhiNhan}</td>
-                            <td>{item.loaiCay}</td>
                             <td>
                                 <button>edit</button>
                                 <button>delete</button>

@@ -3,7 +3,7 @@ import BaseLayout from "~/components/layout/BaseLayout";
 import Head from "next/head";
 import i18n from "~/locale/i18n";
 import axios from "axios";
-import styles from "./doanh-nghiep.module.scss"
+import styles from "./san-xuat-vat-nuoi.module.scss"
 
 export default function Page() {
     const [data, setData] = useState<any>([]);
@@ -12,7 +12,7 @@ export default function Page() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/enterprise-type`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/san-xuat-vat-nuoi`, {
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }
@@ -29,31 +29,25 @@ export default function Page() {
     return (
         <Fragment>
             <Head>
-                <title>{i18n.t("Farming.enterprise")}</title>
+                <title>{i18n.t("Breed.productionoflivestock")}</title>
             </Head>
             <table className={styles["customers"]}>
                 <thead>
                     <tr>
-                        <th>Tên doanh nghiệp:</th>
                         <th>Địa chỉ:</th>
-                        <th>Mô tả:</th>
-                        <th>Lĩnh Vực:</th>
-                        <th>Ảnh:</th>
-                        <th>Ngày thành lập:</th>
-                        <th>Trạng thái:</th>
-                        <th>Hoạt động:</th>
+                        <th>Mô Tả</th>
+                        <th>Hình Ảnh</th>
+                        <th>Tình trạng</th>
+                        <th>Hoạt Động</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.map((item: any) => (
-                        <tr key={item.Id}>
-                            <td>{item.name}</td>
+                        <tr key={item.id}>
                             <td>{item.diaChi}</td>
                             <td>{item.moTa}</td>
-                            <td>{item.linhVuc}</td>
-                            <td>{item.image}</td>
-                            <td>{item.ngayThanhLap}</td>
-                            <td>{item.trangThai}</td>
+                            <td>{item.hinhAnh}</td>
+                            <td>{item.tinhTrang}</td>
                             <td>
                                 <button>edit</button>
                                 <button>delete</button>

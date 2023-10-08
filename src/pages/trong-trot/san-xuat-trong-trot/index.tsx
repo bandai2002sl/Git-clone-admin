@@ -12,7 +12,7 @@ export default function Page() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/cultivationProduction-type`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/san-xuat-trong-trot`, {
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }
@@ -34,19 +34,18 @@ export default function Page() {
             <table className={styles["customers"]}>
                 <thead>
                     <tr>
-                        <th>Loại cây:</th>
                         <th>Diện tích trồng:</th>
                         <th>Diện tích trồng mới:</th>
                         <th>Diện tích cho sản phẩm:</th>
                         <th>Năng suất:</th>
                         <th>Sản lượng:</th>
                         <th>Thời điểm báo cáo:</th>
+                        <th>Hoạt động:</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.map((item: any) => (
                         <tr key={item.Id}>
-                            <td>{item.loaiCay}</td>
                             <td>{item.dienTichTrong}</td>
                             <td>{item.dienTichTrongMoi}</td>
                             <td>{item.dienTichChoSanPham}</td>

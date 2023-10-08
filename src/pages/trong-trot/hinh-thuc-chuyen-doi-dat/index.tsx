@@ -12,7 +12,7 @@ export default function Page() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/co-so-chan-nuoi`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/hinh-thuc-chuyen-doi-dat`, {
                     headers: {
                         Authorization: `Bearer ${authToken}`
                     }
@@ -29,19 +29,21 @@ export default function Page() {
     return (
         <Fragment>
             <Head>
-                <title>{i18n.t("Breed.livestockfacility")}</title>
+                <title>{i18n.t("Farming.formoflandconversion")}</title>
             </Head>
             <table className={styles["customers"]}>
                 <thead>
                     <tr>
-                        <th>Tình trạng</th>
-                        <th>Hoạt Động</th>
+                        <th>Tên hình thức:</th>
+                        <th>Tạm ngưng:</th>
+                        <th>Hoạt động:</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.map((item: any) => (
-                        <tr key={item.id}>
-                            <td>{item.tinhTrang}</td>
+                        <tr key={item.Id}>
+                            <td>{item.tenHinhThuc}</td>
+                            <td>{item.tamNgung}</td>
                             <td>
                                 <button>edit</button>
                                 <button>delete</button>

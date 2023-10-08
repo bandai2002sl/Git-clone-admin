@@ -28,7 +28,11 @@ const Login = () => {
       http: authSevices.login(form),
     });
 
-    if (res) {
+    if (res && res.access_token) {
+      const authToken = res?.access_token;
+
+      localStorage.setItem('authToken', authToken);
+
       store?.dispatch(setToken(res?.access_token));
       store?.dispatch(setStateLogin(true));
       store?.dispatch(setInfoUser(res));
@@ -76,9 +80,9 @@ const Login = () => {
         </div>
         <div
           className={styles.background}
-          // style={{
-          //   backgroundImage: `url(${background || backgrounds.login.src})`,
-          // }}
+        // style={{
+        //   backgroundImage: `url(${background || backgrounds.login.src})`,
+        // }}
         ></div>
       </div>
     </RequiredLogout>

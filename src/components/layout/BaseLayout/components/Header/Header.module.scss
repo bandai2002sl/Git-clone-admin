@@ -1,6 +1,6 @@
 .container {
   height: var(--header-height);
-  background-color: #fff; 
+  background-color: #fff;
   border-bottom: 1px solid var(--grey-2);
   position: fixed;
   top: 0;
@@ -10,24 +10,28 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 0 20px; 
+  padding: 0 20px;
 }
 
-.section1, .section2, .section3, .section4, .section5 {
+.section1,
+.section2,
+.section3,
+.section4,
+.section5 {
   flex: 1;
   text-align: center;
 }
 
 
 .section1 {
-  flex: 0.3; 
-  max-width: 10%; 
+  flex: 0.3;
+  max-width: 10%;
   min-width: 50px;
 }
 
 .logo {
-  width: 50px; 
-  height: 50px; 
+  width: 50px;
+  height: 50px;
   min-width: 20px;
 }
 
@@ -37,8 +41,8 @@
 }
 
 .title {
-  font-size: 15px; 
-  color: #000; 
+  font-size: 15px;
+  color: #000;
   white-space: nowrap;
   padding-right: 5px;
   padding-left: 5px;
@@ -48,14 +52,14 @@
 
 .section3 {
   flex: 3;
-  display: flex; 
-  align-items: center; 
+  display: flex;
+  align-items: center;
 }
 
 .locationBox {
   position: relative;
   cursor: pointer;
-  border: 1cap solid #000; 
+  border: 1cap solid #000;
   min-width: 90px;
   align-items: center;
   text-align: center;
@@ -69,7 +73,7 @@
   display: block;
 }
 
-.locationList{
+.locationList {
   display: block;
   position: absolute;
   top: 100%;
@@ -79,27 +83,28 @@
   border: 1px solid #000;
 }
 
-.locationList li:hover{
+.locationList li:hover {
   background-color: #e0dfdf;
 }
 
 .locationTitle {
   border: 1px solid #000;
-  border-radius: 2px; 
+  border-radius: 2px;
   width: 80%;
   display: block;
 }
-.locationTitle:hover{
+
+.locationTitle:hover {
   background-color: #e0dfdf;
 }
 
 
 .section4 {
-  flex: 1.5; 
+  flex: 1.5;
   display: flex;
   align-items: center;
-  padding-left: 0px; 
-  padding-right: 20px; 
+  padding-left: 0px;
+  padding-right: 20px;
 }
 
 .search {
@@ -108,8 +113,8 @@
 
 .searchIcon {
   background-image: url('/images/icon-search.png');
-  width: 25px; 
-  height: 25px; 
+  width: 25px;
+  height: 25px;
   background-size: contain;
   background-repeat: no-repeat;
   position: absolute;
@@ -121,62 +126,62 @@
 
 .input {
   width: 350px;
-  padding: 3px 0px 3px 35px; 
+  padding: 3px 0px 3px 35px;
   border: 1px solid #cbc0c0;
-  border-radius: 4px; 
-  background-color: rgba(212, 193, 193, 0.1); 
+  border-radius: 4px;
+  background-color: rgba(212, 193, 193, 0.1);
 }
 
 .input::placeholder {
-  color: #999; 
+  color: #999;
 }
 
 .input:focus {
-  outline: none; 
-  background-color: rgba(239, 233, 233, 0.05); 
+  outline: none;
+  background-color: rgba(239, 233, 233, 0.05);
 }
 
 
 .section5 {
-  flex: 0.3; 
-  max-width: 10%; 
+  flex: 0.3;
+  max-width: 10%;
   display: flex;
-  justify-content: center; 
-  align-items: center; 
+  justify-content: center;
+  align-items: center;
 
 }
 
-.section5 button{
+.section5 button {
   white-space: nowrap;
   color: #ffffff;
   background-color: #3498db;
   border: 2px solid #3498db;
-padding: 2px 10px 2px 10px;
-border-radius: 4px;
+  padding: 2px 10px 2px 10px;
+  border-radius: 4px;
 }
 
-.section5 button:hover{
+.section5 button:hover {
   background-color: #0a6daf;
   cursor: pointer;
 }
 
 
 @media (max-width: 1104px) {
-  .section2{
+  .section2 {
     display: none;
   }
 
 
-  .section5{
+  .section5 {
     display: none;
   }
 
   .input {
     width: 200%;
-    padding: 3px 0px 3px 35px; 
+    padding: 3px 0px 3px 35px;
   }
 
   .locationBox {
-    padding:  0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
   }
 }

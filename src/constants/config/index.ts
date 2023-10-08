@@ -13,45 +13,35 @@ export const allowFiles = [
 
 export enum PATH {
   Home = "/",
-  Login = "/login",
+  Login = "/auth/login",
+
+  Administrativeunits = "/don-vi-hanh-chinh/don-vi-hanh-chinh",
+  Administrativeunitregion = "/don-vi-hanh-chinh/vung-don-vi-hanh-chinh",
+  Administrativeunitroad = "/don-vi-hanh-chinh/duong-don-vi-hanh-chinh",
+
   Farming = "/trong-trot",
   Seafood = "/thuy-san",
   Cooperative = "/trong-trot/hop-tac-xa",
   BusinessCategory = "/trong-trot/loai-kinh-doanh",
-  Linked = "/trong-trot/lien-ket",
-  treeDisease = "/trong-trot/benh-cay",
-  crops = "/trong-trot/cay-trong",
-  landUseConversion = "/trong-trot/chuyen-doi-su-dung-dat",
-  businessEstablishment = "/trong-trot/co-so-kinh-doanh",
-  drought = "/trong-trot/han-han",
-  conversionForm = "/trong-trot/hinh-thuc-chuyen-doi",
-  typeOfDisease = "/trong-trot/loai-benh",
-  highTechModel = "/trong-trot/mo-hinh-cong-nghe-cao",
-  cropProduction = "/trong-trot/san-xuat-trong-trot",
-  fishingVesselManagement = "/thuy-san/quan-ly-tau-ca",
-  aquaticProductProduction = "/thuy-san/san-xuat-thuy-san",
-  seafoodBusinessEstablishments = "/thuy-san/co-so-kinh-doanh",
-  mechanization = "/pt-nong-thon/co-gioi-hoa",
-  craftVillageList = "/pt-nong-thon/danh-muc-lang-nghe",
-  ocopProducts = "/pt-nong-thon/san-pham-ocop",
-  pumpStation = "/pt-thuy-loi/tram-bom",
-  canal = "/pt-thuy-loi/kenh-muong",
-  reservoir = "/pt-thuy-loi/ho-chua",
-  drain = "/pt-thuy-loi/cong",
-  forestryData = "/lam-nghiep/du-lieu-lam-nghiep",
-  irrigatedArea = "/pt-thuy-loi/dien-tich-tuoi-tieu",
-  generalInformation = "/lam-nghiep/thong-tin-chung",
-  units = "/don-vi-hanh-chinh/don-vi-hanh-chinh",
-  unitRoad = "/don-vi-hanh-chinh/duong-don-vi-hanh-chinh",
-  unitArea = "/don-vi-hanh-chinh/vung-don-vi-hanh-chinh",
-  processingFacilities = "/trong-trot/co-so-che-bien",
-  slaughterHouse = "/ql-chat-luong/co-so-giet-mo",
-  livestockDiseases = "/chan-nuoi/benh-vat-nuoi",
-  livestockFacility = "/chan-nuoi/co-so-chan-nuoi",
-  formOfLivestockFarming = "/chan-nuoi/hinh-thuc-chan-nuoi",
-  livestockProduction = "/chan-nuoi/san-xuat-vat-nuoi",
-  livestock = "/chan-nuoi/vat-nuoi",
-  safeFarmingArea = "/chan-nuoi/vung-chan-nuoi-an-toan"
+  BusinessEstablishment = "/trong-trot/co-so-kinh-doanh",
+  DiseaseType = "/trong-trot/loai-benh",
+  Crops = "/trong-trot/cay-trong",
+  CultivationProduction = "/trong-trot/san-xuat-trong-trot",
+  Hightechmodel = "/trong-trot/mo-hinh-cong-nghe-cao",
+  Link = "/trong-trot/lien-ket",
+  Plantdisease = "/trong-trot/benh-cay",
+  Formoflandconversion = "/trong-trot/hinh-thuc-chuyen-doi-dat",
+  Landuseconversion = "/trong-trot/chuyen-doi-su-dung-dat",
+  Drought = "/trong-trot/han-han",
+  Processingfacilities = "/trong-trot/co-so-che-bien",
+
+  Breed = "/chan-nuoi",
+  Pet = "/chan-nuoi/vat-nuoi",
+  Productionoflivestock = "/chan-nuoi/san-xuat-vat-nuoi",
+  Formofanimalhusbandry = "/chan-nuoi/hinh-thuc-chan-nuoi",
+  Livestockfacility = "/chan-nuoi/co-so-chan-nuoi",
+  Safelivestockarea = "/chan-nuoi/vung-chan-nuoi-an-toan",
+  Petdiseases = "/chan-nuoi/benh-vat-nuoi",
 }
 
 export interface Imenu {
@@ -69,7 +59,25 @@ export const menu: Imenu[] = [
     path: "/",
     Icon: AiFillHome,
   },
-  
+
+  {
+    title: "Đơn vị hành chính",
+    group: [
+      {
+        title: "Đơn vị hành chính",
+        path: PATH.Administrativeunits,
+      },
+      {
+        title: "Vùng đơn vị hành chính",
+        path: PATH.Administrativeunitregion,
+      },
+      {
+        title: "Đường đơn vị hành chính",
+        path: PATH.Administrativeunitroad,
+      },
+    ]
+  },
+
   {
     title: "Quản lý trồng trọt",
     group: [
@@ -82,187 +90,77 @@ export const menu: Imenu[] = [
         path: PATH.BusinessCategory,
       },
       {
-        title: "Liên kết",
-        path: PATH.Linked, 
-      },
-      {
-        title: "Bệnh cây",
-        path: PATH.treeDisease,
-      },
-      {
-        title: "Cây trồng",
-        path: PATH.crops,
-      },
-      {
-        title: "Chuyển đổi sử dụng đất",
-        path: PATH.landUseConversion,
-      },
-      {
         title: "Cơ sở kinh doanh",
-        path: PATH.businessEstablishment,
-      },
-      {
-        title: "Hạn hán",
-        path: PATH.drought,
-      },
-      {
-        title: "Hình thức chuyển đổi",
-        path: PATH.conversionForm,
+        path: PATH.BusinessEstablishment,
       },
       {
         title: "Loại bệnh",
-        path: PATH.typeOfDisease,
+        path: PATH.DiseaseType,
       },
       {
-        title: "Mô hình công nghệ cao",
-        path: PATH.highTechModel,
+        title: "Cây trồng",
+        path: PATH.Crops,
       },
       {
         title: "Sản xuất trồng trọt",
-        path: PATH.cropProduction,
+        path: PATH.CultivationProduction,
+      },
+      {
+        title: "Mô hình công nghệ cao",
+        path: PATH.Hightechmodel,
+      },
+      {
+        title: "Liên kết",
+        path: PATH.Link,
+      },
+      {
+        title: "Bệnh cây",
+        path: PATH.Plantdisease,
+      },
+      {
+        title: "Hình thức chuyển đổi đất",
+        path: PATH.Formoflandconversion,
+      },
+      {
+        title: "Chuyển đổi đất sử dụng",
+        path: PATH.Landuseconversion,
+      },
+      {
+        title: "Hạn hán",
+        path: PATH.Drought,
       },
       {
         title: "Cơ sở chế biến",
-        path: PATH.processingFacilities,
+        path: PATH.Processingfacilities,
       },
-
     ],
   },
   {
-    title: "Quản lý thuỷ sản",
+    title: "Chăn nuôi",
     group: [
       {
-        title: "Cơ sở kinh doanh",
-        path: PATH.businessEstablishment,
-      },
-      {
-        title: "Quản lý tàu cá",
-        path: PATH.fishingVesselManagement,
-      },
-      {
-        title: "Sản xuất thuỷ sản",
-        path: PATH.aquaticProductProduction,
-      },
-    ]
-  },
-
-  {
-    title: "Quản lý phát triển lâm nghiệp",
-    group: [
-      {
-        title: "Thông tin chung",
-        path: PATH.generalInformation,
-      },
-      {
-        title: "Dữ liệu lâm nghiệp",
-        path: PATH.forestryData,
-      },
-    ]
-  },
-
-    {
-    title: "Quản lý chất lượng thuỷ lợi",
-    group:[
-      {
-        title: "Cống",
-        path: PATH.drain,
-      },
-      {
-        title: "Hồ chứa",
-        path: PATH.reservoir,
-      },
-      {
-        title: "Kênh mương",
-        path: PATH.canal,
-      },
-      {
-        title: "Trạm bơm",
-        path: PATH.pumpStation,
-      },
-      {
-        title: "Diện tích tưới tiêu",
-        path: PATH.irrigatedArea,
-      },
-    ]
-  },
-  {
-    title: "Quản lý phát triển nông thôn",
-    group: [
-      {
-        title: "Cơ giới hoá",
-        path: PATH.mechanization,
-      },
-      {
-        title: "Danh mục làng nghề",
-        path: PATH.craftVillageList,
-      },
-      {
-        title: "Sản phẩm OCOP",
-        path: PATH.ocopProducts,
-      },
-    ]
-
-  },
-  {
-    title: "Quản lý đơn vị hành chính",
-    group: [
-      {
-        title: "Đơn vị hành chính",
-        path: PATH.units,
-      },
-      {
-        title: "Đường đơn vị hành chính",
-        path: PATH.unitRoad,
-      },
-      {
-        title: "Vùng đơn vị hành chính",
-        path: PATH.unitArea,
-      },
-    ]
-  },
-  {
-    title: "Quản lý chất lượng",
-    group: [
-      {
-        title: "Cơ sở chế biến",
-        path: PATH.processingFacilities,
-      },
-      {
-        title: "Cơ sở giết mổ",
-        path: PATH.slaughterHouse,
-      },
-      {
-        title: "Cơ sở kinh doanh",
-        path: PATH.businessEstablishment,
-      },
-    ]
-  },
-  {
-    title: "Quản lý chăn nuôi",
-    group: [
-      {
-        title: "Bệnh vật nuôi",
-        path: PATH.livestockDiseases,
-      },
-      {
-        title: "Cơ sở chăn nuôi",
-        path: PATH.livestockFacility,
-      },
-      {
-        title: "Hình thức chăn nuôi",
-        path: PATH.formOfLivestockFarming,
+        title: "Vật nuôi",
+        path: PATH.Pet,
       },
       {
         title: "Sản xuất vật nuôi",
-        path: PATH.livestockProduction,
+        path: PATH.Productionoflivestock,
       },
       {
-        title: "Vật nuôi",
-        path: PATH.livestock,
+        title: "Hình thức chăn nuôi",
+        path: PATH.Formofanimalhusbandry,
+      },
+      {
+        title: "Cơ sở chăn nuôi",
+        path: PATH.Livestockfacility,
       },
       {
         title: "Vùng chăn nuôi an toàn",
-        path: PATH.safeFarmingArea,
+        path: PATH.Safelivestockarea,
+      },
+      {
+        title: "Bệnh vật nuôi",
+        path: PATH.Petdiseases,
       },
     ]
   },

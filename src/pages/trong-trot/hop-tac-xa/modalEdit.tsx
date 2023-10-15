@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, } from "reactstrap";
 import styles from "../../modal-custom.module.scss"
+import hopTacXaSevices from "~/services/hopTacXaSevices";
 
 interface ModalEditProps {
     isOpen: boolean;
@@ -38,28 +39,15 @@ export default function ModalEdit({
 
     const handleSaveChanges = async () => {
         try {
-            const response = await axios.put(
-                `${process.env.NEXT_PUBLIC_API_CLIENT}/ca-nhan-htx/${editedItemId}`,
-                editedItem,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-                    },
-                }
-            );
-            // Kiểm tra kết quả từ API (response) và xử lý tùy theo kết quả
-            if (response.data.statusCode === 1) {
-                // Dữ liệu đã được cập nhật thành công trên API
-                onUpdate(editedItem); // Gọi hàm onUpdate để cập nhật lại dữ liệu ở component cha
-                setEditedData({}); // Đặt lại editedData trong component cha
-                onClose(); // Đóng modal sau khi cập nhật thành công
-            } else {
-                console.log("lỗi", response)
-            }
+            const response = await hopTacXaSevices.updateHopTacXa(editedItem.id, editedItem);
+            onUpdate(editedItem); // Gọi hàm onUpdate để cập nhật lại dữ liệu ở component cha
+            setEditedData({}); // Đặt lại editedData trong component cha
+            onClose(); // Đóng modal sau khi cập nhật thành công
         } catch (error) {
             console.error(error);
         }
     };
+
 
     return (
         <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} backdrop={false} size='lg'>

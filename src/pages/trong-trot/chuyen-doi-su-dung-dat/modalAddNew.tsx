@@ -36,6 +36,7 @@ export default function AddNewItemModal({ isOpen, onClose, onSubmit, newItem, se
     const handleSave = () => {
         checkValidInput(newItem);
         onSubmit(newItem);
+        onClose();
     };
     return (
         <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>

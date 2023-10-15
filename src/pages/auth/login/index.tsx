@@ -28,11 +28,7 @@ const Login = () => {
       http: authSevices.login(form),
     });
 
-    if (res && res.access_token) {
-      const authToken = res?.access_token;
-
-      localStorage.setItem('authToken', authToken);
-
+    if (res) {
       store?.dispatch(setToken(res?.access_token));
       store?.dispatch(setStateLogin(true));
       store?.dispatch(setInfoUser(res));

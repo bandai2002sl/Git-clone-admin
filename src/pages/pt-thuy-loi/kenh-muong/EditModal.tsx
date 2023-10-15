@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, } from "reactstrap";
-import styles from "../../modal-custom.module.scss"
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label } from "reactstrap";
+import styles from "../../modal-custom.module.scss";
 
 interface ModalEditProps {
     isOpen: boolean;
@@ -22,8 +22,6 @@ export default function ModalEdit({
 }: ModalEditProps) {
     const [editedItem, setEditedItem] = useState({ ...editedData });
 
-    const [editedX, setEditedX] = useState("");
-    const [editedY, setEditedY] = useState("");
     useEffect(() => {
         // Kiểm tra nếu editedData không phải là null hoặc undefined
         if (editedData) {
@@ -39,7 +37,7 @@ export default function ModalEdit({
     const handleSaveChanges = async () => {
         try {
             const response = await axios.put(
-                `${process.env.NEXT_PUBLIC_API_CLIENT}/loai-benh/${editedItemId}`,
+                `${process.env.NEXT_PUBLIC_API_CLIENT}/your-endpoint/${editedItemId}`,
                 editedItem,
                 {
                     headers: {
@@ -54,7 +52,7 @@ export default function ModalEdit({
                 setEditedData({}); // Đặt lại editedData trong component cha
                 onClose(); // Đóng modal sau khi cập nhật thành công
             } else {
-                console.log("lỗi", response)
+                console.log("lỗi", response);
             }
         } catch (error) {
             console.error(error);
@@ -67,38 +65,38 @@ export default function ModalEdit({
             <ModalBody>
                 <div className={styles["modal-body"]}>
                     <div className='input-container'>
-                        <Label for="tenBenh">Tên Bệnh:</Label>
+                        <Label for="ten">Tên:</Label>
                         <Input
                             type="text"
-                            name="tenBenh"
-                            value={editedItem.tenBenh}
+                            name="ten"
+                            value={editedItem.ten}
                             onChange={handleInputChange}
                         />
                     </div>
                     <div className='input-container'>
-                        <Label for="moTa">Mô tả:</Label>
+                        <Label for="chieuDai">Chiều dài:</Label>
                         <Input
-                            type="text"
-                            name="moTa"
-                            value={editedItem.moTa}
+                            type="number"
+                            name="chieuDai"
+                            value={editedItem.chieuDai}
                             onChange={handleInputChange}
                         />
                     </div>
                     <div className='input-container'>
-                        <Label for="doiTuong">Đối tượng</Label>
+                        <Label for="chieuDaiKienCo">Chiều dài kiến cố:</Label>
                         <Input
-                            type="text"
-                            name="doiTuong"
-                            value={editedItem.doiTuong}
+                            type="number"
+                            name="chieuDaiKienCo"
+                            value={editedItem.chieuDaiKienCo}
                             onChange={handleInputChange}
                         />
                     </div>
                     <div className='input-container'>
-                        <Label for="hinhAnh" >Hình ảnh</Label>
+                        <Label for="administrativeUnitId">Administrative Unit ID:</Label>
                         <Input
-                            type="text"
-                            name="hinhAnh"
-                            value={editedItem.hinhAnh}
+                            type="number"
+                            name="administrativeUnitId"
+                            value={editedItem.administrativeUnitId}
                             onChange={handleInputChange}
                         />
                     </div>
@@ -112,6 +110,6 @@ export default function ModalEdit({
                     Đóng
                 </Button>
             </ModalFooter>
-        </Modal >
+        </Modal>
     );
 }

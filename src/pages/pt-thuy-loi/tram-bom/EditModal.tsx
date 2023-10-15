@@ -1,14 +1,13 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label } from "reactstrap";
 import styles from "../../modal-custom.module.scss";
 
 interface NewData {
   ten: string;
   diaChi: string;
-  dungTichThietKe: number;
-  dienTichTuoiThietKe: number;
-  dienTichTuoiThucTe: number;
-  loaiHo: string;
+  congXuat: number;
+  loaiHinh: string;
   administrativeUnitId: number;
 }
 
@@ -22,10 +21,8 @@ export default function ModalAdd({ isOpen, onClose, onSubmit }: ModalAddProps) {
   const [newData, setNewData] = useState<NewData>({
     ten: "",
     diaChi: "",
-    dungTichThietKe: 0,
-    dienTichTuoiThietKe: 0,
-    dienTichTuoiThucTe: 0,
-    loaiHo: "",
+    congXuat: 0,
+    loaiHinh: "",
     administrativeUnitId: 0,
   });
 
@@ -37,10 +34,14 @@ export default function ModalAdd({ isOpen, onClose, onSubmit }: ModalAddProps) {
     }));
   };
 
-  const handleSaveChanges = () => {
-    // Gọi hàm onSubmit để gửi newData lên server
-    onSubmit(newData);
-    onClose(); // Đóng modal sau khi thêm mới
+  const handleSaveChanges = async () => {
+    try {
+      // Call the onSubmit function to send newData to the server
+      onSubmit(newData);
+      onClose(); // Close the modal after adding new data
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -57,20 +58,12 @@ export default function ModalAdd({ isOpen, onClose, onSubmit }: ModalAddProps) {
             <Input type="text" name="diaChi" value={newData.diaChi} onChange={handleInputChange} />
           </div>
           <div className="input-container">
-            <Label for="dungTichThietKe">Dung tích thiết kế:</Label>
-            <Input type="number" name="dungTichThietKe" value={newData.dungTichThietKe} onChange={handleInputChange} />
+            <Label for="congXuat">Công suất:</Label>
+            <Input type="number" name="congXuat" value={newData.congXuat} onChange={handleInputChange} />
           </div>
           <div className="input-container">
-            <Label for="dienTichTuoiThietKe">Diện tích tưới thiết kế:</Label>
-            <Input type="number" name="dienTichTuoiThietKe" value={newData.dienTichTuoiThietKe} onChange={handleInputChange} />
-          </div>
-          <div className="input-container">
-            <Label for="dienTichTuoiThucTe">Diện tích tưới thực tế:</Label>
-            <Input type="number" name="dienTichTuoiThucTe" value={newData.dienTichTuoiThucTe} onChange={handleInputChange} />
-          </div>
-          <div className="input-container">
-            <Label for="loaiHo">Loại hồ:</Label>
-            <Input type="text" name="loaiHo" value={newData.loaiHo} onChange={handleInputChange} />
+            <Label for="loaiHinh">Loại hình:</Label>
+            <Input type="text" name="loaiHinh" value={newData.loaiHinh} onChange={handleInputChange} />
           </div>
           <div className="input-container">
             <Label for="administrativeUnitId">Administrative Unit ID:</Label>

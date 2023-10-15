@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, } from "reactstrap";
-import styles from "../../modal-custom.module.scss"
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label } from "reactstrap";
+import styles from "../../modal-custom.module.scss";
 
 interface ModalEditProps {
     isOpen: boolean;
     onClose: () => void;
-    onUpdate: (editedItem: any) => void;
     editedItemId: number;
     editedData: any;
     setEditedData: React.Dispatch<any>;
+    onUpdate: (editedItem: any) => void;
 }
 
 export default function ModalEdit({
@@ -22,8 +22,6 @@ export default function ModalEdit({
 }: ModalEditProps) {
     const [editedItem, setEditedItem] = useState({ ...editedData });
 
-    const [editedX, setEditedX] = useState("");
-    const [editedY, setEditedY] = useState("");
     useEffect(() => {
         // Kiểm tra nếu editedData không phải là null hoặc undefined
         if (editedData) {
@@ -39,7 +37,7 @@ export default function ModalEdit({
     const handleSaveChanges = async () => {
         try {
             const response = await axios.put(
-                `${process.env.NEXT_PUBLIC_API_CLIENT}/loai-benh/${editedItemId}`,
+                `${process.env.NEXT_PUBLIC_API_CLIENT}/cong/${editedItemId}`,
                 editedItem,
                 {
                     headers: {
@@ -54,7 +52,7 @@ export default function ModalEdit({
                 setEditedData({}); // Đặt lại editedData trong component cha
                 onClose(); // Đóng modal sau khi cập nhật thành công
             } else {
-                console.log("lỗi", response)
+                console.log("lỗi", response);
             }
         } catch (error) {
             console.error(error);
@@ -67,38 +65,56 @@ export default function ModalEdit({
             <ModalBody>
                 <div className={styles["modal-body"]}>
                     <div className='input-container'>
-                        <Label for="tenBenh">Tên Bệnh:</Label>
+                        <Label for="ten">Tên:</Label>
                         <Input
                             type="text"
-                            name="tenBenh"
-                            value={editedItem.tenBenh}
+                            name="ten"
+                            value={editedItem.ten}
                             onChange={handleInputChange}
                         />
                     </div>
                     <div className='input-container'>
-                        <Label for="moTa">Mô tả:</Label>
+                        <Label for="diaChi">Địa Chỉ:</Label>
                         <Input
                             type="text"
-                            name="moTa"
-                            value={editedItem.moTa}
+                            name="diaChi"
+                            value={editedItem.diaChi}
                             onChange={handleInputChange}
                         />
                     </div>
                     <div className='input-container'>
-                        <Label for="doiTuong">Đối tượng</Label>
+                        <Label for="kichCo">Kích Cỡ:</Label>
                         <Input
                             type="text"
-                            name="doiTuong"
-                            value={editedItem.doiTuong}
+                            name="kichCo"
+                            value={editedItem.kichCo}
                             onChange={handleInputChange}
                         />
                     </div>
                     <div className='input-container'>
-                        <Label for="hinhAnh" >Hình ảnh</Label>
+                        <Label for="loaiKichThuoc">Loại Kích Thước:</Label>
                         <Input
                             type="text"
-                            name="hinhAnh"
-                            value={editedItem.hinhAnh}
+                            name="loaiKichThuoc"
+                            value={editedItem.loaiKichThuoc}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="loaiHinh">Loại Hình:</Label>
+                        <Input
+                            type="text"
+                            name="loaiHinh"
+                            value={editedItem.loaiHinh}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="administrativeUnitId">Administrative Unit ID:</Label>
+                        <Input
+                            type="number"
+                            name="administrativeUnitId"
+                            value={editedItem.administrativeUnitId}
                             onChange={handleInputChange}
                         />
                     </div>
@@ -112,6 +128,6 @@ export default function ModalEdit({
                     Đóng
                 </Button>
             </ModalFooter>
-        </Modal >
+        </Modal>
     );
 }

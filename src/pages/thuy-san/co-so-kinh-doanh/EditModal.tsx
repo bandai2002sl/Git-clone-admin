@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, } from "reactstrap";
-import styles from "../../modal-custom.module.scss"
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label } from "reactstrap";
+import styles from "../../modal-custom.module.scss";
 
 interface ModalEditProps {
     isOpen: boolean;
@@ -22,8 +22,6 @@ export default function ModalEdit({
 }: ModalEditProps) {
     const [editedItem, setEditedItem] = useState({ ...editedData });
 
-    const [editedX, setEditedX] = useState("");
-    const [editedY, setEditedY] = useState("");
     useEffect(() => {
         // Kiểm tra nếu editedData không phải là null hoặc undefined
         if (editedData) {
@@ -39,7 +37,7 @@ export default function ModalEdit({
     const handleSaveChanges = async () => {
         try {
             const response = await axios.put(
-                `${process.env.NEXT_PUBLIC_API_CLIENT}/loai-benh/${editedItemId}`,
+                `${process.env.NEXT_PUBLIC_API_CLIENT}/co-so-kinh-doanh/${editedItemId}`,
                 editedItem,
                 {
                     headers: {
@@ -54,7 +52,7 @@ export default function ModalEdit({
                 setEditedData({}); // Đặt lại editedData trong component cha
                 onClose(); // Đóng modal sau khi cập nhật thành công
             } else {
-                console.log("lỗi", response)
+                console.log("lỗi", response);
             }
         } catch (error) {
             console.error(error);
@@ -67,38 +65,74 @@ export default function ModalEdit({
             <ModalBody>
                 <div className={styles["modal-body"]}>
                     <div className='input-container'>
-                        <Label for="tenBenh">Tên Bệnh:</Label>
+                        <Label for="diaDiem">Địa điểm:</Label>
                         <Input
                             type="text"
-                            name="tenBenh"
-                            value={editedItem.tenBenh}
+                            name="diaDiem"
+                            value={editedItem.diaDiem}
                             onChange={handleInputChange}
                         />
                     </div>
                     <div className='input-container'>
-                        <Label for="moTa">Mô tả:</Label>
-                        <Input
-                            type="text"
-                            name="moTa"
-                            value={editedItem.moTa}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className='input-container'>
-                        <Label for="doiTuong">Đối tượng</Label>
-                        <Input
-                            type="text"
-                            name="doiTuong"
-                            value={editedItem.doiTuong}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className='input-container'>
-                        <Label for="hinhAnh" >Hình ảnh</Label>
+                        <Label for="hinhAnh">Hình ảnh:</Label>
                         <Input
                             type="text"
                             name="hinhAnh"
                             value={editedItem.hinhAnh}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="dangKyKinhDoanh">Đăng ký kinh doanh:</Label>
+                        <Input
+                            type="text"
+                            name="dangKyKinhDoanh"
+                            value={editedItem.dangKyKinhDoanh}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="sdt">Số điện thoại:</Label>
+                        <Input
+                            type="text"
+                            name="sdt"
+                            value={editedItem.sdt}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="trangThai">Trạng thái:</Label>
+                        <Input
+                            type="text"
+                            name="trangThai"
+                            value={editedItem.trangThai}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="caNhanHtxId">Cá nhân HTX ID:</Label>
+                        <Input
+                            type="number"
+                            name="caNhanHtxId"
+                            value={editedItem.caNhanHtxId}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="loaiKinhDoanhId">Loại kinh doanh ID:</Label>
+                        <Input
+                            type="number"
+                            name="loaiKinhDoanhId"
+                            value={editedItem.loaiKinhDoanhId}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="administrativeUnitId">Administrative Unit ID:</Label>
+                        <Input
+                            type="number"
+                            name="administrativeUnitId"
+                            value={editedItem.administrativeUnitId}
                             onChange={handleInputChange}
                         />
                     </div>
@@ -112,6 +146,6 @@ export default function ModalEdit({
                     Đóng
                 </Button>
             </ModalFooter>
-        </Modal >
+        </Modal>
     );
 }

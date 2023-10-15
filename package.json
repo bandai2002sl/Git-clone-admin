@@ -46,6 +46,6 @@
     "@types/md5": "^2.3.2",
     "@types/negotiator": "^0.6.1",
     "@types/uuid": "9.0.2",
-    "sass": "1.64.1"
+    "sass": "^1.64.1"
   }
 }

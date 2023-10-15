@@ -11,6 +11,8 @@ export const allowFiles = [
 ];
 
 
+
+
 export enum PATH {
   Home = "/",
   Login = "/auth/login",
@@ -42,6 +44,25 @@ export enum PATH {
   Livestockfacility = "/chan-nuoi/co-so-chan-nuoi",
   Safelivestockarea = "/chan-nuoi/vung-chan-nuoi-an-toan",
   Petdiseases = "/chan-nuoi/benh-vat-nuoi",
+  //
+  fishingVesselManagement = "/thuy-san/quan-ly-tau-ca",
+  aquaticProductProduction = "/thuy-san/san-xuat-thuy-san",
+  seafoodBusinessEstablishments = "/thuy-san/co-so-kinh-doanh",
+
+  mechanization = "/pt-nong-thon/co-gioi-hoa",
+  craftVillageList = "/pt-nong-thon/danh-muc-lang-nghe",
+  ocopProducts = "/pt-nong-thon/san-pham-ocop",
+
+  pumpStation = "/pt-thuy-loi/tram-bom",
+  canal = "/pt-thuy-loi/kenh-muong",
+  reservoir = "/pt-thuy-loi/ho-chua",
+  drain = "/pt-thuy-loi/cong",
+  irrigatedArea = "/pt-thuy-loi/dien-tich-tuoi-tieu",
+
+  forestryData = "/lam-nghiep/du-lieu-lam-nghiep",
+  generalInformation = "/lam-nghiep/thong-tin-chung",
+  slaughterHouse = "/ql-chat-luong/co-so-giet-mo",
+  ProcessingFacilities = "/ql-chat-luong/co-so-che-bien",
 }
 
 export interface Imenu {
@@ -76,6 +97,79 @@ export const menu: Imenu[] = [
         path: PATH.Administrativeunitroad,
       },
     ]
+  },
+  {
+    title: "Quản lý thuỷ sản",
+    group: [
+      {
+        title: "Cơ sở kinh doanh",
+        path: PATH.seafoodBusinessEstablishments,
+      },
+      {
+        title: "Quản lý tàu cá",
+        path: PATH.fishingVesselManagement,
+      },
+      {
+        title: "Sản xuất thuỷ sản",
+        path: PATH.aquaticProductProduction,
+      },
+    ]
+  },
+  {
+    title: "Quản lý phát triển lâm nghiệp",
+    group: [
+      {
+        title: "Thông tin chung",
+        path: PATH.generalInformation,
+      },
+      {
+        title: "Dữ liệu lâm nghiệp",
+        path: PATH.forestryData,
+      },
+    ]
+  },
+  {
+    title: "Quản lý chất lượng thuỷ lợi",
+    group:[
+      {
+        title: "Cống",
+        path: PATH.drain,
+      },
+      {
+        title: "Hồ chứa",
+        path: PATH.reservoir,
+      },
+      {
+        title: "Kênh mương",
+        path: PATH.canal,
+      },
+      {
+        title: "Trạm bơm",
+        path: PATH.pumpStation,
+      },
+      {
+        title: "Diện tích tưới tiêu",
+        path: PATH.irrigatedArea,
+      },
+    ]
+  },
+  {
+    title: "Quản lý phát triển nông thôn",
+    group: [
+      {
+        title: "Cơ giới hoá",
+        path: PATH.mechanization,
+      },
+      {
+        title: "Danh mục làng nghề",
+        path: PATH.craftVillageList,
+      },
+      {
+        title: "Sản phẩm OCOP",
+        path: PATH.ocopProducts,
+      },
+    ]
+
   },
 
   {
@@ -135,6 +229,24 @@ export const menu: Imenu[] = [
       },
     ],
   },
+  {
+    title: "Quản lý chất lượng",
+    group: [
+      {
+        title: "Cơ sở chế biến",
+        path: PATH.ProcessingFacilities,
+      },
+      {
+        title: "Cơ sở giết mổ",
+        path: PATH.slaughterHouse,
+      },
+      {
+        title: "Cơ sở kinh doanh",
+        path: PATH.BusinessEstablishment,
+      },
+    ]
+  },
+
   {
     title: "Chăn nuôi",
     group: [

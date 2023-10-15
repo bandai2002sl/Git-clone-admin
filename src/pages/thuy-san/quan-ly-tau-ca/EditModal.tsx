@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, } from "reactstrap";
-import styles from "../../modal-custom.module.scss"
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label } from "reactstrap";
+import styles from "../../modal-custom.module.scss";
 
 interface ModalEditProps {
     isOpen: boolean;
@@ -20,14 +20,28 @@ export default function ModalEdit({
     editedItemId,
     setEditedData,
 }: ModalEditProps) {
-    const [editedItem, setEditedItem] = useState({ ...editedData });
+    const [editedItem, setEditedItem] = useState({
+        soDangKy: 0,
+        diaChi: "",
+        tinhTrang: "",
+        moTa: "",
+        ngayDangKy: "2023-10-14T18:33:31.613Z",
+        administrativeUnitId: 0,
+        caNhanHTXId: 0
+    });
 
-    const [editedX, setEditedX] = useState("");
-    const [editedY, setEditedY] = useState("");
     useEffect(() => {
         // Kiểm tra nếu editedData không phải là null hoặc undefined
         if (editedData) {
-            setEditedItem({ ...editedData });
+            setEditedItem({
+                soDangKy: editedData.soDangKy || 0,
+                diaChi: editedData.diaChi || "",
+                tinhTrang: editedData.tinhTrang || "",
+                moTa: editedData.moTa || "",
+                ngayDangKy: editedData.ngayDangKy || "2023-10-14T18:33:31.613Z",
+                administrativeUnitId: editedData.administrativeUnitId || 0,
+                caNhanHTXId: editedData.caNhanHTXId || 0
+            });
         }
     }, [editedData]);
 
@@ -39,7 +53,7 @@ export default function ModalEdit({
     const handleSaveChanges = async () => {
         try {
             const response = await axios.put(
-                `${process.env.NEXT_PUBLIC_API_CLIENT}/loai-benh/${editedItemId}`,
+                `${process.env.NEXT_PUBLIC_API_CLIENT}/quan-ly-tau-ca/${editedItemId}`,
                 editedItem,
                 {
                     headers: {
@@ -54,7 +68,7 @@ export default function ModalEdit({
                 setEditedData({}); // Đặt lại editedData trong component cha
                 onClose(); // Đóng modal sau khi cập nhật thành công
             } else {
-                console.log("lỗi", response)
+                console.log("lỗi", response);
             }
         } catch (error) {
             console.error(error);
@@ -67,11 +81,11 @@ export default function ModalEdit({
             <ModalBody>
                 <div className={styles["modal-body"]}>
                     <div className='input-container'>
-                        <Label for="tenBenh">Tên Bệnh:</Label>
+                        <Label for="diaChi">Địa chỉ:</Label>
                         <Input
                             type="text"
-                            name="tenBenh"
-                            value={editedItem.tenBenh}
+                            name="diaChi"
+                            value={editedItem.diaChi}
                             onChange={handleInputChange}
                         />
                     </div>
@@ -85,20 +99,47 @@ export default function ModalEdit({
                         />
                     </div>
                     <div className='input-container'>
-                        <Label for="doiTuong">Đối tượng</Label>
+                        <Label for="tinhTrang">Tình trạng:</Label>
                         <Input
                             type="text"
-                            name="doiTuong"
-                            value={editedItem.doiTuong}
+                            name="tinhTrang"
+                            value={editedItem.tinhTrang}
                             onChange={handleInputChange}
                         />
                     </div>
                     <div className='input-container'>
-                        <Label for="hinhAnh" >Hình ảnh</Label>
+                        <Label for="soDangKy">Số đăng ký:</Label>
+                        <Input
+                            type="number"
+                            name="soDangKy"
+                            value={editedItem.soDangKy}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="ngayDangKy">Ngày đăng ký:</Label>
                         <Input
                             type="text"
-                            name="hinhAnh"
-                            value={editedItem.hinhAnh}
+                            name="ngayDangKy"
+                            value={editedItem.ngayDangKy}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="caNhanHTXId">Cá nhân HTX ID:</Label>
+                        <Input
+                            type="number"
+                            name="caNhanHTXId"
+                            value={editedItem.caNhanHTXId}
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="administrativeUnitId">Administrative Unit ID:</Label>
+                        <Input
+                            type="number"
+                            name="administrativeUnitId"
+                            value={editedItem.administrativeUnitId}
                             onChange={handleInputChange}
                         />
                     </div>
@@ -112,6 +153,6 @@ export default function ModalEdit({
                     Đóng
                 </Button>
             </ModalFooter>
-        </Modal >
+        </Modal>
     );
 }

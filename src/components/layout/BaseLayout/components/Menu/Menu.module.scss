@@ -23,6 +23,7 @@
   font-weight: 500;
   margin-bottom: 0;
   text-decoration: none;
+  color: var(--dark) !important;
 
   &:hover {
     opacity: 0.8;
@@ -36,7 +37,7 @@
 
   &.active {
     background-color: var(--primary);
-    color: var(--light);
+    color: var(--light) !important;
 
     i {
       color: var(--light);

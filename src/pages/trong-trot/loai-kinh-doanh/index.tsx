@@ -1,13 +1,15 @@
+import "bootstrap/dist/css/bootstrap.min.css";
+
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import { Fragment, ReactElement, useEffect, useState } from "react";
+
+import AddNewItemModal from "../../../components/page/trong-trot/loai-kinh-doanh/modalAddNew";
 import BaseLayout from "~/components/layout/BaseLayout";
 import Head from "next/head";
+import ModalEdit from "~/components/page/trong-trot/loai-kinh-doanh/modalEdit";
 import i18n from "~/locale/i18n";
-import styles from "../../manage.module.scss"
-import AddNewItemModal from "../loai-kinh-doanh/modalAddNew";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import ModalEdit from "./modalEdit";
 import loaiKinhDoanhSevices from "~/services/loaiKinhDoanhSevices";
+import styles from "../../manage.module.scss";
 
 export default function Page() {
   const [data, setData] = useState<any>([]);
@@ -28,24 +30,24 @@ export default function Page() {
         const newData = response.data;
         setData(newData);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   const handleAdd = async () => {
     try {
-      const response = await loaiKinhDoanhSevices.createLoaiKinhDoanh(newItem)
+      const response = await loaiKinhDoanhSevices.createLoaiKinhDoanh(newItem);
       setData([...data, response.data]);
       setIsAddModalOpen(false);
       setNewItem({
         loaiKinhDoanh: "",
         moTa: "",
-        tamNgung: ""
+        tamNgung: "",
       });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   };
 
@@ -55,14 +57,17 @@ export default function Page() {
   };
   const handleUpdate = async (editedItem: any) => {
     try {
-      const response = await loaiKinhDoanhSevices.updateLoaiKinhDoanh(editedItem.id, editedItem);
+      const response = await loaiKinhDoanhSevices.updateLoaiKinhDoanh(
+        editedItem.id,
+        editedItem
+      );
       // Cập nhật lại state data
       const updatedData = data.map((item: any) =>
         item.id === editedItem.id ? editedItem : item
       );
       setData(updatedData);
       setIsEditModalOpen(false);
-      setEditedData(null)
+      setEditedData(null);
     } catch (error) {
       console.error(error);
     }
@@ -74,9 +79,13 @@ export default function Page() {
   };
   const handleConfirmDelete = async (deleteItem: any) => {
     try {
-      const response = await loaiKinhDoanhSevices.deleteLoaiKinhDoanh(deleteItem.id);
+      const response = await loaiKinhDoanhSevices.deleteLoaiKinhDoanh(
+        deleteItem.id
+      );
       // Xóa thành công, cập nhật state data
-      const updatedData = data.filter((dataItem: any) => dataItem.id !== deleteItem.id);
+      const updatedData = data.filter(
+        (dataItem: any) => dataItem.id !== deleteItem.id
+      );
       setData(updatedData);
       setIsConfirmDeleteOpen(false);
       setItemToDelete(null);
@@ -103,7 +112,6 @@ export default function Page() {
             isOpen={isAddModalOpen}
             onClose={() => {
               setIsAddModalOpen(false);
-
             }}
             onSubmit={handleAdd}
             newItem={newItem}
@@ -133,7 +141,7 @@ export default function Page() {
                   <ModalEdit
                     isOpen={isEditModalOpen}
                     onClose={() => {
-                      setIsEditModalOpen(false)
+                      setIsEditModalOpen(false);
                     }}
                     onUpdate={handleUpdate}
                     editedItemId={editedData.id}
@@ -144,13 +152,14 @@ export default function Page() {
                 <button onClick={() => handleDelete(item)}>Xóa</button>
                 {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
                 {isConfirmDeleteOpen && (
-                  <Modal isOpen={isConfirmDeleteOpen} backdrop={false} >
+                  <Modal isOpen={isConfirmDeleteOpen} backdrop={false}>
                     <ModalHeader>Xác nhận xóa</ModalHeader>
-                    <ModalBody>
-                      Bạn có chắc chắn muốn xóa?
-                    </ModalBody>
+                    <ModalBody>Bạn có chắc chắn muốn xóa?</ModalBody>
                     <ModalFooter>
-                      <Button color="primary" onClick={() => handleConfirmDelete(itemToDelete)}>
+                      <Button
+                        color="primary"
+                        onClick={() => handleConfirmDelete(itemToDelete)}
+                      >
                         Có
                       </Button>
                       <Button color="secondary" onClick={handleCancelDelete}>

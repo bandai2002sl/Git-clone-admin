@@ -5,6 +5,7 @@ import {
   RiEyeLine,
   RiEyeOffLine,
 } from "react-icons/ri";
+import { convertCoin, price } from "~/common/func/convertCoin";
 import { useContext, useEffect, useState } from "react";
 
 import { FormContext } from "../../contexts";
@@ -22,6 +23,7 @@ function Input({
   showDone = false,
   onClean = false,
   bgGrey = false,
+  readOnly = false,
   className,
   ...props
 }: PropsInput) {
@@ -96,7 +98,21 @@ function Input({
   const handleChange = (e: any) => {
     const { value, name } = e.target;
 
-    data.setForm((prev: any) => ({
+    if (props?.isMoney) {
+      if (!Number(price(value))) {
+        return data.setForm((prev: any) => ({
+          ...prev,
+          [name]: 0,
+        }));
+      }
+
+      return data.setForm((prev: any) => ({
+        ...prev,
+        [name]: convertCoin(Number(price(value))),
+      }));
+    }
+
+    return data.setForm((prev: any) => ({
       ...prev,
       [name]: value,
     }));
@@ -264,6 +280,8 @@ function Input({
             value={data.form[name]}
             placeholder={placeholder}
             autoComplete="off"
+            readOnly={readOnly}
+            disabled={readOnly}
           />
           {onClean && !!data.form[name] && props.isRequired ? (
             <span className={styles.toggleType} onClick={handleClean}>

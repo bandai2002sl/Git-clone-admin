@@ -1,18 +1,20 @@
+import "bootstrap/dist/css/bootstrap.min.css";
+
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import { Fragment, ReactElement, useEffect, useState } from "react";
+
+import AddNewItemModal from "../loai-benh/modalAddNew";
 import BaseLayout from "~/components/layout/BaseLayout";
 import Head from "next/head";
-import i18n from "~/locale/i18n";
-import axios from "axios";
-import styles from "../../manage.module.scss"
-import AddNewItemModal from "../loai-benh/modalAddNew";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import ModalEdit from "./modalEdit";
+import axios from "axios";
+import i18n from "~/locale/i18n";
+import styles from "../../manage.module.scss";
 
 export default function Page() {
   const [data, setData] = useState<any>([]);
 
-  const authToken = localStorage.getItem('authToken')
+  const authToken = localStorage.getItem("authToken");
 
   const [errCode, setErrCode] = useState(""); // Sử dụng state để lưu trữ giá trị errCode
   const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State để kiểm soát hiển thị modal thêm
@@ -20,7 +22,7 @@ export default function Page() {
     tenBenh: "",
     moTa: "",
     doiTuong: "",
-    hinhAnh: ""
+    hinhAnh: "",
   }); // State để lưu trữ thông tin bản ghi mới
   const [apiMessage, setApiMessage] = useState<string | null>(null);
   const [inputError, setInputError] = useState<string | null>(null);
@@ -34,28 +36,35 @@ export default function Page() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/loai-benh`, {
-          headers: {
-            Authorization: `Bearer ${authToken}`
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_CLIENT}/loai-benh`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
           }
-        })
+        );
         const newData = response.data.data;
         setData(newData);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }
-    fetchData()
-  }, [authToken])
+    fetchData();
+  }, [authToken]);
 
   const handleAdd = async () => {
     try {
       // Gửi newItem đến API để thêm bản ghi mới
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_CLIENT}/loai-benh`, newItem, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      })
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_CLIENT}/loai-benh`,
+        newItem,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
       setErrCode(response.data.statusCode); // Lưu giá trị errCode vào state
       // Cập nhật state data
       if (response.data.statusCode === 1) {
@@ -65,7 +74,7 @@ export default function Page() {
           tenBenh: "",
           moTa: "",
           doiTuong: "",
-          hinhAnh: ""
+          hinhAnh: "",
         });
         setApiMessage(response.data.message);
         setInputError(null); // Xóa thông báo lỗi
@@ -73,7 +82,7 @@ export default function Page() {
         setInputError(response.data.message);
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   };
 
@@ -100,7 +109,7 @@ export default function Page() {
         );
         setData(updatedData);
         setIsEditModalOpen(false);
-        setEditedData(null)
+        setEditedData(null);
       } else if (response.data.statusCode === 0) {
         setInputError(response.data.message);
       }
@@ -126,7 +135,9 @@ export default function Page() {
       );
       if (response.data.statusCode === 1) {
         // Xóa thành công, cập nhật state data
-        const updatedData = data.filter((dataItem: any) => dataItem.id !== deleteItem.id);
+        const updatedData = data.filter(
+          (dataItem: any) => dataItem.id !== deleteItem.id
+        );
         setData(updatedData);
         setIsConfirmDeleteOpen(false);
         setItemToDelete(null);
@@ -190,7 +201,7 @@ export default function Page() {
                   <ModalEdit
                     isOpen={isEditModalOpen}
                     onClose={() => {
-                      setIsEditModalOpen(false)
+                      setIsEditModalOpen(false);
                     }}
                     onUpdate={handleUpdate}
                     editedItemId={editedData.id}
@@ -201,13 +212,14 @@ export default function Page() {
                 <button onClick={() => handleDelete(item)}>Xóa</button>
                 {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
                 {isConfirmDeleteOpen && (
-                  <Modal isOpen={isConfirmDeleteOpen} backdrop={false} >
+                  <Modal isOpen={isConfirmDeleteOpen} backdrop={false}>
                     <ModalHeader>Xác nhận xóa</ModalHeader>
-                    <ModalBody>
-                      Bạn có chắc chắn muốn xóa?
-                    </ModalBody>
+                    <ModalBody>Bạn có chắc chắn muốn xóa?</ModalBody>
                     <ModalFooter>
-                      <Button color="primary" onClick={() => handleConfirmDelete(itemToDelete)}>
+                      <Button
+                        color="primary"
+                        onClick={() => handleConfirmDelete(itemToDelete)}
+                      >
                         Có
                       </Button>
                       <Button color="secondary" onClick={handleCancelDelete}>

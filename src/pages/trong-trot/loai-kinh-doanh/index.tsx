@@ -6,7 +6,7 @@ import { Fragment, ReactElement, useEffect, useState } from "react";
 import AddNewItemModal from "../loai-benh/modalAddNew";
 import BaseLayout from "~/components/layout/BaseLayout";
 import Head from "next/head";
-import ModalEdit from "./modalEdit";
+// import ModalEdit from "./modalEdit";
 import axios from "axios";
 import i18n from "~/locale/i18n";
 import styles from "../../manage.module.scss";
@@ -197,7 +197,7 @@ export default function Page() {
               <td>
                 <button onClick={() => handleEdit(item)}>Sửa</button>
                 {/* Render modal sửa chi tiết */}
-                {isEditModalOpen && (
+                {/* {isEditModalOpen && (
                   <ModalEdit
                     isOpen={isEditModalOpen}
                     onClose={() => {
@@ -208,7 +208,7 @@ export default function Page() {
                     setEditedData={setEditedData}
                     editedData={editedData}
                   />
-                )}
+                )} */}
                 <button onClick={() => handleDelete(item)}>Xóa</button>
                 {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
                 {isConfirmDeleteOpen && (

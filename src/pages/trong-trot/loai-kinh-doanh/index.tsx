@@ -3,10 +3,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import { Fragment, ReactElement, useEffect, useState } from "react";
 
-import AddNewItemModal from "../loai-kinh-doanh/modalAddNew";
+import AddNewItemModal from "../../../components/page/trong-trot/loai-kinh-doanh/modalAddNew";
 import BaseLayout from "~/components/layout/BaseLayout";
 import Head from "next/head";
-import ModalEdit from "./modalEdit";
+import ModalEdit from "~/components/page/trong-trot/loai-kinh-doanh/modalEdit";
 import i18n from "~/locale/i18n";
 import loaiKinhDoanhSevices from "~/services/loaiKinhDoanhSevices";
 import styles from "../../manage.module.scss";

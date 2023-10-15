@@ -1,7 +1,11 @@
 import { Fragment, useEffect } from "react";
 import { RootState, store } from "~/redux/store";
 import { getItemStorage, setItemStorage } from "~/common/func/localStorage";
-import { setStateLogin, setToken } from "~/redux/reducer/auth";
+import {
+  setPermissionList,
+  setStateLogin,
+  setToken,
+} from "~/redux/reducer/auth";
 
 import CryptoJS from "crypto-js";
 import { PropsSplashScreen } from "./interfaces";
@@ -13,7 +17,9 @@ import { useSelector } from "react-redux";
 
 function SplashScreen({}: PropsSplashScreen) {
   const { loading } = useSelector((state: RootState) => state.site);
-  const { token, isLogin } = useSelector((state: RootState) => state.auth);
+  const { token, isLogin, permissionList } = useSelector(
+    (state: RootState) => state.auth
+  );
   const { infoUser } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
@@ -26,6 +32,7 @@ function SplashScreen({}: PropsSplashScreen) {
         );
         const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         store.dispatch(setToken(decryptedData.token));
+        store.dispatch(setPermissionList(decryptedData.permissionList));
         store.dispatch(
           setInfoUser({
             ...decryptedData.infoUser,
@@ -44,6 +51,7 @@ function SplashScreen({}: PropsSplashScreen) {
           token: token,
           isLogin: isLogin,
           infoUser: infoUser,
+          permissionList: permissionList,
         }),
         process.env.NEXT_PUBLIC_KEY_CERT!
       ).toString();

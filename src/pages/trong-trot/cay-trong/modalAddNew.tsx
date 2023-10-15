@@ -1,105 +1,92 @@
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import Form, { Input } from "~/components/common/Form";
 import React, { useState } from "react";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, } from "reactstrap";
-import styles from "../../modal-custom.module.scss"
+
+import cayTrongSevices from "~/services/cayTrongSevices";
+import styles from "../../modal-custom.module.scss";
+import { useRouter } from "next/router";
 
 interface AddNewItemModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSubmit: (newItem: any) => void;
-    newItem: any;
-    setNewItem: (item: any) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export function InputValidation() {
-    const [errInput, setErrinput] = useState("");
-    const [errMess, setErrMess] = useState("")
+export default function AddNewItemModal({
+  isOpen,
+  onClose,
+}: AddNewItemModalProps) {
+  const router = useRouter();
+  const [form, setForm] = useState({
+    name: "",
+    moTa: "",
+    image: "",
+    tamNgung: "",
+  });
 
-    const checkValidInput = (newItem: any) => {
-        setErrinput("");
-        setErrMess("");
-        let arrInput = ['name', 'moTa', 'image', 'tamNgung'];
-        for (let i = 0; i < arrInput.length; i++) {
-            if (!newItem[arrInput[i]]) {
-                setErrinput(arrInput[i]);
-                setErrMess("Bạn chưa nhập dữ liệu")
-                break;
-            }
-        }
-    };
-    return { errInput, errMess, checkValidInput };
-}
+  const handleSubmit = async () => {
+    try {
+      await cayTrongSevices.createCayTrong(form);
+      onClose();
+      router.replace(router.pathname);
+      setForm({
+        name: "",
+        moTa: "",
+        image: "",
+        tamNgung: "",
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-export default function AddNewItemModal({ isOpen, onClose, onSubmit, newItem, setNewItem }: AddNewItemModalProps) {
-    const { errInput, errMess, checkValidInput } = InputValidation();
-
-    const handleSave = () => {
-        checkValidInput(newItem);
-        onSubmit(newItem);
-        onClose();
-    };
-    return (
-        <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>
-            <ModalHeader toggle={onClose}>THÊM MỚI</ModalHeader>
-            <ModalBody >
-                <div className={styles["modal-body"]}>
-                    <div className='input-container'>
-                        <Label for="name">Tên cây trồng:</Label>
-                        <Input
-                            type="text"
-                            id="name"
-                            placeholder="Tên cây trồng"
-                            value={newItem.name || ""}
-                            onChange={(e) => {
-                                setNewItem({ ...newItem, name: e.target.value || "" })
-                            }}
-                        />
-                        {errInput === 'name' ? <div className="text-danger">{errMess}</div> : ''}
-                    </div>
-                    <div className='input-container'>
-                        <Label for="moTa">Mô tả:</Label>
-                        <Input
-                            type="text"
-                            id="moTa"
-                            placeholder="Mô tả"
-                            value={newItem.moTa || ""}
-                            onChange={(e) => setNewItem({ ...newItem, moTa: e.target.value || "" })}
-                        />
-                        {errInput === 'moTa' ? <div className="text-danger">{errMess}</div> : ''}
-                    </div>
-                    <div className='input-container'>
-                        <Label for="image">Hình ảnh:</Label>
-                        <Input
-                            type="text"
-                            id="image"
-                            placeholder="Hình ảnh"
-                            value={newItem.image || ""}
-                            onChange={(e) => setNewItem({ ...newItem, image: e.target.value || "" })}
-                        />
-                        {errInput === 'image' ? <div className="text-danger">{errMess}</div> : ''}
-                    </div>
-                    <div className='input-container'>
-                        <Label for="tamNgung">Tạm Ngừng:</Label>
-                        <Input
-                            type="text"
-                            id="tamNgung"
-                            placeholder="Tạm Ngừng"
-                            value={newItem.tamNgung || ""}
-                            onChange={(e) => setNewItem({ ...newItem, tamNgung: e.target.value || "" })}
-                        />
-                        {errInput === 'tamNgung' ? <div className="text-danger">{errMess}</div> : ''}
-                    </div>
-                </div>
-            </ModalBody>
-            <div className={styles["modal-footer"]}>
-                <ModalFooter>
-                    <Button color="primary" onClick={handleSave}>
-                        Lưu
-                    </Button>{" "}
-                    <Button color="secondary" onClick={onClose}>
-                        Đóng
-                    </Button>
-                </ModalFooter>
-            </div>
-        </Modal >
-    );
+  return (
+    <Modal
+      isOpen={isOpen}
+      toggle={onClose}
+      className={styles["modal-container"]}
+      size="lg"
+    >
+      <Form form={form} setForm={setForm} onSubmit={handleSubmit}>
+        <ModalHeader toggle={onClose}>THÊM MỚI</ModalHeader>
+        <ModalBody>
+          <div className={styles["modal-body"]}>
+            <Input
+              name="name"
+              label="Tên cây trồng"
+              placeholder="Tên cây trồng"
+              isRequired
+            />
+            <Input
+              name="moTa"
+              label="Mô tả"
+              placeholder="Nhập mô tả"
+              isRequired
+            />
+            <Input
+              name="image"
+              label="Hình ảnh"
+              placeholder="Nhập link hình ảnh"
+              isRequired
+            />
+            <Input
+              name="tamNgung"
+              label="Tạm Ngừng"
+              placeholder="Tạm Ngừng"
+              isRequired
+            />
+          </div>
+        </ModalBody>
+        <div className={styles["modal-footer"]}>
+          <ModalFooter>
+            <Button small primary bold rounded_6>
+              Lưu
+            </Button>
+            <Button color="secondary" onClick={onClose}>
+              Đóng
+            </Button>
+          </ModalFooter>
+        </div>
+      </Form>
+    </Modal>
+  );
 }

@@ -1,6 +1,10 @@
 import Form, { FormContext, Input } from "~/components/common/Form";
 import { Fragment, useState } from "react";
-import { setStateLogin, setToken } from "~/redux/reducer/auth";
+import {
+  setPermissionList,
+  setStateLogin,
+  setToken,
+} from "~/redux/reducer/auth";
 
 import Button from "~/components/common/Button";
 import ImageFill from "~/components/common/ImageFill";
@@ -29,6 +33,7 @@ const Login = () => {
     });
 
     if (res) {
+      store?.dispatch(setPermissionList(res?.permissionList || []));
       store?.dispatch(setToken(res?.access_token));
       store?.dispatch(setStateLogin(true));
       store?.dispatch(setInfoUser(res));
@@ -76,9 +81,9 @@ const Login = () => {
         </div>
         <div
           className={styles.background}
-        // style={{
-        //   backgroundImage: `url(${background || backgrounds.login.src})`,
-        // }}
+          // style={{
+          //   backgroundImage: `url(${background || backgrounds.login.src})`,
+          // }}
         ></div>
       </div>
     </RequiredLogout>

@@ -3,6 +3,8 @@ export interface PropsInput {
   isRequired?: boolean;
   isNumber?: boolean;
   isEmail?: boolean;
+  isMoney?: boolean;
+  readOnly?: boolean;
   isActiveButton?: boolean;
 
   max?: boolean | number;
@@ -11,7 +13,7 @@ export interface PropsInput {
   textRequired?: string;
   textConfirm?: string;
   valueConfirm?: string;
-  label?: string;
+  label?: string | React.ReactNode;
   type?: string;
   note?: string;
   txtBtn?: string;

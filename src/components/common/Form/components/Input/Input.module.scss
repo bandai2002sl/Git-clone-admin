@@ -1,5 +1,3 @@
-@import "../../../../../styles/color";
-
 .container {
   & + .container {
     margin-top: 16px;
@@ -11,7 +9,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: var(--grey);
+    color: var(--border-grey);
   }
 
   .group {
@@ -39,15 +37,15 @@
     }
 
     &.focus {
-      border: 1px solid var(--light-pink) !important;
-      color: var(--light-pink) !important;
+      border: 1px solid var(--primary) !important;
+      color: var(--border-grey) !important;
       background-color: var(--light) !important;
       .inputElement {
         background-color: var(--light) !important;
       }
 
       .icon {
-        color: var(--light-pink) !important;
+        color: var(--primary) !important;
       }
     }
 
@@ -64,10 +62,10 @@
 
     .btn {
       height: 100%;
-      padding: 7px 24px;
-      border-radius: 4px;
+      padding: 6px 18px;
+      border-radius: 6px;
       margin-right: 2px;
-      background-color: var(--grey);
+      background-color: var(--border-grey);
       cursor: no-drop;
       user-select: none;
       color: var(--light);
@@ -89,7 +87,7 @@
     .inputElement {
       font-size: 14px;
       border: 1px solid transparent;
-      padding: 10px 24px;
+      padding: 8px 24px;
       &::placeholder {
         color: var(--grey);
       }
@@ -125,6 +123,11 @@
     padding: 12px 24px;
     border: 1px solid var(--grey);
     border-radius: 8px;
+
+    &::placeholder {
+      font-weight: 500;
+      color: #888 !important;
+    }
   }
 
   .note {
@@ -138,13 +141,15 @@
 }
 
 .error {
+  margin-bottom: -12px !important;
   .inputGroup {
     border: none;
     border-radius: 8px;
-    background-color: var(--light);
+    // background-color: var(--light);
     .inputElement {
-      background-color: var(--light) !important;
-      &::placeholder {
+      // border: 1px solid var(--danger) !important;
+      // background-color: var(--light) !important;
+      back &::placeholder {
         color: var(--danger);
       }
     }

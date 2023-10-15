@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, } from "reactstrap";
 import styles from "../../modal-custom.module.scss"
+
 interface AddNewItemModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -34,6 +35,7 @@ export default function AddNewItemModal({ isOpen, onClose, onSubmit, newItem, se
     const handleSave = () => {
         checkValidInput(newItem);
         onSubmit(newItem);
+        onClose();
     };
     return (
         <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>

@@ -17,7 +17,7 @@ export function InputValidation() {
     const checkValidInput = (newItem: any) => {
         setErrinput("");
         setErrMess("");
-        let arrInput = ['tenBenh', 'moTa', 'doiTuong', 'hinhAnh'];
+        let arrInput = ['loaiKinhDoanh', 'moTa', 'tamNgung'];
         for (let i = 0; i < arrInput.length; i++) {
             if (!newItem[arrInput[i]]) {
                 setErrinput(arrInput[i]);
@@ -35,6 +35,7 @@ export default function AddNewItemModal({ isOpen, onClose, onSubmit, newItem, se
     const handleSave = () => {
         checkValidInput(newItem);
         onSubmit(newItem);
+        onClose();
     };
     return (
         <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>
@@ -42,17 +43,17 @@ export default function AddNewItemModal({ isOpen, onClose, onSubmit, newItem, se
             <ModalBody >
                 <div className={styles["modal-body"]}>
                     <div className='input-container'>
-                        <Label for="tenBenh">Tên bệnh:</Label>
+                        <Label for="loaiKinhDoanh">Loại kinh doanh:</Label>
                         <Input
                             type="text"
-                            id="tenBenh"
-                            placeholder="Tên bệnh"
-                            value={newItem.tenBenh || ""}
+                            id="loaiKinhDoanh"
+                            placeholder="Loại kinh doanh"
+                            value={newItem.loaiKinhDoanh || ""}
                             onChange={(e) => {
-                                setNewItem({ ...newItem, tenBenh: e.target.value || "" })
+                                setNewItem({ ...newItem, loaiKinhDoanh: e.target.value || "" })
                             }}
                         />
-                        {errInput === 'tenBenh' ? <div className="text-danger">{errMess}</div> : ''}
+                        {errInput === 'loaiKinhDoanh' ? <div className="text-danger">{errMess}</div> : ''}
                     </div>
                     <div className='input-container'>
                         <Label for="moTa">Mô tả:</Label>
@@ -66,27 +67,17 @@ export default function AddNewItemModal({ isOpen, onClose, onSubmit, newItem, se
                         {errInput === 'moTa' ? <div className="text-danger">{errMess}</div> : ''}
                     </div>
                     <div className='input-container'>
-                        <Label for="doiTuong">Đối tượng:</Label>
+                        <Label for="tamNgung">Tạm ngừng:</Label>
                         <Input
                             type="text"
-                            id="doiTuong"
-                            placeholder="Đối tượng"
-                            value={newItem.doiTuong || ""}
-                            onChange={(e) => setNewItem({ ...newItem, doiTuong: e.target.value || "" })}
+                            id="tamNgung"
+                            placeholder="Tạm ngừng"
+                            value={newItem.tamNgung || ""}
+                            onChange={(e) => setNewItem({ ...newItem, tamNgung: e.target.value || "" })}
                         />
-                        {errInput === 'doiTuong' ? <div className="text-danger">{errMess}</div> : ''}
+                        {errInput === 'tamNgung' ? <div className="text-danger">{errMess}</div> : ''}
                     </div>
-                    <div className='input-container'>
-                        <Label for="hinhAnh">Hình ảnh:</Label>
-                        <Input
-                            type="text"
-                            id="hinhAnh"
-                            placeholder="Hình Ảnh"
-                            value={newItem.hinhAnh || ""}
-                            onChange={(e) => setNewItem({ ...newItem, hinhAnh: e.target.value || "" })}
-                        />
-                        {errInput === 'hinhAnh' ? <div className="text-danger">{errMess}</div> : ''}
-                    </div>
+
                 </div>
             </ModalBody>
             <div className={styles["modal-footer"]}>

@@ -3,29 +3,19 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import { Fragment, ReactElement, useEffect, useState } from "react";
 
-import AddNewItemModal from "../loai-benh/modalAddNew";
+import AddNewItemModal from "../loai-kinh-doanh/modalAddNew";
 import BaseLayout from "~/components/layout/BaseLayout";
 import Head from "next/head";
-// import ModalEdit from "./modalEdit";
-import axios from "axios";
+import ModalEdit from "./modalEdit";
 import i18n from "~/locale/i18n";
+import loaiKinhDoanhSevices from "~/services/loaiKinhDoanhSevices";
 import styles from "../../manage.module.scss";
 
 export default function Page() {
   const [data, setData] = useState<any>([]);
 
-  const authToken = localStorage.getItem("authToken");
-
-  const [errCode, setErrCode] = useState(""); // Sử dụng state để lưu trữ giá trị errCode
   const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State để kiểm soát hiển thị modal thêm
-  const [newItem, setNewItem] = useState<any>({
-    tenBenh: "",
-    moTa: "",
-    doiTuong: "",
-    hinhAnh: "",
-  }); // State để lưu trữ thông tin bản ghi mới
-  const [apiMessage, setApiMessage] = useState<string | null>(null);
-  const [inputError, setInputError] = useState<string | null>(null);
+  const [newItem, setNewItem] = useState<any>({}); // State để lưu trữ thông tin bản ghi mới
 
   const [editedData, setEditedData] = useState<any>({}); // State để lưu dữ liệu cần sửa
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State để kiểm soát hiển thị modal sửa
@@ -36,51 +26,26 @@ export default function Page() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_CLIENT}/loai-benh`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
-        const newData = response.data.data;
+        const response = await loaiKinhDoanhSevices.displayLoaiKinhDoanh(data);
+        const newData = response.data;
         setData(newData);
       } catch (error) {
         console.error(error);
       }
     }
     fetchData();
-  }, [authToken]);
+  }, []);
 
   const handleAdd = async () => {
     try {
-      // Gửi newItem đến API để thêm bản ghi mới
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_CLIENT}/loai-benh`,
-        newItem,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-      setErrCode(response.data.statusCode); // Lưu giá trị errCode vào state
-      // Cập nhật state data
-      if (response.data.statusCode === 1) {
-        setData([...data, response.data.data]);
-        setIsAddModalOpen(false);
-        setNewItem({
-          tenBenh: "",
-          moTa: "",
-          doiTuong: "",
-          hinhAnh: "",
-        });
-        setApiMessage(response.data.message);
-        setInputError(null); // Xóa thông báo lỗi
-      } else if (response.data.statusCode === 0) {
-        setInputError(response.data.message);
-      }
+      const response = await loaiKinhDoanhSevices.createLoaiKinhDoanh(newItem);
+      setData([...data, response.data]);
+      setIsAddModalOpen(false);
+      setNewItem({
+        loaiKinhDoanh: "",
+        moTa: "",
+        tamNgung: "",
+      });
     } catch (error) {
       console.error(error);
     }
@@ -92,27 +57,17 @@ export default function Page() {
   };
   const handleUpdate = async (editedItem: any) => {
     try {
-      // Gửi dữ liệu đã sửa đến API để cập nhật
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_CLIENT}/loai-benh/${editedItem.id}`,
-        editedItem,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
+      const response = await loaiKinhDoanhSevices.updateLoaiKinhDoanh(
+        editedItem.id,
+        editedItem
       );
-      if (response.data.statusCode === 1) {
-        // Cập nhật lại state data
-        const updatedData = data.map((item: any) =>
-          item.id === editedItem.id ? editedItem : item
-        );
-        setData(updatedData);
-        setIsEditModalOpen(false);
-        setEditedData(null);
-      } else if (response.data.statusCode === 0) {
-        setInputError(response.data.message);
-      }
+      // Cập nhật lại state data
+      const updatedData = data.map((item: any) =>
+        item.id === editedItem.id ? editedItem : item
+      );
+      setData(updatedData);
+      setIsEditModalOpen(false);
+      setEditedData(null);
     } catch (error) {
       console.error(error);
     }
@@ -124,26 +79,16 @@ export default function Page() {
   };
   const handleConfirmDelete = async (deleteItem: any) => {
     try {
-      // Gửi yêu cầu xóa item đến API
-      const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_CLIENT}/loai-benh/${deleteItem.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
+      const response = await loaiKinhDoanhSevices.deleteLoaiKinhDoanh(
+        deleteItem.id
       );
-      if (response.data.statusCode === 1) {
-        // Xóa thành công, cập nhật state data
-        const updatedData = data.filter(
-          (dataItem: any) => dataItem.id !== deleteItem.id
-        );
-        setData(updatedData);
-        setIsConfirmDeleteOpen(false);
-        setItemToDelete(null);
-      } else if (response.data.statusCode === 0) {
-        setInputError(response.data.message);
-      }
+      // Xóa thành công, cập nhật state data
+      const updatedData = data.filter(
+        (dataItem: any) => dataItem.id !== deleteItem.id
+      );
+      setData(updatedData);
+      setIsConfirmDeleteOpen(false);
+      setItemToDelete(null);
     } catch (error) {
       console.error(error);
     }
@@ -153,23 +98,20 @@ export default function Page() {
     setIsConfirmDeleteOpen(false);
     setItemToDelete(null);
   };
-
   return (
     <Fragment>
       <Head>
-        <title>{i18n.t("Farming.diseasetype")}</title>
+        <title>{i18n.t("Farming.businessCategory")}</title>
       </Head>
       <div>
         <button onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</button>
-        {apiMessage && <div className="success-message">{apiMessage}</div>}
-        {inputError && <div className="error-message">{inputError}</div>}
+
         {/* Render modal nếu isModalOpen là true */}
         {isAddModalOpen && (
           <AddNewItemModal
             isOpen={isAddModalOpen}
             onClose={() => {
               setIsAddModalOpen(false);
-              setInputError(null);
             }}
             onSubmit={handleAdd}
             newItem={newItem}
@@ -180,24 +122,22 @@ export default function Page() {
       <table className={styles["customers"]}>
         <thead>
           <tr>
-            <th>Tên Bệnh:</th>
+            <th>Loại kinh doanh:</th>
             <th>Mô Tả</th>
-            <th>Đối tượng</th>
-            <th>Hình Ảnh</th>
+            <th>Tạm ngừng</th>
             <th>Hoạt Động</th>
           </tr>
         </thead>
         <tbody>
           {data.map((item: any) => (
             <tr key={item.id}>
-              <td>{item.tenBenh}</td>
+              <td>{item.loaiKinhDoanh}</td>
               <td>{item.moTa}</td>
-              <td>{item.doiTuong}</td>
-              <td>{item.hinhAnh}</td>
+              <td>{item.tamNgung}</td>
               <td>
                 <button onClick={() => handleEdit(item)}>Sửa</button>
                 {/* Render modal sửa chi tiết */}
-                {/* {isEditModalOpen && (
+                {isEditModalOpen && (
                   <ModalEdit
                     isOpen={isEditModalOpen}
                     onClose={() => {
@@ -208,7 +148,7 @@ export default function Page() {
                     setEditedData={setEditedData}
                     editedData={editedData}
                   />
-                )} */}
+                )}
                 <button onClick={() => handleDelete(item)}>Xóa</button>
                 {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
                 {isConfirmDeleteOpen && (

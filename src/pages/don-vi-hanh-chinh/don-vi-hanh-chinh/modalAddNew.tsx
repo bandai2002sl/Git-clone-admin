@@ -19,7 +19,7 @@ export function InputValidation() {
         setErrinput("");
         setErrMess("");
         let isValid = true;
-        let arrInput = ['maHanhChinh', 'ten', 'capHanhChinh', 'tenVietTat'];
+        let arrInput = ['maHanhChinh', 'ten', 'capHanhChinh', 'tenVietTat', 'toaDo'];
         for (let i = 0; i < arrInput.length; i++) {
             if (!newItem[arrInput[i]]) {
                 isValid = false;
@@ -36,47 +36,23 @@ export function InputValidation() {
 export default function AddNewItemModal({ isOpen, onClose, onSubmit, newItem, setNewItem, data }: AddNewItemModalProps) {
     const { errInput, errMess, checkValidInput } = InputValidation();
     const [errExist, setErrExist] = useState("")
-    const [xCoordinate, setXCoordinate] = useState(newItem.xCoordinate || "");
-    const [yCoordinate, setYCoordinate] = useState(newItem.yCoordinate || "");
-    const [err, setErr] = useState("")
 
     const handleSave = () => {
-        // Chuyển đổi giá trị X và Y thành số
-        const x = parseFloat(xCoordinate);
-        const y = parseFloat(yCoordinate);
-
         const isValid = checkValidInput(newItem);
-        if (xCoordinate.trim() === "" || yCoordinate.trim() === "") {
-            setErr("Bạn chưa nhập dữ liệu X hoặc Y");
-        } else
-            // Kiểm tra giá trị của X và Y
-            if (validateCoordinates(x, y)) {
-                // Tạo giá trị tọa độ "POINT(X Y)"
-                const toaDo = `POINT(${x} ${y})`;
-                setNewItem({ ...newItem, toaDo });
-                setErr("");
+        if (isValid) {
+            if (isMaHanhChinhExisted(data, newItem.maHanhChinh)) {
+                setErrExist('Mã hành chính đã tồn tại');
             } else {
-                setErr("Kinh độ phải trong khoảng -180 đến 180, Vĩ độ phải trong khoảng -90 đến 90");
+                setErrExist('');
+                onSubmit(newItem);
+                onClose();
             }
-        if (isMaHanhChinhExisted(data, newItem.maHanhChinh)) {
-            setErrExist('Mã hành chính đã tồn tại');
-        } else if (!isMaHanhChinhExisted(data, newItem.maHanhChinh)) {
-            setErrExist('')
-            onSubmit(newItem);
         }
-        else if (!isValid) {
-            onSubmit(newItem);
-        } else onClose()
+
     };
     function isMaHanhChinhExisted(data: any[], maHanhChinhToCheck: string): boolean {
         return data.some((item) => item.maHanhChinh === maHanhChinhToCheck);
     }
-    const validateCoordinates = (x: number, y: number): boolean => {
-        // Kiểm tra giá trị của X và Y
-        const isValidX = !isNaN(x) && x >= -180 && x <= 180;
-        const isValidY = !isNaN(y) && y >= -90 && y <= 90;
-        return isValidX && isValidY;
-    };
     return (
         <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>
             <ModalHeader toggle={onClose}>THÊM MỚI</ModalHeader>
@@ -130,22 +106,17 @@ export default function AddNewItemModal({ isOpen, onClose, onSubmit, newItem, se
                         {errInput === 'tenVietTat' ? <div className="text-danger">{errMess}</div> : ''}
                     </div>
                     <div className='input-container'>
-                        <Label for="toaDo">Tọa độ (X, Y):</Label>
+                        <Label for="toaDo">Tọa độ (X, Y):
+                            <div>VD: point(10 -10)</div>
+                        </Label>
                         <Input
                             type="text"
-                            id="toaDoX"
-                            placeholder="Tọa độ X"
-                            value={xCoordinate}
-                            onChange={(e) => setXCoordinate(e.target.value || "")}
+                            id="toaDo"
+                            placeholder="Tọa độ"
+                            value={newItem.toaDo || ""}
+                            onChange={(e) => setNewItem({ ...newItem, toaDo: e.target.value || "" })}
                         />
-                        <Input
-                            type="text"
-                            id="toaDoY"
-                            placeholder="Tọa độ Y"
-                            value={yCoordinate}
-                            onChange={(e) => setYCoordinate(e.target.value || "")}
-                        />
-                        {err ? <div className="text-danger">{err}</div> : ''}
+                        {errInput === 'toaDo' ? <div className="text-danger">{errMess}</div> : ''}
                     </div>
                 </div>
             </ModalBody>

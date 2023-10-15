@@ -2,85 +2,53 @@ import { Fragment, ReactElement, useEffect, useState } from "react";
 import BaseLayout from "~/components/layout/BaseLayout";
 import Head from "next/head";
 import i18n from "~/locale/i18n";
-import axios from "axios";
 import styles from "../../manage.module.scss"
 import AddNewItemModal from "./modalAddNew";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ModalEdit from "./modalEdit";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import donViHanhChinhSevices from "~/services/donViHanhChinhSevices";
 
 export default function Page() {
     const [data, setData] = useState<any>([]); // State để lưu trữ dữ liệu từ API
-    const [newItem, setNewItem] = useState<any>({
-        maHanhChinh: "",
-        ten: "",
-        capHanhChinh: "",
-        tenVietTat: "",
-        toaDo: ""
-    }); // State để lưu trữ thông tin bản ghi mới
+    const [newItem, setNewItem] = useState<any>({}); // State để lưu trữ thông tin bản ghi mới
     const [editedData, setEditedData] = useState<any>({}); // State để lưu dữ liệu cần sửa
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State để kiểm soát hiển thị modal thêm
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State để kiểm soát hiển thị modal sửa
-    const [apiMessage, setApiMessage] = useState<string | null>(null);
-    const [inputError, setInputError] = useState<string | null>(null);
-    const [errCode, setErrCode] = useState(""); // Sử dụng state để lưu trữ giá trị errCode
-
-    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
 
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State để kiểm soát hiển thị modal thêm
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State để kiểm soát hiển thị modal sửa
+    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
 
-    const authToken = localStorage.getItem('authToken'); // Lấy token từ localStorage
 
     useEffect(() => {
-        // Hàm fetchData để thực hiện cuộc gọi API
         async function fetchData() {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/administrative-unit`, {
-                    headers: {
-                        Authorization: `Bearer ${authToken}`, // Thêm mã thông báo xác thực vào yêu cầu
-                    },
-                });
-                const newData = response.data.data;
-                setData(newData); // Lưu dữ liệu từ API vào state
+                const response = await donViHanhChinhSevices.displayDonViHanhChinh(data);
+                const newData = response.data;
+                setData(newData);
             } catch (error) {
-                console.error('Lỗi khi gọi API:', error);
+                console.error(error)
             }
         }
-
-        fetchData(); // Gọi hàm fetchData khi component được tạo
-    }, [authToken]); // [] đảm bảo useEffect chỉ chạy một lần sau khi component được tạo
+        fetchData()
+    }, []);
 
     const handleAdd = async () => {
         try {
-            // Gửi newItem đến API để thêm bản ghi mới
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_CLIENT}/administrative-unit`, newItem, {
-                headers: {
-                    Authorization: `Bearer ${authToken}`,
-                },
-            })
-            setErrCode(response.data.statusCode); // Lưu giá trị errCode vào state
-            // Cập nhật state data
-            if (response.data.statusCode === 1) {
-                setData([...data, response.data.data]);
-                setIsAddModalOpen(false);
-                setNewItem({
-                    maHanhChinh: "",
-                    ten: "",
-                    capHanhChinh: "",
-                    tenVietTat: "",
-                    toaDo: ""
-                });
-
-                setApiMessage(response.data.message);
-                setInputError(null); // Xóa thông báo lỗi
-            } else if (response.data.statusCode === 0) {
-                setInputError(response.data.message);
-            }
+            const response = await donViHanhChinhSevices.createDonViHanhChinh(newItem)
+            setData([...data, response.data]);
+            setIsAddModalOpen(false);
+            setNewItem({
+                maHanhChinh: "",
+                ten: "",
+                capHanhChinh: "",
+                tenVietTat: "",
+                toaDo: ""
+            });
         } catch (error) {
             console.error(error)
         }
     };
-
 
     const handleEdit = (item: any) => {
         setEditedData(item);
@@ -88,27 +56,15 @@ export default function Page() {
     };
     const handleUpdate = async (editedItem: any) => {
         try {
-            // Gửi dữ liệu đã sửa đến API để cập nhật
-            const response = await axios.put(
-                `${process.env.NEXT_PUBLIC_API_CLIENT}/administrative-unit/${editedItem.id}`,
-                editedItem,
-                {
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
-                }
+            const response = await donViHanhChinhSevices.updateDonViHanhChinh(editedItem.id, editedItem);
+            // Cập nhật lại state data
+            const updatedData = data.map((item: any) =>
+                item.id === editedItem.id ? editedItem : item
             );
-            if (response.data.statusCode === 1) {
-                // Cập nhật lại state data
-                const updatedData = data.map((item: any) =>
-                    item.id === editedItem.id ? editedItem : item
-                );
-                setData(updatedData);
-                setIsEditModalOpen(false);
-                setEditedData(null)
-            } else if (response.data.statusCode === 0) {
-                setInputError(response.data.message);
-            }
+            setData(updatedData);
+            setIsEditModalOpen(false);
+            setEditedData(null)
+
         } catch (error) {
             console.error(error);
         }
@@ -122,24 +78,13 @@ export default function Page() {
 
     const handleConfirmDelete = async (deleteItem: any) => {
         try {
-            // Gửi yêu cầu xóa item đến API
-            const response = await axios.delete(
-                `${process.env.NEXT_PUBLIC_API_CLIENT}/administrative-unit/${deleteItem.id}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
-                }
-            );
-            if (response.data.statusCode === 1) {
-                // Xóa thành công, cập nhật state data
-                const updatedData = data.filter((dataItem: any) => dataItem.id !== deleteItem.id);
-                setData(updatedData);
-                setIsConfirmDeleteOpen(false);
-                setItemToDelete(null);
-            } else if (response.data.statusCode === 0) {
-                setInputError(response.data.message);
-            }
+            const response = await donViHanhChinhSevices.deleteDonViHanhChinh(deleteItem.id);
+            // Xóa thành công, cập nhật state data
+            const updatedData = data.filter((dataItem: any) => dataItem.id !== deleteItem.id);
+            setData(updatedData);
+            setIsConfirmDeleteOpen(false);
+            setItemToDelete(null);
+
         } catch (error) {
             console.error(error);
         }
@@ -157,15 +102,12 @@ export default function Page() {
             </Head>
             <div>
                 <button onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</button>
-                {apiMessage && <div className="success-message">{apiMessage}</div>}
-                {inputError && <div className="error-message">{inputError}</div>}
                 {/* Render modal nếu isModalOpen là true */}
                 {isAddModalOpen && (
                     <AddNewItemModal
                         isOpen={isAddModalOpen}
                         onClose={() => {
                             setIsAddModalOpen(false);
-                            setInputError(null);
                         }}
                         onSubmit={handleAdd}
                         newItem={newItem}

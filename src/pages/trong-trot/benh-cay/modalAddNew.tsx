@@ -8,6 +8,7 @@ interface AddNewItemModalProps {
     onSubmit: (newItem: any) => void;
     newItem: any;
     setNewItem: (item: any) => void;
+    data: any[]
 }
 
 export function InputValidation() {
@@ -17,7 +18,8 @@ export function InputValidation() {
     const checkValidInput = (newItem: any) => {
         setErrinput("");
         setErrMess("");
-        let arrInput = ['name', 'moTa', 'image', 'tamNgung', 'ngayGhiNhan'];
+        let isValid = true;
+        let arrInput = ['diaChi', 'moTa', 'hinhAnh', 'dienTich', 'ngayGhiNhan'];
         for (let i = 0; i < arrInput.length; i++) {
             if (!newItem[arrInput[i]]) {
                 setErrinput(arrInput[i]);
@@ -35,12 +37,43 @@ export default function AddNewItemModal({ isOpen, onClose, onSubmit, newItem, se
     const handleSave = () => {
         checkValidInput(newItem);
         onSubmit(newItem);
+        onClose();
     };
     return (
         <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>
             <ModalHeader toggle={onClose}>THÊM MỚI</ModalHeader>
             <ModalBody >
                 <div className={styles["modal-body"]}>
+                    <div className='input-container'>
+                        <Label for="cropTypeId">Id cây trồng</Label>
+                        <Input type="number"
+                            id="cropTypeId"
+                            placeholder="Id cây trồng"
+                            value={newItem.cropTypeId || ""}
+                            onChange={(e) => {
+                                setNewItem({ ...newItem, cropTypeId: e.target.value || "" })
+                            }} />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="loaiBenhId">Id loại bệnh</Label>
+                        <Input type="number"
+                            id="loaiBenhId"
+                            placeholder="Id loại bệnh"
+                            value={newItem.loaiBenhId || ""}
+                            onChange={(e) => {
+                                setNewItem({ ...newItem, loaiBenhId: e.target.value || "" })
+                            }} />
+                    </div>
+                    <div className='input-container'>
+                        <Label for="administrativeUnitId">Id đơn vị hành chính</Label>
+                        <Input type="number"
+                            id="administrativeUnitId"
+                            placeholder="Id đơn vị hành chính"
+                            value={newItem.administrativeUnitId || ""}
+                            onChange={(e) => {
+                                setNewItem({ ...newItem, administrativeUnitId: e.target.value || "" })
+                            }} />
+                    </div>
                     <div className='input-container'>
                         <Label for="diaChi">Địa chỉ:</Label>
                         <Input
@@ -98,6 +131,7 @@ export default function AddNewItemModal({ isOpen, onClose, onSubmit, newItem, se
                         />
                         {errInput === 'ngayGhiNhan' ? <div className="text-danger">{errMess}</div> : ''}
                     </div>
+
                 </div>
             </ModalBody>
             <div className={styles["modal-footer"]}>

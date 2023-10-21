@@ -1,79 +1,50 @@
-import { Fragment, ReactElement, useEffect, useState } from "react";
-import BaseLayout from "~/components/layout/BaseLayout";
-import Head from "next/head";
-import i18n from "~/locale/i18n";
-import axios from "axios";
-import styles from "../../manage.module.scss";
-import AddNewItemModal from "./addNewModal";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import ModalEdit from "./EditModal";
+import React, { Fragment, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
+import BaseLayout from '~/components/layout/BaseLayout';
+import Head from 'next/head';
+import i18n from '~/locale/i18n';
+import styles from '../../manage.module.scss';
+import AddNewItemModal from '~/components/page/thuy-loi/tram-bom/modalAddNew';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import ModalEdit from '~/components/page/thuy-loi/cong/modalEdit';
+import congServices from "~/services/congServices";
 
 export default function Page() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<any>([]);
 
-  const authToken = localStorage.getItem("authToken");
-
-  const [errCode, setErrCode] = useState<string>("");
-  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
-  const [newItem, setNewItem] = useState<any>({
-    ten: "",
-    diaChi: "",
-    kichCo: "",
-    loaiKichThuoc: "",
-    loaiHinh: "",
-    administrativeUnitId: 0,
-  });
-  const [apiMessage, setApiMessage] = useState<string | null>(null);
-  const [inputError, setInputError] = useState<string | null>(null);
-
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newItem, setNewItem] = useState<any>({});
   const [editedData, setEditedData] = useState<any>({});
-  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
-
-  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState<boolean>(false);
-  const [itemToDelete, setItemToDelete] = useState<any>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_CLIENT}/cong`, {
-          headers: {
-            Authorization: `Bearer ${authToken}`
-          }
-        });
-        const newData = response.data.data;
+        const response = await congServices.displayCong(data);
+        const newData = response.data;
         setData(newData);
       } catch (error) {
         console.error(error);
       }
     }
     fetchData();
-  }, [authToken]);
+  }, []);
 
   const handleAdd = async () => {
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_CLIENT}/cong`, newItem, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
+      const response = await congServices.createCong(newItem);
+      setData([...data, response.data]);
+      setIsAddModalOpen(false);
+      setNewItem({
+        ten: "",
+        diaChi: "",
+        congXuat: 0,
+        loaiHinh: "",
+        administrativeUnitId: 0,
       });
-      setErrCode(response.data.statusCode);
-      if (response.data.statusCode === 1) {
-        setData([...data, response.data.data]);
-        setIsAddModalOpen(false);
-        setNewItem({
-          ten: "",
-          diaChi: "",
-          kichCo: "",
-          loaiKichThuoc: "",
-          loaiHinh: "",
-          administrativeUnitId: 0,
-        });
-        setApiMessage(response.data.message);
-        setInputError(null);
-      } else if (response.data.statusCode === 0) {
-        setInputError(response.data.message);
-      }
     } catch (error) {
       console.error(error);
     }
@@ -84,27 +55,15 @@ export default function Page() {
     setIsEditModalOpen(true);
   };
 
-  const handleUpdate = async (editedItem: any) => {
+  const handleUpdate = async () => {
     try {
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_CLIENT}/cong/${editedItem.id}`,
-        editedItem,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
+      const response = await congServices.updateCong(editedData.id, editedData);
+      const updatedData = data.map((item: any) =>
+        item.id === editedData.id ? response.data : item
       );
-      if (response.data.statusCode === 1) {
-        const updatedData = data.map((item: any) =>
-          item.id === editedItem.id ? editedItem : item
-        );
-        setData(updatedData);
-        setIsEditModalOpen(false);
-        setEditedData({});
-      } else if (response.data.statusCode === 0) {
-        setInputError(response.data.message);
-      }
+      setData(updatedData);
+      setIsEditModalOpen(false);
+      setEditedData(null);
     } catch (error) {
       console.error(error);
     }
@@ -117,22 +76,11 @@ export default function Page() {
 
   const handleConfirmDelete = async (deleteItem: any) => {
     try {
-      const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_CLIENT}/cong/${deleteItem.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-      if (response.data.statusCode === 1) {
-        const updatedData = data.filter((dataItem: any) => dataItem.id !== deleteItem.id);
-        setData(updatedData);
-        setIsConfirmDeleteOpen(false);
-        setItemToDelete(null);
-      } else if (response.data.statusCode === 0) {
-        setInputError(response.data.message);
-      }
+      const response = await congServices.deleteCong(deleteItem.id);
+      const updatedData = data.filter((dataItem: any) => dataItem.id !== deleteItem.id);
+      setData(updatedData);
+      setIsConfirmDeleteOpen(false);
+      setItemToDelete(null);
     } catch (error) {
       console.error(error);
     }
@@ -146,35 +94,27 @@ export default function Page() {
   return (
     <Fragment>
       <Head>
-        <title>{i18n.t("Farming.diseasetype")}</title>
+        <title>{i18n.t("Cống")}</title>
       </Head>
       <div>
         <button onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</button>
-        {apiMessage && <div className="success-message">{apiMessage}</div>}
-        {inputError && <div className="error-message">{inputError}</div>}
         {isAddModalOpen && (
           <AddNewItemModal
-            isOpen={isAddModalOpen}
-            onClose={() => {
-              setIsAddModalOpen(false);
-              setInputError(null);
-            }}
-            onSubmit={handleAdd}
-            newItem={newItem}
-            setNewItem={setNewItem}
-            onUpdate={Date} 
-          />
+                      isOpen={isAddModalOpen}
+                      onClose={() => setIsAddModalOpen(false)}
+                      onSubmit={handleAdd}
+                      newItem={newItem}
+                      setNewItem={setNewItem} data={[]}          />
         )}
       </div>
       <table className={styles["customers"]}>
         <thead>
           <tr>
-            <th>Tên:</th>
-            <th>Địa Chỉ</th>
-            <th>Kích Cỡ</th>
-            <th>Loại Kích Thước</th>
-            <th>Loại Hình</th>
-            <th>Administrative Unit ID</th>
+            <th>Tên</th>
+            <th>Địa chỉ</th>
+            <th>Kích cỡ</th>
+            <th>Loại kích thước</th>
+            <th>Loại hình</th>
             <th>Hoạt Động</th>
           </tr>
         </thead>
@@ -186,15 +126,12 @@ export default function Page() {
               <td>{item.kichCo}</td>
               <td>{item.loaiKichThuoc}</td>
               <td>{item.loaiHinh}</td>
-              <td>{item.administrativeUnitId}</td>
               <td>
                 <button onClick={() => handleEdit(item)}>Sửa</button>
                 {isEditModalOpen && (
                   <ModalEdit
                     isOpen={isEditModalOpen}
-                    onClose={() => {
-                      setIsEditModalOpen(false)
-                    }}
+                    onClose={() => setIsEditModalOpen(false)}
                     onUpdate={handleUpdate}
                     editedItemId={editedData.id}
                     setEditedData={setEditedData}
@@ -203,13 +140,11 @@ export default function Page() {
                 )}
                 <button onClick={() => handleDelete(item)}>Xóa</button>
                 {isConfirmDeleteOpen && (
-                  <Modal isOpen={isConfirmDeleteOpen} backdrop={false} >
+                  <Modal isOpen={isConfirmDeleteOpen} backdrop={false}>
                     <ModalHeader>Xác nhận xóa</ModalHeader>
-                    <ModalBody>
-                      Bạn có chắc chắn muốn xóa?
-                    </ModalBody>
+                    <ModalBody>Bạn có chắc chắn muốn xóa?</ModalBody>
                     <ModalFooter>
-                      <Button color="primary" onClick={() => handleConfirmDelete(itemToDelete)}>
+                      <Button color="primary" onClick={handleConfirmDelete}>
                         Có
                       </Button>
                       <Button color="secondary" onClick={handleCancelDelete}>

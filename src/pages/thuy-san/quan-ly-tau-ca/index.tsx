@@ -6,9 +6,10 @@ import i18n from '~/locale/i18n';
 import styles from '../../manage.module.scss';
 import AddNewItemModal from '../../../components/page/thuy-san/quan-ly-tau-ca/modalAddNew';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import {Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import ModalEdit from '../../../components/page/thuy-san/quan-ly-tau-ca/modalEdit';
 import quanLyTauCaServices from "~/services/quanLyTauCaServices";
+import Button from "~/components/common/Button";
 
 export default function Page() {
   const [data, setData] = useState<any>([]);
@@ -107,7 +108,8 @@ export default function Page() {
         <title>{i18n.t('Quản lý tàu cá')}</title>
       </Head>
       <div>
-        <button onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</button>
+      <Button primary bold rounded_4 maxContent onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm </Button>                
+
         {isAddModalOpen && (
           <AddNewItemModal
             isOpen={isAddModalOpen}
@@ -136,7 +138,9 @@ export default function Page() {
               <td>{item.moTa}</td>
               <td>{item.tinhTrang}</td>
               <td>
-                <button onClick={() => handleEdit(item)}>Sửa</button>
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                                <Button primary bold rounded_4 maxContent onClick={() => handleEdit(item)}>&#9998; Sửa</Button>                                {/* Render modal sửa chi tiết */}
+
                 {isEditModalOpen && (
                   <ModalEdit
                     isOpen={isEditModalOpen}
@@ -149,7 +153,11 @@ export default function Page() {
                     editedData={editedData}
                   />
                 )}
-                <button onClick={() => handleDelete(item)}>Xóa</button>
+                <div style={{marginLeft: '10px'}}>  
+                  <Button primary bold rounded_4 maxContent onClick={() => handleDelete(item)}>&#10060; </Button>
+                </div>
+              </div>                                
+
                 {isConfirmDeleteOpen && (
                   <Modal isOpen={isConfirmDeleteOpen} backdrop={false}>
                     <ModalHeader>Xác nhận xóa</ModalHeader>

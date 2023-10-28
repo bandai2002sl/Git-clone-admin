@@ -3,16 +3,20 @@ import BaseLayout from "~/components/layout/BaseLayout";
 import Head from "next/head";
 import i18n from "~/locale/i18n";
 import styles from "../../manage.module.scss"
-import AddNewItemModal from "../co-so-che-bien/modalAddNew";
+import AddNewItemModal from "~/components/page/trong-trot/co-so-che-bien/modalAddNew";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import ModalEdit from "./modalEdit";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import coSoCheBienSevices from "~/services/coSoCheBienSevices";
+import ModalEdit from "~/components/page/trong-trot/co-so-che-bien/modalEdit";
+import { useRouter } from "next/router";
+import Button from "~/components/common/Button";
+import { MdDelete, MdEdit } from "react-icons/md";
+import { toastSuccess, toastError } from "~/common/func/toast";
 
 export default function Page() {
+    const router = useRouter();
     const [data, setData] = useState<any>([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State để kiểm soát hiển thị modal thêm
-    const [newItem, setNewItem] = useState<any>({}); // State để lưu trữ thông tin bản ghi mới
 
     const [editedData, setEditedData] = useState<any>({}); // State để lưu dữ liệu cần sửa
     const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State để kiểm soát hiển thị modal sửa
@@ -31,41 +35,11 @@ export default function Page() {
             }
         }
         fetchData()
-    }, [])
-
-    const handleAdd = async () => {
-        try {
-            const response = await coSoCheBienSevices.createCoSoCheBien(newItem)
-            setData([...data, response.data]);
-            setIsAddModalOpen(false);
-            setNewItem({
-                name: "",
-                moTa: "",
-                image: "",
-                tamNgung: ""
-            });
-        } catch (error) {
-            console.error(error)
-        }
-    };
+    }, [router])
 
     const handleEdit = (item: any) => {
         setEditedData(item);
         setIsEditModalOpen(true);
-    };
-    const handleUpdate = async (editedItem: any) => {
-        try {
-            const response = await coSoCheBienSevices.updateCoSoCheBien(editedItem.id, editedItem);
-            // Cập nhật lại state data
-            const updatedData = data.map((item: any) =>
-                item.id === editedItem.id ? editedItem : item
-            );
-            setData(updatedData);
-            setIsEditModalOpen(false);
-            setEditedData(null)
-        } catch (error) {
-            console.error(error);
-        }
     };
 
     const handleDelete = (deleteItem: any) => {
@@ -74,12 +48,16 @@ export default function Page() {
     };
     const handleConfirmDelete = async (deleteItem: any) => {
         try {
-            const response = await coSoCheBienSevices.deleteCoSoCheBien(deleteItem.id);
-            // Xóa thành công, cập nhật state data
-            const updatedData = data.filter((dataItem: any) => dataItem.id !== deleteItem.id);
-            setData(updatedData);
-            setIsConfirmDeleteOpen(false);
-            setItemToDelete(null);
+            let res: any = await coSoCheBienSevices.deleteCoSoCheBien(deleteItem.id);
+            if (res.statusCode === 200) {
+                toastSuccess({ msg: "Thành công" });
+                router.replace(router.pathname);
+                setIsConfirmDeleteOpen(false);
+                setItemToDelete(null);
+            } else {
+                toastError({ msg: "Không thành công" });
+                setIsConfirmDeleteOpen(false);
+            }
         } catch (error) {
             console.error(error);
         }
@@ -96,7 +74,15 @@ export default function Page() {
                 <title>{i18n.t("Farming.processingfacilities")}</title>
             </Head>
             <div>
-                <button onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</button>
+                <Button
+                    primary
+                    bold
+                    rounded_4
+                    maxContent
+                    onClick={() => setIsAddModalOpen(true)}
+                >
+                    &#x002B; Thêm
+                </Button>
                 {/* Render modal nếu isModalOpen là true */}
                 {isAddModalOpen && (
                     <AddNewItemModal
@@ -104,27 +90,28 @@ export default function Page() {
                         onClose={() => {
                             setIsAddModalOpen(false);
                         }}
-                        onSubmit={handleAdd}
-                        newItem={newItem}
-                        setNewItem={setNewItem}
                     />
                 )}
             </div>
             <table className={styles["customers"]}>
                 <thead>
                     <tr>
-                        <th>Địa chỉ:</th>
-                        <th>Loại chế biến:</th>
-                        <th>Mô tả:</th>
-                        <th>Hình ảnh:</th>
-                        <th>Trạng thái:</th>
-                        <th>Có đăng ký:</th>
+                        <th>DV Hành chính</th>
+                        <th>Hợp tác xã</th>
+                        <th>Địa chỉ</th>
+                        <th>Loại chế biến</th>
+                        <th>Mô tả</th>
+                        <th>Hình ảnh</th>
+                        <th>Trạng thái</th>
+                        <th>Có đăng ký</th>
                         <th>Hoạt Động</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.map((item: any) => (
                         <tr key={item.id}>
+                            <td>{item.administrativeUnit.ten}</td>
+                            <td>{item.caNhanHtx.name}</td>
                             <td>{item.diaChi}</td>
                             <td>{item.loaiCheBien}</td>
                             <td>{item.moTa}</td>
@@ -132,41 +119,42 @@ export default function Page() {
                             <td>{item.trangThai}</td>
                             <td>{item.coDangKy}</td>
                             <td>
-                                <button onClick={() => handleEdit(item)}>Sửa</button>
-                                {/* Render modal sửa chi tiết */}
-                                {isEditModalOpen && (
-                                    <ModalEdit
-                                        isOpen={isEditModalOpen}
-                                        onClose={() => {
-                                            setIsEditModalOpen(false)
-                                        }}
-                                        onUpdate={handleUpdate}
-                                        editedItemId={editedData.id}
-                                        setEditedData={setEditedData}
-                                        editedData={editedData}
-                                    />
-                                )}
-                                <button onClick={() => handleDelete(item)}>Xóa</button>
-                                {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
-                                {isConfirmDeleteOpen && (
-                                    <Modal isOpen={isConfirmDeleteOpen} backdrop={false} >
-                                        <ModalHeader>Xác nhận xóa</ModalHeader>
-                                        <ModalBody>
-                                            Bạn có chắc chắn muốn xóa?
-                                        </ModalBody>
-                                        <ModalFooter>
-                                            <Button color="primary" onClick={() => handleConfirmDelete(itemToDelete)}>
-                                                Có
-                                            </Button>
-                                            <Button color="secondary" onClick={handleCancelDelete}>
-                                                Không
-                                            </Button>
-                                        </ModalFooter>
-                                    </Modal>
-                                )}
+                                <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
+                                <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
                             </td>
                         </tr>
                     ))}
+                    {/* Render modal sửa chi tiết */}
+                    {isEditModalOpen && (
+                        <ModalEdit
+                            isOpen={isEditModalOpen}
+                            onClose={() => {
+                                setIsEditModalOpen(false)
+                            }}
+                            setEditedData={setEditedData}
+                            editedData={editedData}
+                        />
+                    )}
+                    {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
+                    {isConfirmDeleteOpen && (
+                        <Modal isOpen={isConfirmDeleteOpen} >
+                            <ModalHeader>Xác nhận xóa</ModalHeader>
+                            <ModalBody>
+                                Bạn có chắc chắn muốn xóa?
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    danger bold rounded_4 maxContent
+                                    onClick={() => handleConfirmDelete(itemToDelete)}
+                                >
+                                    Có
+                                </Button>
+                                <Button secondary bold rounded_4 maxContent onClick={handleCancelDelete}>
+                                    Không
+                                </Button>
+                            </ModalFooter>
+                        </Modal>
+                    )}
                 </tbody>
             </table>
         </Fragment>

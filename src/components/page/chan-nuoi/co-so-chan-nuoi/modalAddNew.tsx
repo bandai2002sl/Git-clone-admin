@@ -128,7 +128,7 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                             ))}
                         </Select>
                         <div style={{ marginBottom: '13px' }}></div>
-                        <div style={{ marginBottom: '10px' }}>Vùng chăn nuôi an toàn</div>
+                        <div style={{ marginBottom: '10px' }}>Hinh thức chăn nuôi</div>
                         <Select
                             value={listHinhThucChanNuoi.length > 0 ? listHinhThucChanNuoi[0].value : null}
                             placeholder="Chọn "

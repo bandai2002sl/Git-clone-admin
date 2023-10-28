@@ -3,16 +3,20 @@ import BaseLayout from "~/components/layout/BaseLayout";
 import Head from "next/head";
 import i18n from "~/locale/i18n";
 import styles from "../../manage.module.scss"
-import AddNewItemModal from "../chuyen-doi-su-dung-dat/modalAddNew";
+import AddNewItemModal from "~/components/page/trong-trot/chuyen-doi-su-dung-dat/modalAddNew";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import ModalEdit from "./modalEdit";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import chuyenDoiSuDungDatSevices from "~/services/chuyenDoiSuDungDatSevices";
+import ModalEdit from "~/components/page/trong-trot/chuyen-doi-su-dung-dat/modalEdit";
+import { useRouter } from "next/router";
+import Button from "~/components/common/Button";
+import { MdDelete, MdEdit } from "react-icons/md";
+import { toastSuccess, toastError } from "~/common/func/toast";
 
 export default function Page() {
+    const router = useRouter();
     const [data, setData] = useState<any>([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State để kiểm soát hiển thị modal thêm
-    const [newItem, setNewItem] = useState<any>({}); // State để lưu trữ thông tin bản ghi mới
 
     const [editedData, setEditedData] = useState<any>({}); // State để lưu dữ liệu cần sửa
     const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State để kiểm soát hiển thị modal sửa
@@ -31,44 +35,12 @@ export default function Page() {
             }
         }
         fetchData()
-    }, [])
-
-    const handleAdd = async () => {
-        try {
-            const response = await chuyenDoiSuDungDatSevices.createChuyenDoiSuDungDat(newItem)
-            setData([...data, response.data.data]);
-            setIsAddModalOpen(false);
-            setNewItem({
-                moTa: "",
-                diaChi: "",
-                dienTich: "",
-                ngayChuyenDoi: ""
-            });
-        } catch (error) {
-            console.error(error)
-        }
-    };
+    }, [router])
 
     const handleEdit = (item: any) => {
         setEditedData(item);
         setIsEditModalOpen(true);
     };
-    const handleUpdate = async (editedItem: any) => {
-        try {
-            const response = await chuyenDoiSuDungDatSevices.updateChuyenDoiSuDungDat(editedItem.id, editedItem);
-            // Cập nhật lại state data
-            const updatedData = data.map((item: any) =>
-                item.id === editedItem.id ? editedItem : item
-            );
-            setData(updatedData);
-            setIsEditModalOpen(false);
-            setEditedData(null)
-
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
 
     const handleDelete = (deleteItem: any) => {
         setItemToDelete(deleteItem);
@@ -76,12 +48,16 @@ export default function Page() {
     };
     const handleConfirmDelete = async (deleteItem: any) => {
         try {
-            const response = await chuyenDoiSuDungDatSevices.deleteChuyenDoiSuDungDat(deleteItem.id);
-            // Xóa thành công, cập nhật state data
-            const updatedData = data.filter((dataItem: any) => dataItem.id !== deleteItem.id);
-            setData(updatedData);
-            setIsConfirmDeleteOpen(false);
-            setItemToDelete(null);
+            let res: any = await chuyenDoiSuDungDatSevices.deleteChuyenDoiSuDungDat(deleteItem.id);
+            if (res.statusCode === 200) {
+                toastSuccess({ msg: "Thành công" });
+                router.replace(router.pathname);
+                setIsConfirmDeleteOpen(false);
+                setItemToDelete(null);
+            } else {
+                toastError({ msg: "Không thành công" });
+                setIsConfirmDeleteOpen(false);
+            }
         } catch (error) {
             console.error(error);
         }
@@ -92,13 +68,33 @@ export default function Page() {
         setItemToDelete(null);
     };
 
+    function formatDateTime(dateTime: any) {
+        const date = new Date(dateTime);
+        const day = date.getDate();
+        const month = date.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0
+        const year = date.getFullYear();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+
+        // Định dạng "dd/mm/yyyy --:--"
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
+    }
+
     return (
         <Fragment>
             <Head>
                 <title>{i18n.t("Farming.landuseconversion")}</title>
             </Head>
             <div>
-                <button onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</button>
+                <Button
+                    primary
+                    bold
+                    rounded_4
+                    maxContent
+                    onClick={() => setIsAddModalOpen(true)}
+                >
+                    &#x002B; Thêm
+                </Button>
                 {/* Render modal nếu isModalOpen là true */}
                 {isAddModalOpen && (
                     <AddNewItemModal
@@ -106,18 +102,17 @@ export default function Page() {
                         onClose={() => {
                             setIsAddModalOpen(false);
                         }}
-                        onSubmit={handleAdd}
-                        newItem={newItem}
-                        setNewItem={setNewItem}
                     />
                 )}
             </div>
             <table className={styles["customers"]}>
                 <thead>
                     <tr>
-                        <th>Mô tả:</th>
+                        <th>DV Hành chính</th>
+                        <th>Hình thức chuyển đổi đất</th>
+                        <th>Mô tả</th>
                         <th>Địa chỉ</th>
-                        <th>Diện tích</th>
+                        <th>Diện tích </th>
                         <th>Ngày chuyển đổi</th>
                         <th>Hoạt Động</th>
                     </tr>
@@ -125,46 +120,49 @@ export default function Page() {
                 <tbody>
                     {data.map((item: any) => (
                         <tr key={item.id}>
+                            <td>{item.administrativeUnit.ten}</td>
+                            <td>{item.hinhThucChuyenDoiDat.tenHinhThuc}</td>
                             <td>{item.moTa}</td>
                             <td>{item.diaChi}</td>
                             <td>{item.dienTich}</td>
-                            <td>{item.ngayChuyenDoi}</td>
+                            <td>{formatDateTime(item.ngayChuyenDoi)}</td>
                             <td>
-                                <button onClick={() => handleEdit(item)}>Sửa</button>
-                                {/* Render modal sửa chi tiết */}
-                                {isEditModalOpen && (
-                                    <ModalEdit
-                                        isOpen={isEditModalOpen}
-                                        onClose={() => {
-                                            setIsEditModalOpen(false)
-                                        }}
-                                        onUpdate={handleUpdate}
-                                        editedItemId={editedData.id}
-                                        setEditedData={setEditedData}
-                                        editedData={editedData}
-                                    />
-                                )}
-                                <button onClick={() => handleDelete(item)}>Xóa</button>
-                                {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
-                                {isConfirmDeleteOpen && (
-                                    <Modal isOpen={isConfirmDeleteOpen} backdrop={false} >
-                                        <ModalHeader>Xác nhận xóa</ModalHeader>
-                                        <ModalBody>
-                                            Bạn có chắc chắn muốn xóa?
-                                        </ModalBody>
-                                        <ModalFooter>
-                                            <Button color="primary" onClick={() => handleConfirmDelete(itemToDelete)}>
-                                                Có
-                                            </Button>
-                                            <Button color="secondary" onClick={handleCancelDelete}>
-                                                Không
-                                            </Button>
-                                        </ModalFooter>
-                                    </Modal>
-                                )}
+                                <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
+                                <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
                             </td>
                         </tr>
                     ))}
+                    {/* Render modal sửa chi tiết */}
+                    {isEditModalOpen && (
+                        <ModalEdit
+                            isOpen={isEditModalOpen}
+                            onClose={() => {
+                                setIsEditModalOpen(false)
+                            }}
+                            setEditedData={setEditedData}
+                            editedData={editedData}
+                        />
+                    )}
+                    {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
+                    {isConfirmDeleteOpen && (
+                        <Modal isOpen={isConfirmDeleteOpen} >
+                            <ModalHeader>Xác nhận xóa</ModalHeader>
+                            <ModalBody>
+                                Bạn có chắc chắn muốn xóa?
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    danger bold rounded_4 maxContent
+                                    onClick={() => handleConfirmDelete(itemToDelete)}
+                                >
+                                    Có
+                                </Button>
+                                <Button secondary bold rounded_4 maxContent onClick={handleCancelDelete}>
+                                    Không
+                                </Button>
+                            </ModalFooter>
+                        </Modal>
+                    )}
                 </tbody>
             </table>
         </Fragment>

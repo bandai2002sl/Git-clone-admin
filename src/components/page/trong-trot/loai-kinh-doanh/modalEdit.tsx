@@ -1,23 +1,14 @@
-import {
-  Button,
-  Input,
-  Label,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-} from "reactstrap";
-import { useEffect, useState } from "react";
-
-import axios from "axios";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
+import { toastSuccess, toastError } from "~/common/func/toast";
+import Form, { Input } from "~/components/common/Form";
+import styles from "~/pages/modal-custom.module.scss"
 import loaiKinhDoanhSevices from "~/services/loaiKinhDoanhSevices";
-import styles from "~/pages/modal-custom.module.scss";
 
 interface ModalEditProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpdate: (editedItem: any) => void;
-  editedItemId: number;
   editedData: any;
   setEditedData: React.Dispatch<any>;
 }
@@ -25,87 +16,65 @@ interface ModalEditProps {
 export default function ModalEdit({
   isOpen,
   onClose,
-  onUpdate,
   editedData,
-  editedItemId,
   setEditedData,
 }: ModalEditProps) {
-  const [editedItem, setEditedItem] = useState({ ...editedData });
+  const router = useRouter();
+  const [form, setForm] = useState({ ...editedData });
 
-  useEffect(() => {
-    // Kiểm tra nếu editedData không phải là null hoặc undefined
-    if (editedData) {
-      setEditedItem({ ...editedData });
-    }
-  }, [editedData]);
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setEditedItem({ ...editedItem, [name]: value });
-  };
-
-  const handleSaveChanges = async () => {
+  const handleSubmit = async () => {
     try {
-      const response = await loaiKinhDoanhSevices.updateLoaiKinhDoanh(
-        editedItem.id,
-        editedItem
-      );
-      onUpdate(editedItem); // Gọi hàm onUpdate để cập nhật lại dữ liệu ở component cha
-      setEditedData({}); // Đặt lại editedData trong component cha
-      onClose(); // Đóng modal sau khi cập nhật thành công
+      let res: any = await loaiKinhDoanhSevices.updateLoaiKinhDoanh(form.id, form);
+      if (res.statusCode === 200) {
+        toastSuccess({ msg: "Thành công" });
+        onClose();
+        router.replace(router.pathname);
+        setEditedData(null);
+      } else {
+        toastError({ msg: "Không thành công" });
+        onClose();
+      }
     } catch (error) {
       console.error(error);
     }
-  };
-
+  }
   return (
-    <Modal
-      isOpen={isOpen}
-      toggle={onClose}
-      className={styles["modal-container"]}
-      backdrop={false}
-      size="lg"
-    >
-      <ModalHeader toggle={onClose}>SỬA THÔNG TIN</ModalHeader>
-      <ModalBody>
-        <div className={styles["modal-body"]}>
-          <div className="input-container">
-            <Label for="loaiKinhDoanh">Loại kinh doanh:</Label>
+    <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>
+      <Form form={form} setForm={setForm} onSubmit={handleSubmit}>
+        <ModalHeader toggle={onClose}>SỬA THÔNG TIN</ModalHeader>
+        <ModalBody>
+          <div className={styles["modal-body"]}>
             <Input
-              type="text"
               name="loaiKinhDoanh"
-              value={editedItem.loaiKinhDoanh}
-              onChange={handleInputChange}
+              label="Loại kinh doanh"
+              placeholder="Nhập loại kinh doanh"
+              isRequired
             />
-          </div>
-          <div className="input-container">
-            <Label for="moTa">Mô tả:</Label>
             <Input
-              type="text"
               name="moTa"
-              value={editedItem.moTa}
-              onChange={handleInputChange}
+              label="Mô tả"
+              placeholder="Nhập mô tả"
+              isRequired
             />
-          </div>
-          <div className="input-container">
-            <Label for="tamNgung">Tạm ngừng</Label>
             <Input
-              type="text"
               name="tamNgung"
-              value={editedItem.tamNgung}
-              onChange={handleInputChange}
+              label="Tạm Ngừng"
+              placeholder="Tạm Ngừng"
+              isRequired
             />
           </div>
+        </ModalBody>
+        <div className={styles["modal-footer"]}>
+          <ModalFooter>
+            <Button small primary bold rounded_6>
+              Lưu
+            </Button>
+            <Button color="secondary" onClick={onClose}>
+              Đóng
+            </Button>
+          </ModalFooter>
         </div>
-      </ModalBody>
-      <ModalFooter>
-        <Button color="primary" onClick={handleSaveChanges}>
-          Lưu thay đổi
-        </Button>
-        <Button color="secondary" onClick={onClose}>
-          Đóng
-        </Button>
-      </ModalFooter>
-    </Modal>
+      </Form>
+    </Modal >
   );
 }

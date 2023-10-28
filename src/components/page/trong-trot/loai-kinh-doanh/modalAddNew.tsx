@@ -1,57 +1,49 @@
-import {
-  Button,
-  Input,
-  Label,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-} from "reactstrap";
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import Form, { Input } from "~/components/common/Form";
 import React, { useState } from "react";
 
-import styles from "~/pages/modal-custom.module.scss";
+import loaiKinhDoanhSevices from "~/services/loaiKinhDoanhSevices";
+import styles from "~/pages/modal-custom.module.scss"
+import { useRouter } from "next/router";
+import { toastSuccess, toastError } from "~/common/func/toast";
 
 interface AddNewItemModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (newItem: any) => void;
-  newItem: any;
-  setNewItem: (item: any) => void;
-}
-
-export function InputValidation() {
-  const [errInput, setErrinput] = useState("");
-  const [errMess, setErrMess] = useState("");
-
-  const checkValidInput = (newItem: any) => {
-    setErrinput("");
-    setErrMess("");
-    let arrInput = ["loaiKinhDoanh", "moTa", "tamNgung"];
-    for (let i = 0; i < arrInput.length; i++) {
-      if (!newItem[arrInput[i]]) {
-        setErrinput(arrInput[i]);
-        setErrMess("Bạn chưa nhập dữ liệu");
-        break;
-      }
-    }
-  };
-  return { errInput, errMess, checkValidInput };
 }
 
 export default function AddNewItemModal({
   isOpen,
   onClose,
-  onSubmit,
-  newItem,
-  setNewItem,
 }: AddNewItemModalProps) {
-  const { errInput, errMess, checkValidInput } = InputValidation();
+  const router = useRouter();
+  const [form, setForm] = useState({
+    loaiKinhDoanh: "",
+    moTa: "",
+    tamNgung: "",
+  });
 
-  const handleSave = () => {
-    checkValidInput(newItem);
-    onSubmit(newItem);
-    onClose();
+  const handleSubmit = async () => {
+    try {
+      let res: any = await loaiKinhDoanhSevices.createLoaiKinhDoanh(form);
+      if (res.statusCode === 200) {
+        toastSuccess({ msg: "Thành công" });
+        onClose();
+        router.replace(router.pathname);
+        setForm({
+          loaiKinhDoanh: "",
+          moTa: "",
+          tamNgung: "",
+        });
+      } else {
+        toastError({ msg: "Không thành công" });
+        onClose();
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -59,72 +51,41 @@ export default function AddNewItemModal({
       className={styles["modal-container"]}
       size="lg"
     >
-      <ModalHeader toggle={onClose}>THÊM MỚI</ModalHeader>
-      <ModalBody>
-        <div className={styles["modal-body"]}>
-          <div className="input-container">
-            <Label for="loaiKinhDoanh">Loại kinh doanh:</Label>
+      <Form form={form} setForm={setForm} onSubmit={handleSubmit}>
+        <ModalHeader toggle={onClose}>THÊM MỚI</ModalHeader>
+        <ModalBody>
+          <div className={styles["modal-body"]}>
             <Input
-              type="text"
-              id="loaiKinhDoanh"
-              placeholder="Loại kinh doanh"
-              value={newItem.loaiKinhDoanh || ""}
-              onChange={(e) => {
-                setNewItem({ ...newItem, loaiKinhDoanh: e.target.value || "" });
-              }}
+              name="loaiKinhDoanh"
+              label="Loại kinh doanh"
+              placeholder="Nhập loại kinh doanh"
+              isRequired
             />
-            {errInput === "loaiKinhDoanh" ? (
-              <div className="text-danger">{errMess}</div>
-            ) : (
-              ""
-            )}
-          </div>
-          <div className="input-container">
-            <Label for="moTa">Mô tả:</Label>
             <Input
-              type="text"
-              id="moTa"
-              placeholder="Mô tả"
-              value={newItem.moTa || ""}
-              onChange={(e) =>
-                setNewItem({ ...newItem, moTa: e.target.value || "" })
-              }
+              name="moTa"
+              label="Mô tả"
+              placeholder="Nhập mô tả"
+              isRequired
             />
-            {errInput === "moTa" ? (
-              <div className="text-danger">{errMess}</div>
-            ) : (
-              ""
-            )}
-          </div>
-          <div className="input-container">
-            <Label for="tamNgung">Tạm ngừng:</Label>
             <Input
-              type="text"
-              id="tamNgung"
-              placeholder="Tạm ngừng"
-              value={newItem.tamNgung || ""}
-              onChange={(e) =>
-                setNewItem({ ...newItem, tamNgung: e.target.value || "" })
-              }
+              name="tamNgung"
+              label="Tạm Ngừng"
+              placeholder="Tạm Ngừng"
+              isRequired
             />
-            {errInput === "tamNgung" ? (
-              <div className="text-danger">{errMess}</div>
-            ) : (
-              ""
-            )}
           </div>
+        </ModalBody>
+        <div className={styles["modal-footer"]}>
+          <ModalFooter>
+            <Button small primary bold rounded_6>
+              Lưu
+            </Button>
+            <Button color="secondary" onClick={onClose}>
+              Đóng
+            </Button>
+          </ModalFooter>
         </div>
-      </ModalBody>
-      <div className={styles["modal-footer"]}>
-        <ModalFooter>
-          <Button color="primary" onClick={handleSave}>
-            Lưu
-          </Button>{" "}
-          <Button color="secondary" onClick={onClose}>
-            Đóng
-          </Button>
-        </ModalFooter>
-      </div>
+      </Form>
     </Modal>
   );
 }

@@ -3,15 +3,17 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Fragment, ReactElement, useEffect, useState } from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
-import AddNewItemModal from "./modalAddNew";
+import AddNewItemModal from "~/components/page/trong-trot/cay-trong/modalAddNew"
 import BaseLayout from "~/components/layout/BaseLayout";
 import Button from "~/components/common/Button";
 import Head from "next/head";
-import ModalEdit from "./modalEdit";
+import ModalEdit from "~/components/page/trong-trot/cay-trong/modalEdit"
 import cayTrongSevices from "~/services/cayTrongSevices";
 import i18n from "~/locale/i18n";
 import styles from "../../manage.module.scss";
 import { useRouter } from "next/router";
+import { MdDelete, MdEdit } from "react-icons/md";
+import { toastSuccess, toastError } from "~/common/func/toast";
 
 export default function Page() {
   const router = useRouter();
@@ -42,38 +44,25 @@ export default function Page() {
     setEditedData(item);
     setIsEditModalOpen(true);
   };
-  const handleUpdate = async (editedItem: any) => {
-    try {
-      const response = await cayTrongSevices.updateCayTrong(
-        editedItem.id,
-        editedItem
-      );
-      // Cập nhật lại state data
-      const updatedData = data.map((item: any) =>
-        item.id === editedItem.id ? editedItem : item
-      );
-      setData(updatedData);
-      setIsEditModalOpen(false);
-      setEditedData(null);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+
 
   const handleDelete = (deleteItem: any) => {
     setItemToDelete(deleteItem);
     setIsConfirmDeleteOpen(true);
   };
+
   const handleConfirmDelete = async (deleteItem: any) => {
     try {
-      const response = await cayTrongSevices.deleteCayTrong(deleteItem.id);
-      // Xóa thành công, cập nhật state data
-      const updatedData = data.filter(
-        (dataItem: any) => dataItem.id !== deleteItem.id
-      );
-      setData(updatedData);
-      setIsConfirmDeleteOpen(false);
-      setItemToDelete(null);
+      let res: any = await cayTrongSevices.deleteCayTrong(deleteItem.id);
+      if (res.statusCode === 200) {
+        toastSuccess({ msg: "Thành công" });
+        router.replace(router.pathname);
+        setIsConfirmDeleteOpen(false);
+        setItemToDelete(null);
+      } else {
+        toastError({ msg: "Không thành công" });
+        setIsConfirmDeleteOpen(false);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -127,42 +116,40 @@ export default function Page() {
               <td>{item.image}</td>
               <td>{item.tamNgung}</td>
               <td>
-                <button onClick={() => handleEdit(item)}>Sửa</button>
-                {/* Render modal sửa chi tiết */}
-                {isEditModalOpen && (
-                  <ModalEdit
-                    isOpen={isEditModalOpen}
-                    onClose={() => {
-                      setIsEditModalOpen(false);
-                    }}
-                    onUpdate={handleUpdate}
-                    editedItemId={editedData.id}
-                    setEditedData={setEditedData}
-                    editedData={editedData}
-                  />
-                )}
-                <button onClick={() => handleDelete(item)}>Xóa</button>
-                {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
-                {isConfirmDeleteOpen && (
-                  <Modal isOpen={isConfirmDeleteOpen} backdrop={false}>
-                    <ModalHeader>Xác nhận xóa</ModalHeader>
-                    <ModalBody>Bạn có chắc chắn muốn xóa?</ModalBody>
-                    <ModalFooter>
-                      <Button
-                        color="primary"
-                        onClick={() => handleConfirmDelete(itemToDelete)}
-                      >
-                        Có
-                      </Button>
-                      <Button color="secondary" onClick={handleCancelDelete}>
-                        Không
-                      </Button>
-                    </ModalFooter>
-                  </Modal>
-                )}
+                <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
+                <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
               </td>
             </tr>
           ))}
+          {/* Render modal sửa chi tiết */}
+          {isEditModalOpen && (
+            <ModalEdit
+              isOpen={isEditModalOpen}
+              onClose={() => {
+                setIsEditModalOpen(false);
+              }}
+              setEditedData={setEditedData}
+              editedData={editedData}
+            />
+          )}
+          {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
+          {isConfirmDeleteOpen && (
+            <Modal isOpen={isConfirmDeleteOpen}>
+              <ModalHeader>Xác nhận xóa</ModalHeader>
+              <ModalBody>Bạn có chắc chắn muốn xóa?</ModalBody>
+              <ModalFooter>
+                <Button
+                  danger bold rounded_4 maxContent
+                  onClick={() => handleConfirmDelete(itemToDelete)}
+                >
+                  Có
+                </Button>
+                <Button secondary bold rounded_4 maxContent onClick={handleCancelDelete}>
+                  Không
+                </Button>
+              </ModalFooter>
+            </Modal>
+          )}
         </tbody>
       </table>
     </Fragment>

@@ -4,106 +4,12 @@ import styles from "./Header.module.scss";
 import { Icon } from "iconsax-react";
 import { useDispatch } from "react-redux";
 import { setStateLogin, setToken } from "~/redux/reducer/auth";
-
 import Image from 'next/image';
+import Button from "~/components/common/Button";
 
 
 
 function Header({ }: PropsHeader) {
-  const [showProvinces, setShowProvinces] = useState(false);
-  const [showDistricts, setShowDistricts] = useState(false);
-  const [showCommunities, setShowCommunities] = useState(false);
-
-  const [isProvinceListVisible, setIsProvinceListVisible] = useState(false);
-  const [isDistrictListVisible, setIsDistrictListVisible] = useState(false);
-  const [isCommuneListVisible, setIsCommuneListVisible] = useState(false);
-
-
-  const provinceBoxRef = useRef<HTMLDivElement>(null);
-  const districtBoxRef = useRef<HTMLDivElement>(null);
-  const communeBoxRef = useRef<HTMLDivElement>(null);
-
-
-  const toggleProvinceList = () => {
-    setIsProvinceListVisible(!isProvinceListVisible);
-    setIsDistrictListVisible(false);
-    setIsCommuneListVisible(false);
-  };
-  const toggleDistrictList = () => {
-    setIsProvinceListVisible(false);
-    setIsDistrictListVisible(!isDistrictListVisible);
-    setIsCommuneListVisible(false);
-  };
-  const toggleCommuneList = () => {
-    setIsProvinceListVisible(false);
-    setIsDistrictListVisible(false);
-    setIsCommuneListVisible(!isCommuneListVisible);
-  };
-
-
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        provinceBoxRef.current &&
-        !provinceBoxRef.current.contains(event.target as Node)
-      ) {
-        setIsProvinceListVisible(false);
-      }
-
-      if (
-        districtBoxRef.current &&
-        !districtBoxRef.current.contains(event.target as Node)
-      ) {
-        setIsDistrictListVisible(false);
-      }
-
-      if (
-        communeBoxRef.current &&
-        !communeBoxRef.current.contains(event.target as Node)
-      ) {
-        setIsCommuneListVisible(false);
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [provinceBoxRef, districtBoxRef, communeBoxRef]);
-
-  const provinces: string[] = ["Ninh Bình"];
-  const districtsByProvince: Record<string, string[]> = {
-    "Ninh Bình": ["Huyện 1", "Huyện 2", "Huyện 3"],
-  };
-  const communesByDistrict: Record<string, string[]> = {
-    "Huyện 1": ["Xã 1", "Xã 2", "Xã 3"],
-    "Huyện 2": ["Xã 4", "Xã 5", "Xã 6"],
-    "Huyện 3": ["Xã 7", "Xã 8", "Xã 9"],
-  };
-
-  const [selectedProvince, setSelectedProvince] = useState<string | null>(null);
-  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
-  const [selectedCommune, setSelectedCommune] = useState<string | null>(null);
-
-  const handleProvinceSelect = (province: string) => {
-    setSelectedProvince(province);
-    setSelectedDistrict(null);
-    setSelectedCommune(null);
-    setIsProvinceListVisible(false);
-  };
-
-  const handleDistrictSelect = (district: string) => {
-    setSelectedDistrict(district);
-    setSelectedCommune(null);
-    setIsDistrictListVisible(false);
-  };
-
-  const handleCommuneSelect = (commune: string) => {
-    setSelectedCommune(commune);
-    setIsCommuneListVisible(false);
-  };
 
 
   const dispatch = useDispatch();
@@ -118,7 +24,6 @@ function Header({ }: PropsHeader) {
 
   return (
     <div className={styles.container}>
-
 
       <div className={styles.section1}>
         <Image
@@ -141,64 +46,52 @@ function Header({ }: PropsHeader) {
 
       <div className={styles.section3}>
 
-        <div
-          className={styles.locationBox}
-          onClick={toggleProvinceList}
-          ref={provinceBoxRef}
-        >
-          <div className={styles.locationTitle}>{selectedProvince || "Tỉnh"}</div>
-          {isProvinceListVisible && (
-            <ul className={styles.locationList}>
-              {provinces.map((province) => (
-                <li key={province} onClick={() => handleProvinceSelect(province)}>
-                  {province}
-                </li>
-              ))}
-            </ul >
-          )
-          }
-        </div >
+          <div className={styles.locationBox}>
+            <div className={styles.locationTitle} >
+              <div className={styles.locationTitle1} >▼</div>
+              <div className={styles.locationTitle2} >Tỉnh</div>
+            </div>
 
-        <div
-          className={styles.locationBox}
-          onClick={toggleDistrictList}
-          ref={districtBoxRef}
-        >
-          <div className={styles.locationTitle}>{selectedDistrict || "Huyện"}</div>
-          {isDistrictListVisible && selectedProvince && (
             <ul className={styles.locationList}>
-              {districtsByProvince[selectedProvince].map((district) => (
-                <li key={district} onClick={() => handleDistrictSelect(district)}>
-                  {district}
-                </li>
-              ))}
+              <li>Ninh Bình</li>
+              <li>Tỉnh 2</li>
             </ul>
-          )}
-        </div>
 
-        <div
-          className={styles.locationBox}
-          onClick={toggleCommuneList}
-          ref={communeBoxRef}
-        >
-          <div className={styles.locationTitle}>{selectedCommune || "Xã"}</div>
-          {isCommuneListVisible && selectedDistrict && (
-            <ul className={styles.locationList}>
-              {communesByDistrict[selectedDistrict].map((commune) => (
-                <li key={commune} onClick={() => handleCommuneSelect(commune)}>
-                  {commune}
-                </li>
-              ))}
+          </div>
+
+        
+          <div className={styles.locationBox}>
+            <div className={styles.locationTitle} >
+              <div className={styles.locationTitle1} >▼</div>
+              <div className={styles.locationTitle2} >Huyện</div>
+            </div>
+
+              <ul className={styles.locationList}>
+                <li>Huyện 1</li>
+                <li>Huyện 2</li>
+              </ul>
+
+          </div>
+  
+          <div className={styles.locationBox}>
+            <div className={styles.locationTitle} >
+              <div className={styles.locationTitle1} >▼</div>
+              <div className={styles.locationTitle2} >Xã</div>
+            </div>
+
+              <ul className={styles.locationList}>
+              <li>Xã 1</li>
+              <li>Xã 2</li>
             </ul>
-          )}
+
+          </div>
+
         </div>
-      </div >
 
 
       <div className={styles.section4}>
         <div className={styles.search}>
-          <div className={styles.searchIcon}>
-          </div>
+          <div className={styles.searchIcon}>🔍</div>
           <input
             type="text"
             placeholder="Nhập vô Enter để tìm kiếm"
@@ -206,15 +99,22 @@ function Header({ }: PropsHeader) {
           />
         </div>
       </div >
-      <div className={styles.logout}>
-        <button onClick={handleLogout}>Đăng Xuất</button>
+
+      <div className={styles.section5}>
+          
+          <Button
+          primary
+          bold
+          rounded_4
+          maxContent
+          onClick={handleLogout}
+        >
+           Đăng xuất ↩
+
+        </Button>
       </div>
 
     </div >
-
-
   );
-
-
 }
 export default Header;

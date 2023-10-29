@@ -1,7 +1,7 @@
 import axiosClient from ".";
 
 const tramBomServices = {
-    display(data:
+    displayTramBom(data:
         {
             "ten": string,
             "diaChi": string,
@@ -13,17 +13,17 @@ const tramBomServices = {
             `${process.env.NEXT_PUBLIC_API_ALL}/tram-bom`,
         );
     },
-    getById(id: number) {
+    getTramBomId(id: number) {
         return axiosClient.get(`${process.env.NEXT_PUBLIC_API_ALL}/tram-bom/${id}`);
     },
-    create(newItem: any) {
+    createTramBom(newItem: any) {
         return axiosClient.post(`${process.env.NEXT_PUBLIC_API_ALL}/tram-bom`, newItem);
     },
-    update(id: number, editedData: any) {
+    updateTramBom(id: number, editedData: any) {
         return axiosClient.put(`${process.env.NEXT_PUBLIC_API_ALL}/tram-bom${id}`, editedData);
     },
 
-    delete(id: number) {
+    deleteTramBom(id: number) {
         return axiosClient.delete(`${process.env.NEXT_PUBLIC_API_ALL}/tram-bom/${id}`);
     },
 };

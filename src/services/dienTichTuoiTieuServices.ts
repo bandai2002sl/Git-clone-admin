@@ -1,7 +1,7 @@
 import axiosClient from ".";
 
 const dienTichTuoiTieuServices = {
-    display(data:
+    displayDienTichTuoiTieu(data:
         {
             "dienTich": number,
             "ngayThongKe": string,
@@ -13,17 +13,17 @@ const dienTichTuoiTieuServices = {
             `${process.env.NEXT_PUBLIC_API_ALL}/dien-tich-tuoi-tieu`,
         );
     },
-    getById(id: number) {
+    getDienTichTuoiTieuId(id: number) {
         return axiosClient.get(`${process.env.NEXT_PUBLIC_API_ALL}/dien-tich-tuoi-tieu/${id}`);
     },
-    create(newItem: any) {
+    createDienTichTuoiTieu(newItem: any) {
         return axiosClient.post(`${process.env.NEXT_PUBLIC_API_ALL}/dien-tich-tuoi-tieu`, newItem);
     },
-    update(id: number, editedData: any) {
+    updateDienTichTuoiTieu(id: number, editedData: any) {
         return axiosClient.put(`${process.env.NEXT_PUBLIC_API_ALL}/dien-tich-tuoi-tieu/${id}`, editedData);
     },
 
-    delete(id: number) {
+    deleteDienTichTuoiTieu(id: number) {
         return axiosClient.delete(`${process.env.NEXT_PUBLIC_API_ALL}/dien-tich-tuoi-tieu/${id}`);
     },
 };

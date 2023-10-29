@@ -1,173 +1,161 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { ReactElement } from 'react';
-import BaseLayout from '~/components/layout/BaseLayout';
-import Head from 'next/head';
-import i18n from '~/locale/i18n';
-import styles from '../../manage.module.scss';
-import AddNewItemModal from '../../../components/page/thuy-loi/tram-bom/modalAddNew';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import {Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import ModalEdit from '../../../components/page/thuy-loi/tram-bom/modalEdit';
-import tramBomServices from "~/services/tramBomServices";
+import { Fragment, ReactElement, useEffect, useState } from "react";
+import BaseLayout from "~/components/layout/BaseLayout";
+import Head from "next/head";
+import i18n from "~/locale/i18n";
+import styles from "../../manage.module.scss"
+import AddNewItemModal from "~/components/page/thuy-loi/tram-bom/modalAddNew";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import hochuaServices from "~/services/hoChuaServices";
+import ModalEdit from "~/components/page/thuy-loi/tram-bom/modalEdit";
+import { useRouter } from "next/router";
 import Button from "~/components/common/Button";
+import { MdDelete, MdEdit } from "react-icons/md";
+import { toastSuccess, toastError } from "~/common/func/toast";
+import tramBomServices from "~/services/tramBomServices";
 
 export default function Page() {
-  const [data, setData] = useState<any>([]);
+    const router = useRouter();
+    const [data, setData] = useState<any>([]);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State để kiểm soát hiển thị modal thêm
 
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newItem, setNewItem] = useState<any>({});
-  const [editedData, setEditedData] = useState<any>({});
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState(null);
+    const [editedData, setEditedData] = useState<any>({}); // State để lưu dữ liệu cần sửa
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State để kiểm soát hiển thị modal sửa
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await tramBomServices.display(data);
-        const newData = response.data;
-        setData(newData);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchData();
-  }, []);
+    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
 
-  const handleAdd = async () => {
-    try {
-      const response = await tramBomServices.create(newItem);
-      setData([...data, response.data]);
-      setIsAddModalOpen(false);
-      setNewItem({
-        ten: "",
-        diaChi: "",
-        congXuat: 0,
-        loaiHinh: "",
-        administrativeUnitId: 0,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await tramBomServices.displayTramBom(data);
+                const newData = response.data;
+                setData(newData);
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        fetchData()
+    }, [router])
 
-  const handleEdit = (item: any) => {
-    setEditedData(item);
-    setIsEditModalOpen(true);
-  };
+    const handleEdit = (item: any) => {
+        setEditedData(item);
+        setIsEditModalOpen(true);
+    };
 
-  const handleUpdate = async () => {
-    try {
-      const response = await tramBomServices.update(editedData.id, editedData);
-      const updatedData = data.map((item: any) =>
-        item.id === editedData.id ? response.data : item
-      );
-      setData(updatedData);
-      setIsEditModalOpen(false);
-      setEditedData(null);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    const handleDelete = (deleteItem: any) => {
+        setItemToDelete(deleteItem);
+        setIsConfirmDeleteOpen(true);
+    };
+    const handleConfirmDelete = async (deleteItem: any) => {
+        try {
+            let res: any = await tramBomServices.deleteTramBom(deleteItem.id);
+            if (res.statusCode === 200) {
+                toastSuccess({ msg: "Thành công" });
+                router.replace(router.pathname);
+                setIsConfirmDeleteOpen(false);
+                setItemToDelete(null);
+            } else {
+                toastError({ msg: "Không thành công" });
+                setIsConfirmDeleteOpen(false);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
-  const handleDelete = (deleteItem: any) => {
-    setItemToDelete(deleteItem);
-    setIsConfirmDeleteOpen(true);
-  };
+    const handleCancelDelete = () => {
+        setIsConfirmDeleteOpen(false);
+        setItemToDelete(null);
+    };
 
-  const handleConfirmDelete = async (deleteItem: any) => {
-    try {
-      const response = await tramBomServices.delete(deleteItem.id);
-      const updatedData = data.filter((dataItem: any) => dataItem.id !== deleteItem.id);
-      setData(updatedData);
-      setIsConfirmDeleteOpen(false);
-      setItemToDelete(null);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleCancelDelete = () => {
-    setIsConfirmDeleteOpen(false);
-    setItemToDelete(null);
-  };
-
-  return (
-    <Fragment>
-      <Head>
-        <title>{i18n.t("Farming.plantDisease")}</title>
-      </Head>
-      <div>
-      <Button primary bold rounded_4 maxContent onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm </Button>                
-
-        {isAddModalOpen && (
-          <AddNewItemModal
-                      isOpen={isAddModalOpen}
-                      onClose={() => setIsAddModalOpen(false)}
-                      onSubmit={handleAdd}
-                      newItem={newItem}
-                      setNewItem={setNewItem} data={[]}          />
-        )}
-      </div>
-      <table className={styles["customers"]}>
-        <thead>
-          <tr>
-            <th>Tên</th>
-            <th>Địa chỉ</th>
-            <th>Công suất</th>
-            <th>Loại hình</th>
-            <th>Hoạt Động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item: any) => (
-            <tr key={item.id}>
-              <td>{item.ten}</td>
-              <td>{item.diaChi}</td>
-              <td>{item.congXuat}</td>
-              <td>{item.loaiHinh}</td>
-              <td>
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                                <Button primary bold rounded_4 maxContent onClick={() => handleEdit(item)}>&#9998; Sửa</Button>                               
-
-                {isEditModalOpen && (
-                  <ModalEdit
-                    isOpen={isEditModalOpen}
-                    onClose={() => setIsEditModalOpen(false)}
-                    onUpdate={handleUpdate}
-                    editedItemId={editedData.id}
-                    setEditedData={setEditedData}
-                    editedData={editedData}
-                  />
+    return (
+        <Fragment>
+            <Head>
+                <title>{i18n.t("Farming.plantdiseases")}</title>
+            </Head>
+            <div>
+                <Button
+                    primary
+                    bold
+                    rounded_4
+                    maxContent
+                    onClick={() => setIsAddModalOpen(true)}
+                >
+                    &#x002B; Thêm
+                </Button>
+                {/* Render modal nếu isModalOpen là true */}
+                {isAddModalOpen && (
+                    <AddNewItemModal
+                        isOpen={isAddModalOpen}
+                        onClose={() => {
+                            setIsAddModalOpen(false);
+                        }}
+                    />
                 )}
-                <div style={{marginLeft: '10px'}}>  
-                  <Button primary bold rounded_4 maxContent onClick={() => handleDelete(item)}>&#10060; </Button>
-                </div>
-              </div>                                
-
-                {isConfirmDeleteOpen && (
-                  <Modal isOpen={isConfirmDeleteOpen} backdrop={false}>
-                    <ModalHeader>Xác nhận xóa</ModalHeader>
-                    <ModalBody>Bạn có chắc chắn muốn xóa?</ModalBody>
-                    <ModalFooter>
-                    <Button color="primary" onClick={() => handleConfirmDelete(itemToDelete)}>
-                        Có
-                      </Button>
-                      <Button color="secondary" onClick={handleCancelDelete}>
-                        Không
-                      </Button>
-                    </ModalFooter>
-                  </Modal>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </Fragment>
-  );
+            </div>
+            <table className={styles["customers"]}>
+                <thead>
+                    <tr>
+                        <th>Tên</th>
+                        <th>DV Hành chính</th>
+                        <th>Địa chỉ</th>
+                        <th>Công xuất</th>
+                        <th>Loại hình</th>
+                        <th>Hoạt Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {data.map((item: any) => (
+                        <tr key={item.id}>
+                            <td>{item.ten}</td>
+                            <td>{item.administrativeUnit.ten}</td>
+                            <td>{item.diaChi}</td>
+                            <td>{item.congXuat}</td>
+                            <td>{item.loaiHinh}</td>
+                            <td>
+                                <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
+                                <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
+                            </td>
+                        </tr>
+                    ))}
+                    {/* Render modal sửa chi tiết */}
+                    {isEditModalOpen && (
+                        <ModalEdit
+                            isOpen={isEditModalOpen}
+                            onClose={() => {
+                                setIsEditModalOpen(false)
+                            }}
+                            setEditedData={setEditedData}
+                            editedData={editedData}
+                        />
+                    )}
+                    {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
+                    {isConfirmDeleteOpen && (
+                        <Modal isOpen={isConfirmDeleteOpen} >
+                            <ModalHeader>Xác nhận xóa</ModalHeader>
+                            <ModalBody>
+                                Bạn có chắc chắn muốn xóa?
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    danger bold rounded_4 maxContent
+                                    onClick={() => handleConfirmDelete(itemToDelete)}
+                                >
+                                    Có
+                                </Button>
+                                <Button secondary bold rounded_4 maxContent onClick={handleCancelDelete}>
+                                    Không
+                                </Button>
+                            </ModalFooter>
+                        </Modal>
+                    )}
+                </tbody>
+            </table>
+        </Fragment>
+    );
 }
 
 Page.getLayout = function (page: ReactElement) {
-  return <BaseLayout>{page}</BaseLayout>;
+    return <BaseLayout>{page}</BaseLayout>;
 };

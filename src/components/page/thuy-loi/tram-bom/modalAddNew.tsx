@@ -1,120 +1,140 @@
-import React, { useState } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label } from 'reactstrap';
-import styles from "~/styles/modal-custom.module.scss";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import DatePicker from "~/components/common/DatePicker";
+import Form, { Input } from "~/components/common/Form";
+import Select, { Option } from "~/components/common/Select";
+import styles from "~/pages/modal-custom.module.scss";
+import donViHanhChinhSevices from "~/services/donViHanhChinhSevices";
+import tramBomServices from "~/services/tramBomServices";
+import { toastSuccess, toastError } from "~/common/func/toast";
 
 interface AddNewItemModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (newItem: any) => void;
-    newItem: any;
-    setNewItem: (item: any) => void;
-    data: any[]
 }
 
-export default function AddNewItemModal({ isOpen, onClose, onSubmit, newItem, setNewItem }: AddNewItemModalProps) {
-    const [errInput, setErrInput] = useState('');
-    const [errMess, setErrMess] = useState('');
+export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProps) {
+    const router = useRouter();
+    const [listHanhChinh, setListHanhChinh] = useState<any>([]);
+    const [form, setForm] = useState({
+        ten: '',
+        administrativeUnitId: '',
+        diaChi: '',
+        congXuat: '',
+        loaiHinh: '',
+    })
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await donViHanhChinhSevices.displayDonViHanhChinh(listHanhChinh);
+                const options = response.data.map((item: any) => ({
+                    label: item.ten, // Tên đơn vị
+                    value: item.id,  // ID của đơn vị
+                }));
+                setListHanhChinh(options);
 
-    const checkValidInput = () => {
-        setErrInput('');
-        setErrMess('');
-        if (!newItem.ten) {
-            setErrInput('ten');
-            setErrMess('Tên không được để trống');
-        } else if (!newItem.diaChi) {
-            setErrInput('diaChi');
-            setErrMess('Địa Chỉ không được để trống');
-        } else if (newItem.congXuat === 0) {
-            setErrInput('congXuat');
-            setErrMess('Công Suất không được để trống');
-        } else if (!newItem.loaiHinh) {
-            setErrInput('loaiHinh');
-            setErrMess('Loại Hình không được để trống');
-        } else if (newItem.administrativeUnitId === 0) {
-            setErrInput('administrativeUnitId');
-            setErrMess('Administrative Unit ID không được để trống');
+            } catch (error) {
+                console.error(error);
+            }
         }
-    }
+        fetchData()
+    }, []);
+    const handleSubmit = async () => {
+        try {
+            if (!form.administrativeUnitId ) {
+                alert("Vui lòng chọn đơn vị hành chính!");
+                return;
+            }
+            let res: any = await tramBomServices.createTramBom(form)
+            if (res.statusCode === 200) {
+                toastSuccess({ msg: "Thành công" });
+                onClose();
+                router.replace(router.pathname);
+                setForm({
+                    ten: '',
+                    administrativeUnitId: '',
+                    diaChi: '',
+                    congXuat: '',
+                    loaiHinh: '',
+                });
+            } else {
+                toastError({ msg: "Không thành công" });
+                onClose();
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    };
+    const handleDVHanhChinhChange = (selectedOption: any) => {
+        setForm({
+            ...form,
+            administrativeUnitId: selectedOption.target.value,
+        });
+    };
 
-    const handleSave = () => {
-        checkValidInput();
-        onSubmit(newItem);
-        onClose();
-    }
 
     return (
-        <Modal isOpen={isOpen} toggle={onClose} className={styles['modal-container']} size="lg">
-            <ModalHeader toggle={onClose}>THÊM MỚI</ModalHeader>
-            <ModalBody>
-                <div className={styles['modal-body']}>
-                    <div className='input-container'>
-                        <Label for="ten">Tên:</Label>
+        <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>
+            <Form form={form} setForm={setForm} onSubmit={handleSubmit}>
+                <ModalHeader toggle={onClose}>THÊM MỚI</ModalHeader>
+                <ModalBody>
+                    <div className={styles["modal-body"]}>
+                        <div style={{ marginBottom: '13px' }}></div>
+                            <Input
+                             type="string"
+                             name="ten"
+                             label="Tên:"
+                             placeholder="Nhập tên:"
+                             isRequired
+                            />
+                        <div style={{ marginBottom: '10px' }}>Đơn vị hành chính</div>
+                        <Select
+                            value={listHanhChinh.length > 0 ? listHanhChinh[0].value : null}
+                            placeholder="Chọn đơn vị hành chính"
+                            onChange={handleDVHanhChinhChange}
+                        >
+                            {listHanhChinh.map((item: any) => (
+                                <Option key={item.value} value={item.value} title={item.label} />
+                            ))}
+                        
+                        </Select>
+                        <div style={{ marginBottom: '13px' }}></div>
                         <Input
-                            type="text"
-                            id="ten"
-                            placeholder="Tên"
-                            value={newItem.ten || ''}
-                            onChange={(e) => setNewItem({ ...newItem, ten: e.target.value || '' })}
+                            type="string"
+                            name="diaChi"
+                            label="Địa chỉ:"
+                            placeholder="Nhập địa chỉ:"
+                            isRequired
                         />
-                        {errInput === 'ten' ? <div className="text-danger">{errMess}</div> : ''}
-                    </div>
-                    <div className='input-container'>
-                        <Label for="diaChi">Địa Chỉ:</Label>
-                        <Input
-                            type="text"
-                            id="diaChi"
-                            placeholder="Địa Chỉ"
-                            value={newItem.diaChi || ''}
-                            onChange={(e) => setNewItem({ ...newItem, diaChi: e.target.value || '' })}
-                        />
-                        {errInput === 'diaChi' ? <div className="text-danger">{errMess}</div> : ''}
-                    </div>
-                    <div className='input-container'>
-                        <Label for="congXuat">Công Suất:</Label>
-                        <Input
-                            type="number"
-                            id="congXuat"
-                            placeholder="Công Suất"
-                            value={newItem.congXuat || 0}
-                            onChange={(e) => setNewItem({ ...newItem, congXuat: parseFloat(e.target.value) || 0 })}
-                        />
-                        {errInput === 'congXuat' ? <div className="text-danger">{errMess}</div> : ''}
-                    </div>
-                    <div className='input-container'>
-                        <Label for="loaiHinh">Loại Hình:</Label>
-                        <Input
-                            type="text"
-                            id="loaiHinh"
-                            placeholder="Loại Hình"
-                            value={newItem.loaiHinh || ''}
-                            onChange={(e) => setNewItem({ ...newItem, loaiHinh: e.target.value || '' })}
-                        />
-                        {errInput === 'loaiHinh' ? <div className="text-danger">{errMess}</div> : ''}
-                    </div>
-                    <div className='input-container'>
-                        <Label for="administrativeUnitId">Administrative Unit ID:</Label>
                         <Input
                             type="number"
-                            id="administrativeUnitId"
-                            placeholder="Administrative Unit ID"
-                            value={newItem.administrativeUnitId || 0}
-                            onChange={(e) => setNewItem({ ...newItem, administrativeUnitId: parseInt(e.target.value) || 0 })
-                            }
+                            name="congXuat"
+                            label="Công xuất:"
+                            placeholder="Nhập công xuất:"
+                            isRequired
                         />
-                        {errInput === 'administrativeUnitId' ? <div className="text-danger">{errMess}</div> : ''}
+                        <Input
+                            type="string"
+                            name="loaiHinh"
+                            label="Loại hình:"
+                            placeholder="Nhập loại hình:"
+                            isRequired
+                        />
+                        
                     </div>
-                </div>
-            </ModalBody>
-            <div className={styles['modal-footer']}>
+                </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={handleSave}>
-                        Lưu
-                    </Button>{' '}
-                    <Button color="secondary" onClick={onClose}>
-                        Đóng
-                    </Button>
+                    <div className={styles["modal-footer"]}>
+                        <Button color="primary">
+                            Lưu
+                        </Button>{" "}
+                        <Button color="secondary" onClick={onClose}>
+                            Đóng
+                        </Button>
+                    </div>
                 </ModalFooter>
-            </div>
-        </Modal>
+            </Form>
+        </Modal >
     );
 }

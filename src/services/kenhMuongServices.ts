@@ -1,7 +1,7 @@
 import axiosClient from ".";
 
 const kenhMuongServices = {
-    displayKenhMuong(data:
+    display(data:
         {
             "ten": string,
             "chieuDai": number,
@@ -12,17 +12,17 @@ const kenhMuongServices = {
             `${process.env.NEXT_PUBLIC_API_ALL}/kenh-muong`,
         );
     },
-    getKenhMuongId(id: number) {
+    getById(id: number) {
         return axiosClient.get(`${process.env.NEXT_PUBLIC_API_ALL}/kenh-muong/${id}`);
     },
-    createKenhMuong(newItem: any) {
+    create(newItem: any) {
         return axiosClient.post(`${process.env.NEXT_PUBLIC_API_ALL}/kenh-muong`, newItem);
     },
-    updateKenhMuong(id: number, editedData: any) {
+    update(id: number, editedData: any) {
         return axiosClient.put(`${process.env.NEXT_PUBLIC_API_ALL}/kenh-muong/${id}`, editedData);
     },
 
-    deleteKenhMuong(id: number) {
+    delete(id: number) {
         return axiosClient.delete(`${process.env.NEXT_PUBLIC_API_ALL}/kenh-muong/${id}`);
     },
 };

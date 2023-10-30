@@ -2,171 +2,174 @@ import { Fragment, ReactElement, useEffect, useState } from "react";
 import BaseLayout from "~/components/layout/BaseLayout";
 import Head from "next/head";
 import i18n from "~/locale/i18n";
-import styles from "../../manage.module.scss"
+import styles from "../../manage.module.scss";
 import AddNewItemModal from "~/components/page/thuy-loi/dien-tich-tuoi-tieu/modalAddNew";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import dienTichTuoiTieu from "~/services/dienTichTuoiTieuServices";
-import ModalEdit from "~/components/page/thuy-loi/dien-tich-tuoi-tieu/modalEdit";
-import { useRouter } from "next/router";
-import Button from "~/components/common/Button";
-import { MdDelete, MdEdit } from "react-icons/md";
-import { toastSuccess, toastError } from "~/common/func/toast";
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import ModalEdit from "../../../components/page/thuy-loi/dien-tich-tuoi-tieu/modalEdit";
+import dienTichTuoiTieuServices from "~/services/dienTichTuoiTieuServices";
 
 export default function Page() {
-    const router = useRouter();
-    const [data, setData] = useState<any>([]);
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State để kiểm soát hiển thị modal thêm
+  const [data, setData] = useState<any>([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newItem, setNewItem] = useState<any>({
+    dienTich: 0,
+    ngayThongKe: "2023-10-21T17:09:16.534Z",
+    hinhThuc: "string",
+    administrativeUnitId: 0,
+    cropTypeId: 0
+  });
 
-    const [editedData, setEditedData] = useState<any>({}); // State để lưu dữ liệu cần sửa
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State để kiểm soát hiển thị modal sửa
+  const [editedData, setEditedData] = useState<any>({});
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState(null);
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const response = await dienTichTuoiTieu.displayDienTichTuoiTieu(data);
-                const newData = response.data;
-                setData(newData);
-            } catch (error) {
-                console.error(error)
-            }
-        }
-        fetchData()
-    }, [router])
-
-    const handleEdit = (item: any) => {
-        setEditedData(item);
-        setIsEditModalOpen(true);
-    };
-
-    const handleDelete = (deleteItem: any) => {
-        setItemToDelete(deleteItem);
-        setIsConfirmDeleteOpen(true);
-    };
-    const handleConfirmDelete = async (deleteItem: any) => {
-        try {
-            let res: any = await dienTichTuoiTieu.deleteDienTichTuoiTieu(deleteItem.id);
-            if (res.statusCode === 200) {
-                toastSuccess({ msg: "Thành công" });
-                router.replace(router.pathname);
-                setIsConfirmDeleteOpen(false);
-                setItemToDelete(null);
-            } else {
-                toastError({ msg: "Không thành công" });
-                setIsConfirmDeleteOpen(false);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const handleCancelDelete = () => {
-        setIsConfirmDeleteOpen(false);
-        setItemToDelete(null);
-    };
-
-    function formatDateTime(dateTime: any) {
-        const date = new Date(dateTime);
-        const day = date.getDate();
-        const month = date.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0
-        const year = date.getFullYear();
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-
-        // Định dạng "dd/mm/yyyy --:--"
-        return `${day}/${month}/${year} ${hours}:${minutes}`;
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await dienTichTuoiTieuServices.display(data);
+        const newData = response.data;
+        setData(newData);
+      } catch (error) {
+        console.error(error);
+      }
     }
+    fetchData();
+  }, []);
 
-    return (
-        <Fragment>
-            <Head>
-                <title>{i18n.t("Farming.plantdiseases")}</title>
-            </Head>
-            <div>
-                <Button
-                    primary
-                    bold
-                    rounded_4
-                    maxContent
-                    onClick={() => setIsAddModalOpen(true)}
-                >
-                    &#x002B; Thêm
-                </Button>
-                {/* Render modal nếu isModalOpen là true */}
-                {isAddModalOpen && (
-                    <AddNewItemModal
-                        isOpen={isAddModalOpen}
-                        onClose={() => {
-                            setIsAddModalOpen(false);
-                        }}
-                    />
+  const handleAdd = async () => {
+    try {
+      const response = await dienTichTuoiTieuServices.create(newItem);
+      setData([...data, response.data]);
+      setIsAddModalOpen(false);
+      setNewItem({
+        dienTich: 0,
+        ngayThongKe: "2023-10-21T17:09:16.534Z",
+        hinhThuc: "string",
+        administrativeUnitId: 0,
+        cropTypeId: 0
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleEdit = (item: any) => {
+    setEditedData(item);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdate = async (editedItem: any) => {
+    try {
+      const response = await dienTichTuoiTieuServices.update(editedItem.id, editedItem);
+      const updatedData = data.map((item: any) =>
+        item.id === editedItem.id ? editedItem : item
+      );
+      setData(updatedData);
+      setIsEditModalOpen(false);
+      setEditedData(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDelete = (deleteItem: any) => {
+    setItemToDelete(deleteItem);
+    setIsConfirmDeleteOpen(true);
+  };
+
+  const handleConfirmDelete = async (deleteItem: any) => {
+    try {
+      const response = await dienTichTuoiTieuServices.delete(deleteItem.id);
+      const updatedData = data.filter((dataItem: any) => dataItem.id !== deleteItem.id);
+      setData(updatedData);
+      setIsConfirmDeleteOpen(false);
+      setItemToDelete(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsConfirmDeleteOpen(false);
+    setItemToDelete(null);
+  };
+
+  return (
+    <Fragment>
+      <Head>
+        <title>{i18n.t("Farming.plantdisease")}</title>
+      </Head>
+      <div>
+        <button onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</button>
+        {isAddModalOpen && (
+          <AddNewItemModal
+            isOpen={isAddModalOpen}
+            onClose={() => {
+              setIsAddModalOpen(false);
+            }}
+            onSubmit={handleAdd}
+            newItem={newItem}
+            setNewItem={setNewItem}
+            data={data}
+          />
+        )}
+      </div>
+      <table className={styles["customers"]}>
+        <thead>
+          <tr>
+            <th>Diện tích:</th>
+            <th>Ngày thống kê:</th>
+            <th>Hình thức:</th>
+            <th>Hoạt Động:</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item: any) => (
+            <tr key={item.id}>
+              <td>{item.dienTich}</td>
+              <td>{item.ngayThongKe}</td>
+              <td>{item.hinhThuc}</td>
+              <td>
+                <button onClick={() => handleEdit(item)}>Sửa</button>
+                {isEditModalOpen && (
+                  <ModalEdit
+                    isOpen={isEditModalOpen}
+                    onClose={() => {
+                      setIsEditModalOpen(false);
+                    }}
+                    onUpdate={handleUpdate}
+                    editedItemId={editedData.id}
+                    setEditedData={setEditedData}
+                    editedData={editedData}
+                  />
                 )}
-            </div>
-            <table className={styles["customers"]}>
-                <thead>
-                    <tr>
-                        <th>DV Hành chính</th>
-                        <th>Cây trồng</th>
-                        <th>Diện tích</th>
-                        <th>Hình thức</th>
-                        <th>Ngày thống kê</th>
-                        <th>Hoạt động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((item: any) => (
-                        <tr key={item.id}>
-                            <td>{item.administrativeUnit.ten}</td>
-                            <td>{item.cropType.name}</td>
-                            <td>{item.dienTich}</td>
-                            <td>{item.hinhThuc}</td>
-                            <td>{formatDateTime(item.ngayThongKe)}</td>
-                            <td>
-                                <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
-                                <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
-                            </td>
-                        </tr>
-                    ))}
-                    {/* Render modal sửa chi tiết */}
-                    {isEditModalOpen && (
-                        <ModalEdit
-                            isOpen={isEditModalOpen}
-                            onClose={() => {
-                                setIsEditModalOpen(false)
-                            }}
-                            setEditedData={setEditedData}
-                            editedData={editedData}
-                        />
-                    )}
-                    {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
-                    {isConfirmDeleteOpen && (
-                        <Modal isOpen={isConfirmDeleteOpen} >
-                            <ModalHeader>Xác nhận xóa</ModalHeader>
-                            <ModalBody>
-                                Bạn có chắc chắn muốn xóa?
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button
-                                    danger bold rounded_4 maxContent
-                                    onClick={() => handleConfirmDelete(itemToDelete)}
-                                >
-                                    Có
-                                </Button>
-                                <Button secondary bold rounded_4 maxContent onClick={handleCancelDelete}>
-                                    Không
-                                </Button>
-                            </ModalFooter>
-                        </Modal>
-                    )}
-                </tbody>
-            </table>
-        </Fragment>
-    );
+                <button onClick={() => handleDelete(item)}>Xóa</button>
+                {isConfirmDeleteOpen && (
+                  <Modal isOpen={isConfirmDeleteOpen} backdrop={false}>
+                    <ModalHeader>Xác nhận xóa</ModalHeader>
+                    <ModalBody>Bạn có chắc chắn muốn xóa?</ModalBody>
+                    <ModalFooter>
+                      <Button color="primary" onClick={() => handleConfirmDelete(itemToDelete)}>
+                        Có
+                      </Button>
+                      <Button color="secondary" onClick={handleCancelDelete}>
+                        Không
+                      </Button>
+                    </ModalFooter>
+                  </Modal>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Fragment>
+  );
 }
 
 Page.getLayout = function (page: ReactElement) {
-    return <BaseLayout>{page}</BaseLayout>;
+  return <BaseLayout>{page}</BaseLayout>;
 };

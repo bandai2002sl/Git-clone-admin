@@ -4,12 +4,11 @@ const congServices = {
     displayCong(data:
         {
             "ten": string,
-            "administrativeUnitId": number
             "diaChi": string,
             "kichCo": string,
             "loaiKichThuoc": string,
             "loaiHinh": string,
-            
+            "administrativeUnitId": number
           }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/cong`,

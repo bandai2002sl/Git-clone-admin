@@ -9,6 +9,9 @@ const coSoCheBienSevices = {
             hinhAnh: string,
             trangThai: string,
             coDangKy: string,
+            CoGCNATTP: string,
+            toaDo: string,
+            icon: string,
         }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/co-so-che-bien`,

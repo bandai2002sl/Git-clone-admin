@@ -3,12 +3,15 @@ import axiosClient from ".";
 const coSoChanNuoiSevices = {
     displayCoSoChanNuoi(data:
         {
-            "tinhTrang": string,
-            "caNhanHtxId": number,
-            "vatNuoiIds": [
+            tinhTrang: string,
+            caNhanHtxId: number,
+            vatNuoiIds: [
                 number
             ],
-            "hinhThucChanNuoiId": number
+            hinhThucChanNuoiId: number,
+            diaChi: string,
+            toaDo: string,
+            icon: string,
         }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/co-so-chan-nuoi`,

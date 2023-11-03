@@ -13,6 +13,8 @@ const hopTacXaSevices = {
             loaiHinh: string,
             soNguoi: number,
             trangThai: string
+            toaDo: string,
+            icon: string,
         }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/ca-nhan-htx`,

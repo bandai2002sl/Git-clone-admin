@@ -60,7 +60,7 @@ export default function ModalEdit({
                 </ModalBody>
                 <div className={styles["modal-footer"]}>
                     <ModalFooter>
-                        <Button small primary bold rounded_6>
+                        <Button color="primary">
                             Lưu
                         </Button>
                         <Button color="secondary" onClick={onClose}>

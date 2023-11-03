@@ -3,11 +3,13 @@ import axiosClient from ".";
 const vungChanNuoiAnToanSevices = {
     displayVungChanNuoiAnToan(data:
         {
-            "name": string,
-            "diaChi": string,
-            "quyMo": string,
-            "moTa": string,
-            "ngayChungNhan": string,
+            name: string,
+            diaChi: string,
+            quyMo: string,
+            moTa: string,
+            ngayChungNhan: string,
+            toaDo: string,
+            icon: string,
         }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/vung-chan-nuoi-an-toan`,

@@ -3,14 +3,16 @@ import axiosClient from ".";
 const benhCaySevices = {
   displayBenhCay(data:
     {
-      "cropTypeId": number,
-      "loaiBenhId": number,
-      "administrativeUnitId": number,
-      "diaChi": string,
-      "moTa": string,
-      "hinhAnh": string,
-      "dienTich": number,
-      "ngayGhiNhan": string
+      cropTypeId: number,
+      loaiBenhId: number,
+      administrativeUnitId: number,
+      diaChi: string,
+      moTa: string,
+      hinhAnh: string,
+      dienTich: number,
+      ngayGhiNhan: string
+      toaDo: string,
+      icon: string,
     }) {
     return axiosClient.get(`${process.env.NEXT_PUBLIC_API_ALL}/benh-cay`);
   },

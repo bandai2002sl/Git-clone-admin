@@ -1,10 +1,9 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import ReactSelect from "react-select";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
 import { toastSuccess, toastError } from "~/common/func/toast";
-import DatePicker from "~/components/common/DatePicker";
 import Form, { Input } from "~/components/common/Form";
-import Select, { Option } from "~/components/common/Select";
 import styles from "~/pages/modal-custom.module.scss";
 import donViHanhChinhSevices from "~/services/donViHanhChinhSevices";
 import hopTacXaSevices from "~/services/hopTacXaSevices";
@@ -42,13 +41,37 @@ export default function ModalEdit({
         }
         fetchData()
     }, []);
-
+    const regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\]?[0-9]{3}[-\s\]?[0-9]{4,6}$/im
     const handleSubmit = async () => {
-        if (!form.administrativeUnitId) {
-            alert("Vui lòng chọn đơn vị hành chính.");
-            return;
-        }
         try {
+            if (!form.administrativeUnitId) {
+                alert("Vui lòng chọn đơn vị hành chính.");
+                return;
+            } if (form.name.length > 255) {
+                alert("Tên Htx dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (!regex.test(form.sdt)) {
+                alert("Tên SDT dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (form.address.length > 255) {
+                alert("Địa chỉ dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (form.moTa.length > 255) {
+                alert("Mô tả dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (form.linhVucHoatDong.length > 255) {
+                alert("Lĩnh vực HD dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (form.loaiHinh.length > 255) {
+                alert("Loại hình dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (parseInt(form.soNguoi, 10) <= 0 || form.soNguoi.length > 10) {
+                alert("Số người dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (form.trangThai.length > 255) {
+                alert("Trạng thái dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            }
             let res: any = await hopTacXaSevices.updateHopTacXa(form.id, form);
             if (res.statusCode === 200) {
                 toastSuccess({ msg: "Thành công" });
@@ -66,7 +89,7 @@ export default function ModalEdit({
     const handleDVHanhChinhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            administrativeUnitId: selectedOption.target.value,
+            administrativeUnitId: selectedOption.value,
         });
     };
 
@@ -77,15 +100,10 @@ export default function ModalEdit({
                 <ModalBody>
                     <div className={styles["modal-body"]}>
                         <div style={{ marginBottom: '10px' }}>Đơn vị hành chính</div>
-                        <Select
-                            value={form.administrativeUnit.id}
-                            placeholder="Chọn đơn vị hành chính"
+                        <ReactSelect
+                            options={listHanhChinh}
                             onChange={handleDVHanhChinhChange}
-                        >
-                            {listHanhChinh.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <Input
                             name="name"
@@ -147,6 +165,18 @@ export default function ModalEdit({
                             name="trangThai"
                             label="trạng thái"
                             placeholder="Nhập trạng thái"
+                            isRequired
+                        />
+                        <Input
+                            name="toaDo"
+                            label="Tọa độ: Point(X Y)"
+                            placeholder="Nhập tọa độ"
+                            isRequired
+                        />
+                        <Input
+                            name="icon"
+                            label="Icon"
+                            placeholder="Nhập icon"
                             isRequired
                         />
                     </div>

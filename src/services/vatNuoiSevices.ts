@@ -6,7 +6,8 @@ const vatNuoiSevices = {
             name: string,
             moTa: string,
             image: string,
-            tamNgung: string
+            tamNgung: string,
+            icon: string
         }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/vat-nuoi`,

@@ -20,9 +20,31 @@ export default function AddNewItemModal({ isOpen, onClose, data }: AddNewItemMod
         tenVietTat: "",
         toaDo: "",
     })
+    function hasSpecialCharacters(input: any) {
+        const regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+        return regex.test(input);
+    }
+    const regex = /^point\(\s*(-?\d+(\.\d+)?)\s+(-?\d+(\.\d+)?)\s*\)$/i;
     const handleSubmit = async () => {
         if (isMaHanhChinhExisted(data, form.maHanhChinh)) {
-            alert("Mã hành chính đã tồn tại.");
+            alert("Mã hành chính đã tồn tại! vui lòng nhập lại");
+            return;
+        } if (hasSpecialCharacters(form.maHanhChinh) || form.maHanhChinh.length > 50 || !/^[A-Za-z0-9]+$/.test(form.maHanhChinh)) {
+            alert("Mã hành chính dữ liệu không hợp lệ! vui lòng nhập lại");
+            return;
+        } if (form.ten.length > 255) {
+            alert("Tên hành chính dữ liệu không hợp lệ! vui lòng nhập lại");
+            return;
+        } if (parseInt(form.capHanhChinh, 10) <= 0 || form.capHanhChinh.length > 10) {
+            alert("Cấp hành chính dữ liệu không hợp lệ! vui lòng nhập lại");
+            return;
+        } if (form.tenVietTat.length > 50) {
+            alert("Tên viết tắt  dữ liệu không hợp lệ! vui lòng nhập lại");
+            return;
+        }
+        const matches = form.toaDo.match(regex);
+        if (!regex.test(form.toaDo)) {
+            alert("Tọa độ dữ liệu không hợp lệ! vui lòng nhập lại");
             return;
         }
         try {
@@ -40,7 +62,6 @@ export default function AddNewItemModal({ isOpen, onClose, data }: AddNewItemMod
                 });
             } else {
                 toastError({ msg: "Không thành công" });
-                onClose();
             }
         } catch (error) {
             console.error(error);

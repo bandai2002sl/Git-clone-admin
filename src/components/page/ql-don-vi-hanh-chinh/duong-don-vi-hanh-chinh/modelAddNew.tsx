@@ -7,6 +7,7 @@ import duongDonViHanhChinhSevices from "~/services/duongDonViHanhChinhServices";
 import donViHanhChinhSevices from "~/services/donViHanhChinhSevices";
 import Select, { Option } from "~/components/common/Select";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import ReactSelect from "react-select";
 
 interface AddNewItemModalProps {
     isOpen: boolean;
@@ -63,7 +64,7 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
     const handleDVHanhChinhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            administrativeUnitId: selectedOption.target.value,
+            administrativeUnitId: selectedOption.value,
         });
     };
     return (
@@ -73,15 +74,10 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                 <ModalBody>
                     <div className={styles["modal-body"]}>
                         <div style={{ marginBottom: '10px' }}>Đơn vị hành chính</div>
-                        <Select
-                            value={listHanhChinh.length > 0 ? listHanhChinh[0].value : null}
-                            placeholder="Chọn đơn vị hành chính"
+                        <ReactSelect
+                            options={listHanhChinh}
                             onChange={handleDVHanhChinhChange}
-                        >
-                            {listHanhChinh.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <Input
                             name="duong"

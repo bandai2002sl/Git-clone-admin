@@ -9,6 +9,8 @@ import vatNuoiSevices from "~/services/vatNuoiSevices";
 import donViHanhChinhSevices from "~/services/donViHanhChinhSevices";
 import vungChanNuoiAnToanSevices from "~/services/vungChanNuoiAnToanSevices";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import kyBaoCaoSevices from "~/services/kyBaoCaoSevices";
+import ReactSelect from "react-select";
 
 interface ModalEditProps {
     isOpen: boolean;
@@ -26,6 +28,7 @@ export default function ModalEdit({
     const router = useRouter();
     const [listHanhChinh, setListHanhChinh] = useState<any>([]);
     const [listVatNuoi, setListVatNuoi] = useState<any>([]);
+    const [listKyBaoCao, setListKyBaoCao] = useState<any>([]);
     const [form, setForm] = useState({ ...editedData })
 
     useEffect(() => {
@@ -43,6 +46,12 @@ export default function ModalEdit({
                     value: item.id,
                 }));
                 setListVatNuoi(options1);
+                const res2 = await kyBaoCaoSevices.displayKyBaoCao(listKyBaoCao);
+                const options3 = res2.data.map((item: any) => ({
+                    label: item.tenBaoCao,
+                    value: item.id,
+                }));
+                setListKyBaoCao(options3);
             } catch (error) {
                 console.error(error);
             }
@@ -52,7 +61,7 @@ export default function ModalEdit({
 
     const handleSubmit = async () => {
         try {
-            if (!form.administrativeUnitId || !form.vatNuoiId) {
+            if (!form.administrativeUnitId || !form.vatNuoiId || !form.kyBaoCaoId) {
                 alert("Vui lòng chọn đơn vị hành chính, vật nuôi!");
                 return;
             }
@@ -73,13 +82,19 @@ export default function ModalEdit({
     const handleDVHanhChinhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            administrativeUnitId: selectedOption.target.value,
+            administrativeUnitId: selectedOption.value,
         });
     };
     const handleVatNuoiChange = (selectedOption: any) => {
         setForm({
             ...form,
-            vatNuoiId: selectedOption.target.value,
+            vatNuoiId: selectedOption.value,
+        });
+    };
+    const handleKyBaoCaoChange = (selectedOption: any) => {
+        setForm({
+            ...form,
+            kyBaoCaoId: selectedOption.value,
         });
     };
     return (
@@ -89,26 +104,22 @@ export default function ModalEdit({
                 <ModalBody>
                     <div className={styles["modal-body"]}>
                         <div style={{ marginBottom: '10px' }}>Đơn vị hành chính</div>
-                        <Select
-                            value={form.administrativeUnit.id}
-                            placeholder="Chọn đơn vị hành chính"
+                        <ReactSelect
+                            options={listHanhChinh}
                             onChange={handleDVHanhChinhChange}
-                        >
-                            {listHanhChinh.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <div style={{ marginBottom: '10px' }}>Vật nuôi:</div>
-                        <Select
-                            value={form.vatNuoi.id}
-                            placeholder="Chọn vật nuôi"
+                        <ReactSelect
+                            options={listVatNuoi}
                             onChange={handleVatNuoiChange}
-                        >
-                            {listVatNuoi.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
+                        <div style={{ marginBottom: '13px' }}></div>
+                        <div style={{ marginBottom: '10px' }}>Kỳ báo cáo:</div>
+                        <ReactSelect
+                            options={listKyBaoCao}
+                            onChange={handleKyBaoCaoChange}
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <Input
                             type="string"
@@ -143,6 +154,18 @@ export default function ModalEdit({
                             name="ngayChungNhan"
                             label="Ngày chứng nhận"
                             placeholder="Ngày chứng nhận"
+                            isRequired
+                        />
+                        <Input
+                            name="toaDo"
+                            label="Tọa độ: Point(X Y)"
+                            placeholder="Nhập tọa độ"
+                            isRequired
+                        />
+                        <Input
+                            name="icon"
+                            label="Icon"
+                            placeholder="Nhập icon"
                             isRequired
                         />
                     </div>

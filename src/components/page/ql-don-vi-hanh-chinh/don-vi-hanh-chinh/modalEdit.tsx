@@ -22,8 +22,39 @@ export default function ModalEdit({
     const router = useRouter();
     const [form, setForm] = useState({ ...editedData })
 
+    function hasSpecialCharacters(input: any) {
+        const regex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+        return regex.test(input);
+    }
+    const regex = /^point\(\s*(-?\d+(\.\d+)?)\s+(-?\d+(\.\d+)?)\s*\)$/i;
     const handleSubmit = async () => {
         try {
+            if (hasSpecialCharacters(form.maHanhChinh) || form.maHanhChinh.length > 50 || !/^[A-Za-z0-9]+$/.test(form.maHanhChinh)) {
+                alert("Mã hành chính dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (form.ten.length > 255) {
+                alert("Tên hành chính dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            }
+            if (parseInt(form.capHanhChinh, 10) <= 0 || form.capHanhChinh.length > 10) {
+                alert("Cấp hành chính dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (form.tenVietTat.length > 50) {
+                alert("Tên viết tắt  dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            }
+            const matches = form.toaDo.match(regex);
+            if (!regex.test(form.toaDo)) {
+                alert("Tọa độ dũ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (matches) {
+                const longitude = parseFloat(matches[1]);
+                const latitude = parseFloat(matches[3]);
+                if (longitude < -180 || longitude > 180 || latitude < -90 || latitude > 90) {
+                    alert("Tọa độ dữ liệu không hợp lệ! vui lòng nhập lại");
+                    return;
+                }
+            }
             let res: any = await donViHanhChinhSevices.updateDonViHanhChinh(form.id, form);
             if (res.statusCode === 200) {
                 toastSuccess({ msg: "Thành công" });

@@ -9,6 +9,7 @@ import donViHanhChinhSevices from "~/services/donViHanhChinhSevices";
 import loaiKinhDoanhSevices from "~/services/loaiKinhDoanhSevices";
 import coSoKinhDoanhSevices from "~/services/coSoKinhDoanhSevices";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import ReactSelect from "react-select";
 
 interface ModalEditProps {
     isOpen: boolean;
@@ -81,19 +82,19 @@ export default function ModalEdit({
     const handleDVHanhChinhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            administrativeUnitId: selectedOption.target.value,
+            administrativeUnitId: selectedOption.value,
         });
     };
     const handleHopTacXaChange = (selectedOption: any) => {
         setForm({
             ...form,
-            caNhanHtxId: selectedOption.target.value,
+            caNhanHtxId: selectedOption.value,
         });
     };
     const handleLoaiKinhDoanhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            loaiKinhDoanhId: selectedOption.target.value,
+            loaiKinhDoanhId: selectedOption.value,
         });
     };
     return (
@@ -102,37 +103,22 @@ export default function ModalEdit({
                 <ModalHeader toggle={onClose}>SỬA THÔNG TIN</ModalHeader>
                 <ModalBody>
                     <div style={{ marginBottom: '10px' }}>Đơn vị hành chính</div>
-                    <Select
-                        value={listHanhChinh.length > 0 ? listHanhChinh[0].value : null}
-                        placeholder="Chọn đơn vị hành chính"
+                    <ReactSelect
+                        options={listHanhChinh}
                         onChange={handleDVHanhChinhChange}
-                    >
-                        {listHanhChinh.map((item: any) => (
-                            <Option key={item.value} value={item.value} title={item.label} />
-                        ))}
-                    </Select>
+                    />
                     <div style={{ marginBottom: '13px' }}></div>
                     <div style={{ marginBottom: '10px' }}>Hợp tác xã:</div>
-                    <Select
-                        value={listHopTacXa.length > 0 ? listHopTacXa[0].value : null}
-                        placeholder="Chọn hợp tác xã"
+                    <ReactSelect
+                        options={listHopTacXa}
                         onChange={handleHopTacXaChange}
-                    >
-                        {listHopTacXa.map((item: any) => (
-                            <Option key={item.value} value={item.value} title={item.label} />
-                        ))}
-                    </Select>
+                    />
                     <div style={{ marginBottom: '13px' }}></div>
-                    <div style={{ marginBottom: '10px' }}>Loại kinh doanh:</div>
-                    <Select
-                        value={listLoaiKinhDoanh.length > 0 ? listLoaiKinhDoanh[0].value : null}
-                        placeholder="Chọn loại kinh doanh"
+                    <div style={{ marginBottom: '10px' }}>Loại Kinh Doanh:</div>
+                    <ReactSelect
+                        options={listLoaiKinhDoanh}
                         onChange={handleLoaiKinhDoanhChange}
-                    >
-                        {listLoaiKinhDoanh.map((item: any) => (
-                            <Option key={item.value} value={item.value} title={item.label} />
-                        ))}
-                    </Select>
+                    />
                     <div style={{ marginBottom: '13px' }}></div>
                     <Input
                         type="string"
@@ -167,6 +153,18 @@ export default function ModalEdit({
                         name="trangThai"
                         label="Trạng thái:"
                         placeholder="Nhập trạng thái:"
+                        isRequired
+                    />
+                    <Input
+                        name="toaDo"
+                        label="Tọa độ: Point(X Y)"
+                        placeholder="Nhập tọa độ"
+                        isRequired
+                    />
+                    <Input
+                        name="icon"
+                        label="Icon"
+                        placeholder="Nhập icon"
                         isRequired
                     />
                 </ModalBody>

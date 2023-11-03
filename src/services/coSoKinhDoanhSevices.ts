@@ -8,6 +8,8 @@ const coSoKinhDoanhSevices = {
             dangKyKinhDoanh: string,
             sdt: string,
             trangThai: string,
+            toaDo: string,
+            icon: string,
         }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/co-so-kinh-doanh`,

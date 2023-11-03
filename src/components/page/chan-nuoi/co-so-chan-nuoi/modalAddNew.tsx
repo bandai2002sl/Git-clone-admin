@@ -9,6 +9,8 @@ import vatNuoiSevices from "~/services/vatNuoiSevices";
 import hinhThucChanNuoiSevices from "~/services/hinhThucChanNuoiSevices";
 import coSoChanNuoiSevices from "~/services/coSoChanNuoiSevices";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import ReactSelect from "react-select";
+import kyBaoCaoSevices from "~/services/kyBaoCaoSevices";
 
 interface AddNewItemModalProps {
     isOpen: boolean;
@@ -20,11 +22,16 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
     const [listVatNuoi, setListVatNuoi] = useState<any>([]);
     const [listHopTacXa, setListHopTacXa] = useState<any>([]);
     const [listHinhThucChanNuoi, setListHinhThucChanNuoi] = useState<any>([]);
+    const [listKyBaoCao, setListKyBaoCao] = useState<any>([]);
     const [form, setForm] = useState({
         vatNuoiIds: [] as number[],
         caNhanHtxId: "",
         hinhThucChanNuoiId: "",
-        tinhTrang: ""
+        tinhTrang: "",
+        diaChi: '',
+        kyBaoCaoId: '',
+        toaDo: '',
+        icon: ''
     })
     useEffect(() => {
         async function fetchData() {
@@ -47,6 +54,12 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                     value: item.id,
                 }));
                 setListHinhThucChanNuoi(options2);
+                const res2 = await kyBaoCaoSevices.displayKyBaoCao(listKyBaoCao);
+                const options3 = res2.data.map((item: any) => ({
+                    label: item.tenBaoCao,
+                    value: item.id,
+                }));
+                setListKyBaoCao(options3);
             } catch (error) {
                 console.error(error);
             }
@@ -55,7 +68,7 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
     }, []);
     const handleSubmit = async () => {
         try {
-            if (form.vatNuoiIds.length === 0 || !form.caNhanHtxId || !form.hinhThucChanNuoiId) {
+            if (form.vatNuoiIds.length === 0 || !form.caNhanHtxId || !form.hinhThucChanNuoiId || !form.kyBaoCaoId) {
                 alert("Vui lòng chọn vật nuôi, hợp tác xã, hình thức chăn nuôi!");
                 return;
             }
@@ -68,7 +81,11 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                     vatNuoiIds: [],
                     caNhanHtxId: "",
                     hinhThucChanNuoiId: "",
-                    tinhTrang: ""
+                    tinhTrang: "",
+                    diaChi: '',
+                    kyBaoCaoId: '',
+                    toaDo: '',
+                    icon: ''
                 });
             } else {
                 toastError({ msg: "Không thành công" });
@@ -80,7 +97,7 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
         }
     };
     const handleVatNuoiChange = (selectedOption: any) => {
-        const selectedValues = Array.from(selectedOption.target.selectedOptions, (option: any) => option.value);
+        const selectedValues = selectedOption.map((option: any) => option.value);
         setForm({
             ...form,
             vatNuoiIds: selectedValues.map(Number),
@@ -89,61 +106,76 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
     const handleHopTacXaChange = (selectedOption: any) => {
         setForm({
             ...form,
-            caNhanHtxId: selectedOption.target.value,
+            caNhanHtxId: selectedOption.value,
         });
     };
     const handleHinhThucChanNuoiChange = (selectedOption: any) => {
         setForm({
             ...form,
-            hinhThucChanNuoiId: selectedOption.target.value,
+            hinhThucChanNuoiId: selectedOption.value,
         });
     };
-
-    console.log("check", form.vatNuoiIds)
+    const handleKyBaoCaoChange = (selectedOption: any) => {
+        setForm({
+            ...form,
+            kyBaoCaoId: selectedOption.value,
+        });
+    };
     return (
         <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>
             <Form form={form} setForm={setForm} onSubmit={handleSubmit}>
                 <ModalHeader toggle={onClose}>THÊM MỚI</ModalHeader>
                 <ModalBody>
                     <div className={styles["modal-body"]}>
-                        <div style={{ marginBottom: '10px' }}>Chọn vật nuôi(giữ ctrl để chọn được nhiều)</div>
-                        <select
-                            multiple
-                            placeholder="Chọn vật nuôi"
+                        <div style={{ marginBottom: '10px' }}>Chọn vật nuôi</div>
+                        <ReactSelect
+                            isMulti
+                            options={listVatNuoi}
                             onChange={handleVatNuoiChange}
-                        >
-                            {listVatNuoi.map((item: any) => (
-                                <option key={item.value} value={item.value} title={item.label}>{item.label}</option>
-                            ))}
-                        </select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <div style={{ marginBottom: '10px' }}>Hợp tác xã</div>
-                        <Select
-                            value={listHopTacXa.length > 0 ? listHopTacXa[0].value : null}
-                            placeholder="Chọn "
+                        <ReactSelect
+                            options={listHopTacXa}
                             onChange={handleHopTacXaChange}
-                        >
-                            {listHopTacXa.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <div style={{ marginBottom: '10px' }}>Hinh thức chăn nuôi</div>
-                        <Select
-                            value={listHinhThucChanNuoi.length > 0 ? listHinhThucChanNuoi[0].value : null}
-                            placeholder="Chọn "
+                        <ReactSelect
+                            options={listHinhThucChanNuoi}
                             onChange={handleHinhThucChanNuoiChange}
-                        >
-                            {listHinhThucChanNuoi.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
+                        <div style={{ marginBottom: '13px' }}></div>
+                        <div style={{ marginBottom: '10px' }}>Kỳ báo cáo:</div>
+                        <ReactSelect
+                            options={listKyBaoCao}
+                            onChange={handleKyBaoCaoChange}
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <Input
                             type="string"
                             name="tinhTrang"
                             label="Tình trạng:"
                             placeholder="Nhập tình trạng:"
+                            isRequired
+                        />
+                        <Input
+                            type="string"
+                            name="diaChi"
+                            label="Địa chỉ:"
+                            placeholder="Nhập địa chỉ:"
+                            isRequired
+                        />
+                        <Input
+                            name="toaDo"
+                            label="Tọa độ: Point(X Y)"
+                            placeholder="Nhập tọa độ"
+                            isRequired
+                        />
+                        <Input
+                            name="icon"
+                            label="Icon"
+                            placeholder="Nhập icon"
                             isRequired
                         />
                     </div>

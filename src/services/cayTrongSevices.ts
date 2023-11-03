@@ -3,10 +3,11 @@ import axiosClient from ".";
 const cayTrongSevices = {
     displayCayTrong(data:
         {
-            "name": string,
-            "moTa": string,
-            "image": string,
-            "tamNgung": string
+            name: string,
+            moTa: string,
+            image: string,
+            tamNgung: string,
+            icon: string,
         }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/crop-type`,

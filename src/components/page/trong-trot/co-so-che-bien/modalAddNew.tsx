@@ -8,6 +8,8 @@ import hopTacXaSevices from "~/services/hopTacXaSevices";
 import donViHanhChinhSevices from "~/services/donViHanhChinhSevices";
 import coSoCheBienSevices from "~/services/coSoCheBienSevices";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import kyBaoCaoSevices from "~/services/kyBaoCaoSevices";
+import ReactSelect from "react-select";
 
 interface AddNewItemModalProps {
     isOpen: boolean;
@@ -18,15 +20,20 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
     const router = useRouter();
     const [listHanhChinh, setListHanhChinh] = useState<any>([]);
     const [listHopTacXa, setListHopTacXa] = useState<any>([]);
+    const [listKyBaoCao, setListKyBaoCao] = useState<any>([]);
     const [form, setForm] = useState({
         administrativeUnitId: "",
         caNhanHtxId: "",
+        kyBaoCaoId: '',
         diaChi: "",
         loaiCheBien: "",
         moTa: "",
         hinhAnh: "",
         trangThai: "",
         coDangKy: "",
+        CoGCNATTP: "",
+        toaDo: '',
+        icon: ''
     })
     useEffect(() => {
         async function fetchData() {
@@ -43,6 +50,12 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                     value: item.id,
                 }));
                 setListHopTacXa(options1);
+                const res2 = await kyBaoCaoSevices.displayKyBaoCao(listKyBaoCao);
+                const options3 = res2.data.map((item: any) => ({
+                    label: item.tenBaoCao,
+                    value: item.id,
+                }));
+                setListKyBaoCao(options3);
             } catch (error) {
                 console.error(error);
             }
@@ -51,7 +64,7 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
     }, []);
     const handleSubmit = async () => {
         try {
-            if (!form.administrativeUnitId || !form.caNhanHtxId) {
+            if (!form.administrativeUnitId || !form.caNhanHtxId || !form.kyBaoCaoId) {
                 alert("Vui lòng chọn đơn vị hành chính, hợp tác xã!");
                 return;
             }
@@ -63,12 +76,16 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                 setForm({
                     administrativeUnitId: "",
                     caNhanHtxId: "",
+                    kyBaoCaoId: '',
                     diaChi: "",
                     loaiCheBien: "",
                     moTa: "",
                     hinhAnh: "",
                     trangThai: "",
                     coDangKy: "",
+                    CoGCNATTP: "",
+                    toaDo: '',
+                    icon: ''
                 });
             } else {
                 toastError({ msg: "Không thành công" });
@@ -81,13 +98,13 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
     const handleDVHanhChinhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            administrativeUnitId: selectedOption.target.value,
+            administrativeUnitId: selectedOption.value,
         });
     };
     const handleHopTacXaChange = (selectedOption: any) => {
         setForm({
             ...form,
-            caNhanHtxId: selectedOption.target.value,
+            caNhanHtxId: selectedOption.value,
         });
     };
     const handleCoDangKyChange = (selectedOption: any) => {
@@ -96,7 +113,12 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
             coDangKy: selectedOption.target.title,
         });
     };
-
+    const handleKyBaoCaoChange = (selectedOption: any) => {
+        setForm({
+            ...form,
+            kyBaoCaoId: selectedOption.value,
+        });
+    };
 
     return (
         <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>
@@ -105,26 +127,22 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                 <ModalBody>
                     <div className={styles["modal-body"]}>
                         <div style={{ marginBottom: '10px' }}>Đơn vị hành chính</div>
-                        <Select
-                            value={listHanhChinh.length > 0 ? listHanhChinh[0].value : null}
-                            placeholder="Chọn đơn vị hành chính"
+                        <ReactSelect
+                            options={listHanhChinh}
                             onChange={handleDVHanhChinhChange}
-                        >
-                            {listHanhChinh.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <div style={{ marginBottom: '10px' }}>Hợp tác xã</div>
-                        <Select
-                            value={listHopTacXa.length > 0 ? listHopTacXa[0].value : null}
-                            placeholder="Chọn "
+                        <ReactSelect
+                            options={listHopTacXa}
                             onChange={handleHopTacXaChange}
-                        >
-                            {listHopTacXa.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
+                        <div style={{ marginBottom: '13px' }}></div>
+                        <div style={{ marginBottom: '10px' }}>Kỳ báo cáo:</div>
+                        <ReactSelect
+                            options={listKyBaoCao}
+                            onChange={handleKyBaoCaoChange}
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <Input
                             type="string"
@@ -170,6 +188,26 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                             <Option value={1} title={"Có"} />
                             <Option value={2} title={"Không"} />
                         </Select>
+                        <div style={{ marginBottom: '13px' }}></div>
+                        <Input
+                            type="string"
+                            name="CoGCNATTP"
+                            label="CoGCNATTP:"
+                            placeholder="Nhập CoGCNATTP"
+                            isRequired
+                        />
+                        <Input
+                            name="toaDo"
+                            label="Tọa độ: Point(X Y)"
+                            placeholder="Nhập tọa độ"
+                            isRequired
+                        />
+                        <Input
+                            name="icon"
+                            label="Icon"
+                            placeholder="Nhập icon"
+                            isRequired
+                        />
                     </div>
                 </ModalBody>
                 <ModalFooter>

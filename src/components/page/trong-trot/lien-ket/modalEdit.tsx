@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import ReactSelect from "react-select";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
 import { toastSuccess, toastError } from "~/common/func/toast";
 import DatePicker from "~/components/common/DatePicker";
@@ -65,7 +66,7 @@ export default function ModalEdit({
     const handleHopTacXaChange = (selectedOption: any) => {
         setForm({
             ...form,
-            caNhanHtxId: selectedOption.target.value,
+            caNhanHtxId: selectedOption.value,
         });
     };
 
@@ -76,15 +77,10 @@ export default function ModalEdit({
                 <ModalBody>
                     <div className={styles["modal-body"]}>
                         <div style={{ marginBottom: '10px' }}>Hợp tác xã</div>
-                        <Select
-                            value={form.caNhanHtx.id}
-                            placeholder="Chọn đơn vị hành chính"
+                        <ReactSelect
+                            options={listHopTacXa}
                             onChange={handleHopTacXaChange}
-                        >
-                            {listHopTacXa.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <Input
                             type="string"

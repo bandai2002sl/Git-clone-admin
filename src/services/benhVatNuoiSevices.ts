@@ -3,10 +3,12 @@ import axiosClient from ".";
 const benhVatNuoiSevices = {
     displayBenhVatNuoi(data:
         {
-            "diaChi": string,
-            "nguyenNhan": string,
-            "dienTich": number,
-            "ngayGhiNhan": string,
+            diaChi: string,
+            nguyenNhan: string,
+            dienTich: number,
+            ngayGhiNhan: string,
+            toaDo: string,
+            icon: string,
         }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/benh-vat-nuoi`,

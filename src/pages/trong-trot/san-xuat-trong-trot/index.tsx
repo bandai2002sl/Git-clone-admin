@@ -12,6 +12,9 @@ import { useRouter } from "next/router";
 import Button from "~/components/common/Button";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import Pagination from "~/components/common/Pagination";
+import CheckPermission from "~/components/common/CheckPermission";
+import { PageKey, PermissionID } from "~/constants/config/enum";
 
 export default function Page() {
     const router = useRouter();
@@ -24,12 +27,20 @@ export default function Page() {
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
+    const [total, setTotal] = useState(0);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const dataToDisplay = data.slice(startIndex, endIndex);
+
     useEffect(() => {
         async function fetchData() {
             try {
                 const response = await sanXuatTrongTrotSevices.displaySanXuatTrongTrot(data);
                 const newData = response.data;
                 setData(newData);
+                setTotal(newData.length);
             } catch (error) {
                 console.error(error)
             }
@@ -67,6 +78,9 @@ export default function Page() {
         setIsConfirmDeleteOpen(false);
         setItemToDelete(null);
     };
+    const handlePageChange = (page: any) => {
+        setCurrentPage(page);
+    };
     function formatDateTime(dateTime: any) {
         const date = new Date(dateTime);
         const day = date.getDate();
@@ -84,15 +98,12 @@ export default function Page() {
                 <title>{i18n.t("Farming.cultivationProduction")}</title>
             </Head>
             <div>
-                <Button
-                    primary
-                    bold
-                    rounded_4
-                    maxContent
-                    onClick={() => setIsAddModalOpen(true)}
+                <CheckPermission
+                    pageKey={PageKey.San_xuat_trong_trot}
+                    permissionId={PermissionID.Them}
                 >
-                    &#x002B; Thêm
-                </Button>
+                    <Button primary bold rounded_4 maxContent onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</Button>
+                </CheckPermission>
                 {/* Render modal nếu isModalOpen là true */}
                 {isAddModalOpen && (
                     <AddNewItemModal
@@ -114,11 +125,15 @@ export default function Page() {
                         <th>Năng suất</th>
                         <th>Sản lượng</th>
                         <th>Thời điểm báo cáo</th>
+                        <th>Địa chỉ</th>
+                        <th>Kỳ báo cáo</th>
+                        <th>Tọa Độ</th>
+                        <th>icon</th>
                         <th>Hoạt Động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((item: any) => (
+                    {dataToDisplay.map((item: any) => (
                         <tr key={item.id}>
                             <td>{item.administrativeUnit.ten}</td>
                             <td>{item.cropType.name}</td>
@@ -128,9 +143,23 @@ export default function Page() {
                             <td>{item.nangSuat}</td>
                             <td>{item.sanLuong}</td>
                             <td>{formatDateTime(item.thoiDiemBaoCao)}</td>
+                            <td>{item.diaChi}</td>
+                            <td>{item.kyBaoCao.tenBaoCao}</td>
+                            <td>{item.toaDo}</td>
+                            <td>{item.icon}</td>
                             <td>
-                                <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
-                                <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
+                                <CheckPermission
+                                    pageKey={PageKey.San_xuat_trong_trot}
+                                    permissionId={PermissionID.Sua}
+                                >
+                                    <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
+                                </CheckPermission>
+                                <CheckPermission
+                                    pageKey={PageKey.San_xuat_trong_trot}
+                                    permissionId={PermissionID.Xoa}
+                                >
+                                    <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
+                                </CheckPermission>
                             </td>
                         </tr>
                     ))}
@@ -167,6 +196,12 @@ export default function Page() {
                     )}
                 </tbody>
             </table>
+            <Pagination
+                total={total}
+                pageSize={pageSize}
+                currentPage={currentPage}
+                onSetPage={handlePageChange}
+            />
         </Fragment>
     );
 }

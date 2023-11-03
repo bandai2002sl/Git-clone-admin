@@ -10,6 +10,8 @@ import donViHanhChinhSevices from "~/services/donViHanhChinhSevices";
 import loaiBenhSevices from "~/services/loaiBenhSevices";
 import benhVatNuoiSevices from "~/services/benhVatNuoiSevices";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import kyBaoCaoSevices from "~/services/kyBaoCaoSevices";
+import ReactSelect from "react-select";
 
 interface ModalEditProps {
     isOpen: boolean;
@@ -28,6 +30,7 @@ export default function ModalEdit({
     const [listHanhChinh, setListHanhChinh] = useState<any>([]);
     const [listVatNuoi, setListVatNuoi] = useState<any>([]);
     const [listLoaiBenh, setListLoaiBenh] = useState<any>([]);
+    const [listKyBaoCao, setListKyBaoCao] = useState<any>([]);
     const [form, setForm] = useState({ ...editedData })
 
     useEffect(() => {
@@ -51,6 +54,12 @@ export default function ModalEdit({
                     value: item.id,
                 }));
                 setListLoaiBenh(options2);
+                const res2 = await kyBaoCaoSevices.displayKyBaoCao(listKyBaoCao);
+                const options3 = res2.data.map((item: any) => ({
+                    label: item.tenBaoCao,
+                    value: item.id,
+                }));
+                setListKyBaoCao(options3);
             } catch (error) {
                 console.error(error);
             }
@@ -60,11 +69,11 @@ export default function ModalEdit({
 
     const handleSubmit = async () => {
         try {
-            if (!form.administrativeUnitId || !form.vatNuoiId || !form.loaiBenhId) {
+            if (!form.administrativeUnitId || !form.vatNuoiId || !form.loaiBenhId || !form.kyBaoCaoId) {
                 alert("Vui lòng chọn đơn vị hành chính, vật nuôi, loại bệnh!");
                 return;
             }
-            let res: any = await benhVatNuoiSevices.createBenhVatNuoi(form)
+            let res: any = await benhVatNuoiSevices.updateBenhVatNuoi(form.id, form)
             if (res.statusCode === 200) {
                 toastSuccess({ msg: "Thành công" });
                 onClose();
@@ -81,19 +90,25 @@ export default function ModalEdit({
     const handleDVHanhChinhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            administrativeUnitId: selectedOption.target.value,
+            administrativeUnitId: selectedOption.value,
         });
     };
     const handleVatNuoiChange = (selectedOption: any) => {
         setForm({
             ...form,
-            vatNuoiId: selectedOption.target.value,
+            vatNuoiId: selectedOption.value,
         });
     };
     const handleLoaiBenhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            loaiBenhId: selectedOption.target.value,
+            loaiBenhId: selectedOption.value,
+        });
+    };
+    const handleKyBaoCaoChange = (selectedOption: any) => {
+        setForm({
+            ...form,
+            kyBaoCaoId: selectedOption.value,
         });
     };
     return (
@@ -103,37 +118,28 @@ export default function ModalEdit({
                 <ModalBody>
                     <div className={styles["modal-body"]}>
                         <div style={{ marginBottom: '10px' }}>Đơn vị hành chính</div>
-                        <Select
-                            value={form.administrativeUnit.id}
-                            placeholder="Chọn đơn vị hành chính"
+                        <ReactSelect
+                            options={listHanhChinh}
                             onChange={handleDVHanhChinhChange}
-                        >
-                            {listHanhChinh.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <div style={{ marginBottom: '10px' }}>Vật nuôi:</div>
-                        <Select
-                            value={form.vatNuoi.id}
-                            placeholder="Chọn vật nuôi"
+                        <ReactSelect
+                            options={listVatNuoi}
                             onChange={handleVatNuoiChange}
-                        >
-                            {listVatNuoi.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <div style={{ marginBottom: '10px' }}>Loại bệnh</div>
-                        <Select
-                            value={form.loaiBenh.id}
-                            placeholder="Chọn loại bệnh"
+                        <ReactSelect
+                            options={listLoaiBenh}
                             onChange={handleLoaiBenhChange}
-                        >
-                            {listLoaiBenh.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
+                        <div style={{ marginBottom: '13px' }}></div>
+                        <div style={{ marginBottom: '10px' }}>Kỳ báo cáo:</div>
+                        <ReactSelect
+                            options={listKyBaoCao}
+                            onChange={handleKyBaoCaoChange}
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <Input
                             type="string"
@@ -161,6 +167,18 @@ export default function ModalEdit({
                             name="ngayGhiNhan"
                             label="Ngày ghi nhận"
                             placeholder="Ngày ghi nhận"
+                            isRequired
+                        />
+                        <Input
+                            name="toaDo"
+                            label="Tọa độ: Point(X Y)"
+                            placeholder="Nhập tọa độ"
+                            isRequired
+                        />
+                        <Input
+                            name="icon"
+                            label="Icon"
+                            placeholder="Nhập icon"
                             isRequired
                         />
                     </div>

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
 import { toastSuccess, toastError } from "~/common/func/toast";
 import Form, { Input } from "~/components/common/Form";
+import Select, { Option } from "~/components/common/Select";
 import styles from "~/pages/modal-custom.module.scss"
 import loaiBenhSevices from "~/services/loaiBenhSevices";
 
@@ -38,6 +39,12 @@ export default function ModalEdit({
             console.error(error);
         }
     }
+    const handleDoiTuongChange = (selectedOption: any) => {
+        setForm({
+            ...form,
+            doiTuong: selectedOption.target.title,
+        });
+    };
     return (
         <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>
             <Form form={form} setForm={setForm} onSubmit={handleSubmit}>
@@ -46,8 +53,8 @@ export default function ModalEdit({
                     <div className={styles["modal-body"]}>
                         <Input
                             name="tenBenh"
-                            label="Tên bệnh cây"
-                            placeholder="Tên bệnh cây"
+                            label="Tên bệnh"
+                            placeholder="Tên bệnh"
                             isRequired
                         />
                         <Input
@@ -56,16 +63,25 @@ export default function ModalEdit({
                             placeholder="Nhập mô tả"
                             isRequired
                         />
-                        <Input
-                            name="doiTuong"
-                            label="Đối tượng"
-                            placeholder="Nhập đối tượng"
-                            isRequired
-                        />
+                        <div style={{ marginBottom: '10px' }}>Đối tượng</div>
+                        <Select
+                            value={form.doiTuong === "Cây trồng" ? 1 : 2}
+                            placeholder="Chọn Cây trồng hoặc Vật nuôi"
+                            onChange={handleDoiTuongChange}>
+
+                            <Option value={1} title={"Cây trồng"} />
+                            <Option value={2} title={"Vật nuôi"} />
+                        </Select>
                         <Input
                             name="hinhAnh"
                             label="Hình ảnh"
                             placeholder="Nhập link hình ảnh"
+                            isRequired
+                        />
+                        <Input
+                            name="icon"
+                            label="icon"
+                            placeholder="Nhập icon"
                             isRequired
                         />
                     </div>

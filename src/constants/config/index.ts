@@ -18,6 +18,7 @@ export enum PATH {
   Administrativeunits = "/don-vi-hanh-chinh/don-vi-hanh-chinh",
   Administrativeunitregion = "/don-vi-hanh-chinh/vung-don-vi-hanh-chinh",
   Administrativeunitroad = "/don-vi-hanh-chinh/duong-don-vi-hanh-chinh",
+  Reportingperiod = "/don-vi-hanh-chinh/ky-bao-cao",
 
   Farming = "/trong-trot",
   Seafood = "/thuy-san",
@@ -94,6 +95,10 @@ export const menu: Imenu[] = [
       {
         title: "Đường đơn vị hành chính",
         path: PATH.Administrativeunitroad,
+      },
+      {
+        title: "Kỳ báo cáo",
+        path: PATH.Reportingperiod,
       },
     ]
   },
@@ -216,7 +221,7 @@ export const menu: Imenu[] = [
   },
   {
     title: "Quản lý chất lượng thuỷ lợi",
-    group:[
+    group: [
       {
         title: "Cống",
         path: PATH.Drain,

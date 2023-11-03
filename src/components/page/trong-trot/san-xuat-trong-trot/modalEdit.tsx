@@ -1,13 +1,13 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import ReactSelect from "react-select";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
 import { toastSuccess, toastError } from "~/common/func/toast";
-import DatePicker from "~/components/common/DatePicker";
 import Form, { Input } from "~/components/common/Form";
-import Select, { Option } from "~/components/common/Select";
 import styles from "~/pages/modal-custom.module.scss";
 import cayTrongSevices from "~/services/cayTrongSevices";
 import donViHanhChinhSevices from "~/services/donViHanhChinhSevices";
+import kyBaoCaoSevices from "~/services/kyBaoCaoSevices";
 import sanXuatTrongTrotSevices from "~/services/sanXuatTrongTrotSevices";
 
 interface ModalEditProps {
@@ -26,6 +26,7 @@ export default function ModalEdit({
     const router = useRouter();
     const [listHanhChinh, setListHanhChinh] = useState<any>([]);
     const [listCayTrong, setListCayTrong] = useState<any>([]);
+    const [listKyBaoCao, setListKyBaoCao] = useState<any>([]);
     const [form, setForm] = useState({ ...editedData })
 
     useEffect(() => {
@@ -43,6 +44,12 @@ export default function ModalEdit({
                     value: item.id,
                 }));
                 setListCayTrong(options1);
+                const res1 = await kyBaoCaoSevices.displayKyBaoCao(listKyBaoCao);
+                const options2 = res1.data.map((item: any) => ({
+                    label: item.tenBaoCao,
+                    value: item.id,
+                }));
+                setListKyBaoCao(options2);
             } catch (error) {
                 console.error(error);
             }
@@ -52,7 +59,7 @@ export default function ModalEdit({
 
     const handleSubmit = async () => {
         try {
-            if (!form.administrativeUnitId || !form.cropTypeId) {
+            if (!form.administrativeUnitId || !form.cropTypeId || !form.kyBaoCaoId) {
                 alert("Vui lòng chọn đơn vị hành chính, cây trồng!");
                 return;
             }
@@ -73,16 +80,21 @@ export default function ModalEdit({
     const handleDVHanhChinhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            administrativeUnitId: selectedOption.target.value,
+            administrativeUnitId: selectedOption.value,
         });
     };
     const handleCayTrongChange = (selectedOption: any) => {
         setForm({
             ...form,
-            cropTypeId: selectedOption.target.value,
+            cropTypeId: selectedOption.value,
         });
     };
-
+    const handleKyBaoCaoChange = (selectedOption: any) => {
+        setForm({
+            ...form,
+            kyBaoCaoId: selectedOption.value,
+        });
+    };
     return (
         <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>
             <Form form={form} setForm={setForm} onSubmit={handleSubmit}>
@@ -90,26 +102,22 @@ export default function ModalEdit({
                 <ModalBody>
                     <div className={styles["modal-body"]}>
                         <div style={{ marginBottom: '10px' }}>Đơn vị hành chính</div>
-                        <Select
-                            value={form.administrativeUnit.id}
-                            placeholder="Chọn đơn vị hành chính"
+                        <ReactSelect
+                            options={listHanhChinh}
                             onChange={handleDVHanhChinhChange}
-                        >
-                            {listHanhChinh.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <div style={{ marginBottom: '10px' }}>Cây trồng:</div>
-                        <Select
-                            value={form.cropType.id}
-                            placeholder="Chọn cây trồng"
+                        <ReactSelect
+                            options={listCayTrong}
                             onChange={handleCayTrongChange}
-                        >
-                            {listCayTrong.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
+                        <div style={{ marginBottom: '13px' }}></div>
+                        <div style={{ marginBottom: '10px' }}>Kỳ báo cáo:</div>
+                        <ReactSelect
+                            options={listKyBaoCao}
+                            onChange={handleKyBaoCaoChange}
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <Input
                             type="number"
@@ -151,6 +159,24 @@ export default function ModalEdit({
                             name="thoiDiemBaoCao"
                             label="Thời điểm báo cáo"
                             placeholder="Nhập thời điểm báo cáo"
+                            isRequired
+                        />
+                        <Input
+                            name="diaChi"
+                            label="Địa chỉ"
+                            placeholder="Nhập địa chỉ"
+                            isRequired
+                        />
+                        <Input
+                            name="toaDo"
+                            label="Tọa độ: Point(X Y)"
+                            placeholder="Nhập tọa độ"
+                            isRequired
+                        />
+                        <Input
+                            name="icon"
+                            label="Icon"
+                            placeholder="Nhập icon"
                             isRequired
                         />
                     </div>

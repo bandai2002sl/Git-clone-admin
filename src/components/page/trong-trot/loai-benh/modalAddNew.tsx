@@ -6,6 +6,7 @@ import loaiBenhSevices from "~/services/loaiBenhSevices";
 import styles from "~/pages/modal-custom.module.scss"
 import { useRouter } from "next/router";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import Select, { Option } from "~/components/common/Select";
 
 interface AddNewItemModalProps {
     isOpen: boolean;
@@ -21,7 +22,8 @@ export default function AddNewItemModal({
         tenBenh: "",
         moTa: "",
         doiTuong: "",
-        hinhAnh: ""
+        hinhAnh: "",
+        icon: "",
     });
 
     const handleSubmit = async () => {
@@ -35,7 +37,8 @@ export default function AddNewItemModal({
                     tenBenh: "",
                     moTa: "",
                     doiTuong: "",
-                    hinhAnh: ""
+                    hinhAnh: "",
+                    icon: "",
                 });
             } else {
                 toastError({ msg: "Không thành công" });
@@ -45,7 +48,12 @@ export default function AddNewItemModal({
             console.error(error);
         }
     };
-
+    const handleDoiTuongChange = (selectedOption: any) => {
+        setForm({
+            ...form,
+            doiTuong: selectedOption.target.title,
+        });
+    };
     return (
         <Modal
             isOpen={isOpen}
@@ -59,8 +67,8 @@ export default function AddNewItemModal({
                     <div className={styles["modal-body"]}>
                         <Input
                             name="tenBenh"
-                            label="Tên bệnh cây"
-                            placeholder="Tên bệnh cây"
+                            label="Tên bệnh"
+                            placeholder="Tên bệnh"
                             isRequired
                         />
                         <Input
@@ -69,16 +77,25 @@ export default function AddNewItemModal({
                             placeholder="Nhập mô tả"
                             isRequired
                         />
-                        <Input
-                            name="doiTuong"
-                            label="Đối tượng"
-                            placeholder="Nhập đối tượng"
-                            isRequired
-                        />
+                        <div style={{ marginBottom: '10px' }}>Đối tượng</div>
+                        <Select
+                            value
+                            placeholder="Chọn Cây trồng hoặc Vật nuôi"
+                            onChange={handleDoiTuongChange}>
+
+                            <Option value={1} title={"Cây trồng"} />
+                            <Option value={2} title={"Vật nuôi"} />
+                        </Select>
                         <Input
                             name="hinhAnh"
                             label="Hình ảnh"
                             placeholder="Nhập link hình ảnh"
+                            isRequired
+                        />
+                        <Input
+                            name="icon"
+                            label="icon"
+                            placeholder="Nhập icon"
                             isRequired
                         />
                     </div>

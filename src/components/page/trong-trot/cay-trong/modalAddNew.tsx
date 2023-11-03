@@ -22,6 +22,7 @@ export default function AddNewItemModal({
     moTa: "",
     image: "",
     tamNgung: "",
+    icon: "",
   });
 
   const handleSubmit = async () => {
@@ -36,6 +37,7 @@ export default function AddNewItemModal({
           moTa: "",
           image: "",
           tamNgung: "",
+          icon: "",
         });
       } else {
         toastError({ msg: "Không thành công" });
@@ -79,6 +81,12 @@ export default function AddNewItemModal({
               name="tamNgung"
               label="Tạm Ngừng"
               placeholder="Tạm Ngừng"
+              isRequired
+            />
+            <Input
+              name="icon"
+              label="icon"
+              placeholder="Nhập icon"
               isRequired
             />
           </div>

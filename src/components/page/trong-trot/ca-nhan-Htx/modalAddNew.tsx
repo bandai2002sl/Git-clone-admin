@@ -3,11 +3,10 @@ import Form, { Input } from "~/components/common/Form";
 import React, { useEffect, useState } from "react";
 import styles from "~/pages/modal-custom.module.scss";
 import { useRouter } from "next/router";
-import Select, { Option } from "~/components/common/Select";
 import hopTacXaSevices from "~/services/hopTacXaSevices";
 import donViHanhChinhSevices from "~/services/donViHanhChinhSevices";
-import DatePicker from "~/components/common/DatePicker";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import ReactSelect from "react-select";
 
 interface AddNewItemModalProps {
     isOpen: boolean;
@@ -27,15 +26,41 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
         ngayThanhLap: "",
         loaiHinh: "",
         soNguoi: '',
-        trangThai: ""
+        trangThai: "",
+        toaDo: "",
+        icon: "",
     })
-
+    const regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\]?[0-9]{3}[-\s\]?[0-9]{4,6}$/im
     const handleSubmit = async () => {
-        if (!form.administrativeUnitId) {
-            alert("Vui lòng chọn đơn vị hành chính.");
-            return;
-        }
         try {
+            if (!form.administrativeUnitId) {
+                alert("Vui lòng chọn đơn vị hành chính.");
+                return;
+            } if (form.name.length > 255) {
+                alert("Tên Htx dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (!regex.test(form.sdt)) {
+                alert("Tên SDT dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (form.address.length > 255) {
+                alert("Địa chỉ dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (form.moTa.length > 255) {
+                alert("Mô tả dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (form.linhVucHoatDong.length > 255) {
+                alert("Lĩnh vực HD dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (form.loaiHinh.length > 255) {
+                alert("Loại hình dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (parseInt(form.soNguoi, 10) <= 0 || form.soNguoi.length > 10) {
+                alert("Số người dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            } if (form.trangThai.length > 255) {
+                alert("Trạng thái dữ liệu không hợp lệ! vui lòng nhập lại");
+                return;
+            }
             let res: any = await hopTacXaSevices.createHopTacXa(form)
             if (res.statusCode === 200) {
                 toastSuccess({ msg: "Thành công" });
@@ -52,7 +77,9 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                     ngayThanhLap: "",
                     loaiHinh: "",
                     soNguoi: '',
-                    trangThai: ""
+                    trangThai: "",
+                    toaDo: "",
+                    icon: "",
                 });
             } else {
                 toastError({ msg: "Không thành công" });
@@ -80,7 +107,7 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
     const handleDVHanhChinhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            administrativeUnitId: selectedOption.target.value,
+            administrativeUnitId: selectedOption.value,
         });
     };
     return (
@@ -90,15 +117,10 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                 <ModalBody>
                     <div className={styles["modal-body"]}>
                         <div style={{ marginBottom: '10px' }}>Đơn vị hành chính</div>
-                        <Select
-                            value={listHanhChinh.length > 0 ? listHanhChinh[0].value : null}
-                            placeholder="Chọn đơn vị hành chính"
+                        <ReactSelect
+                            options={listHanhChinh}
                             onChange={handleDVHanhChinhChange}
-                        >
-                            {listHanhChinh.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <Input
                             name="name"
@@ -160,6 +182,18 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                             name="trangThai"
                             label="trạng thái"
                             placeholder="Nhập trạng thái"
+                            isRequired
+                        />
+                        <Input
+                            name="toaDo"
+                            label="Tọa độ: Point(X Y)"
+                            placeholder="Nhập tọa độ"
+                            isRequired
+                        />
+                        <Input
+                            name="icon"
+                            label="Icon"
+                            placeholder="Nhập icon"
                             isRequired
                         />
                     </div>

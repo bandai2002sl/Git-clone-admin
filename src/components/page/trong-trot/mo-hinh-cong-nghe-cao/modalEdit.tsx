@@ -8,6 +8,7 @@ import hopTacXaSevices from "~/services/hopTacXaSevices";
 import donViHanhChinhSevices from "~/services/donViHanhChinhSevices";
 import moHinhCongNgheCaoSevices from "~/services/moHinhCongNgheCaoSevices";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import ReactSelect from "react-select";
 
 interface ModalEditProps {
     isOpen: boolean;
@@ -72,13 +73,13 @@ export default function ModalEdit({
     const handleDVHanhChinhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            administrativeUnitId: selectedOption.target.value,
+            administrativeUnitId: selectedOption.value,
         });
     };
     const handleHopTacXaChange = (selectedOption: any) => {
         setForm({
             ...form,
-            caNhanHtxId: selectedOption.target.value,
+            caNhanHtxId: selectedOption.value,
         });
     };
     return (
@@ -88,26 +89,16 @@ export default function ModalEdit({
                 <ModalBody>
                     <div className={styles["modal-body"]}>
                         <div style={{ marginBottom: '10px' }}>Đơn vị hành chính</div>
-                        <Select
-                            value={form.administrativeUnit.id}
-                            placeholder="Chọn đơn vị hành chính"
+                        <ReactSelect
+                            options={listHanhChinh}
                             onChange={handleDVHanhChinhChange}
-                        >
-                            {listHanhChinh.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <div style={{ marginBottom: '10px' }}>Hợp tác xã</div>
-                        <Select
-                            value={form.caNhanHtx.id}
-                            placeholder="Chọn "
+                        <ReactSelect
+                            options={listHopTacXa}
                             onChange={handleHopTacXaChange}
-                        >
-                            {listHopTacXa.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <Input
                             type="string"

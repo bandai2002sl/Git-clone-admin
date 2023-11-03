@@ -1,20 +1,24 @@
-import { Fragment, ReactElement, useEffect, useState } from "react";
-import BaseLayout from "~/components/layout/BaseLayout";
-import Head from "next/head";
-import i18n from "~/locale/i18n";
-import styles from "../../manage.module.scss"
-import AddNewItemModal from "~/components/page/trong-trot/co-so-che-bien/modalAddNew";
 import "bootstrap/dist/css/bootstrap.min.css";
+
+import { Fragment, ReactElement, useEffect, useState } from "react";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import coSoCheBienSevices from "~/services/coSoCheBienSevices";
-import ModalEdit from "~/components/page/trong-trot/co-so-che-bien/modalEdit";
-import { useRouter } from "next/router";
+
+
+import BaseLayout from "~/components/layout/BaseLayout";
 import Button from "~/components/common/Button";
+import Head from "next/head";
+import kyBaoCaoSevices from "~/services/kyBaoCaoSevices";
+import i18n from "~/locale/i18n";
+import styles from "../../manage.module.scss";
+import { useRouter } from "next/router";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { toastSuccess, toastError } from "~/common/func/toast";
 import Pagination from "~/components/common/Pagination";
 import CheckPermission from "~/components/common/CheckPermission";
 import { PageKey, PermissionID } from "~/constants/config/enum";
+import AddNewItemModal from "~/components/page/ql-don-vi-hanh-chinh/ky-bao-cao/modalAddNew";
+import ModalEdit from "~/components/page/ql-don-vi-hanh-chinh/ky-bao-cao/modalEdit";
+
 
 export default function Page() {
     const router = useRouter();
@@ -37,29 +41,31 @@ export default function Page() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await coSoCheBienSevices.displayCoSoCheBien(data);
+                const response = await kyBaoCaoSevices.displayKyBaoCao(data);
                 const newData = response.data;
                 setData(newData);
                 setTotal(newData.length);
             } catch (error) {
-                console.error(error)
+                console.error(error);
             }
         }
-        fetchData()
-    }, [router])
+        fetchData();
+    }, [router]);
 
     const handleEdit = (item: any) => {
         setEditedData(item);
         setIsEditModalOpen(true);
     };
 
+
     const handleDelete = (deleteItem: any) => {
         setItemToDelete(deleteItem);
         setIsConfirmDeleteOpen(true);
     };
+
     const handleConfirmDelete = async (deleteItem: any) => {
         try {
-            let res: any = await coSoCheBienSevices.deleteCoSoCheBien(deleteItem.id);
+            let res: any = await kyBaoCaoSevices.deleteKyBaoCao(deleteItem.id);
             if (res.statusCode === 200) {
                 toastSuccess({ msg: "Thành công" });
                 router.replace(router.pathname);
@@ -81,14 +87,25 @@ export default function Page() {
     const handlePageChange = (page: any) => {
         setCurrentPage(page);
     };
+    function formatDateTime(dateTime: any) {
+        const date = new Date(dateTime);
+        const day = date.getDate();
+        const month = date.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0
+        const year = date.getFullYear();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+
+        // Định dạng "dd/mm/yyyy --:--"
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
+    }
     return (
         <Fragment>
             <Head>
-                <title>{i18n.t("Farming.processingfacilities")}</title>
+                <title>{i18n.t("Administrativeunits.Reportingperiod")}</title>
             </Head>
             <div>
                 <CheckPermission
-                    pageKey={PageKey.Co_so_che_bien}
+                    pageKey={PageKey.Ky_Bao_Cao}
                     permissionId={PermissionID.Them}
                 >
                     <Button primary bold rounded_4 maxContent onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</Button>
@@ -106,45 +123,29 @@ export default function Page() {
             <table className={styles["customers"]}>
                 <thead>
                     <tr>
-                        <th>DV Hành chính</th>
-                        <th>Hợp tác xã</th>
-                        <th>Kỳ báo cáo</th>
-                        <th>Địa chỉ</th>
-                        <th>Loại chế biến</th>
-                        <th>Mô tả</th>
-                        <th>Hình ảnh</th>
+                        <th>Tên báo cáo</th>
+                        <th>Thời điểm bắt đầu</th>
+                        <th>Thời điểm kết thúc</th>
                         <th>Trạng thái</th>
-                        <th>Có đăng ký</th>
-                        <th>CoGCNATTP</th>
-                        <th>Tọa độ</th>
-                        <th>icon</th>
                         <th>Hoạt Động</th>
                     </tr>
                 </thead>
                 <tbody>
                     {dataToDisplay.map((item: any) => (
                         <tr key={item.id}>
-                            <td>{item.administrativeUnit.ten}</td>
-                            <td>{item.caNhanHtx.name}</td>
-                            <td>{item.kyBaoCao.tenBaoCao}</td>
-                            <td>{item.diaChi}</td>
-                            <td>{item.loaiCheBien}</td>
-                            <td>{item.moTa}</td>
-                            <td>{item.hinhAnh}</td>
+                            <td>{item.tenBaoCao}</td>
+                            <td>{formatDateTime(item.thoiDiemBatDau)}</td>
+                            <td>{formatDateTime(item.thoiDiemKetThuc)}</td>
                             <td>{item.trangThai}</td>
-                            <td>{item.coDangKy}</td>
-                            <td>{item.CoGCNATTP}</td>
-                            <td>{item.toaDo}</td>
-                            <td>{item.icon}</td>
                             <td>
                                 <CheckPermission
-                                    pageKey={PageKey.Co_so_che_bien}
+                                    pageKey={PageKey.Ky_Bao_Cao}
                                     permissionId={PermissionID.Sua}
                                 >
                                     <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
                                 </CheckPermission>
                                 <CheckPermission
-                                    pageKey={PageKey.Co_so_che_bien}
+                                    pageKey={PageKey.Ky_Bao_Cao}
                                     permissionId={PermissionID.Xoa}
                                 >
                                     <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
@@ -157,7 +158,7 @@ export default function Page() {
                         <ModalEdit
                             isOpen={isEditModalOpen}
                             onClose={() => {
-                                setIsEditModalOpen(false)
+                                setIsEditModalOpen(false);
                             }}
                             setEditedData={setEditedData}
                             editedData={editedData}
@@ -165,11 +166,9 @@ export default function Page() {
                     )}
                     {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
                     {isConfirmDeleteOpen && (
-                        <Modal isOpen={isConfirmDeleteOpen} >
+                        <Modal isOpen={isConfirmDeleteOpen}>
                             <ModalHeader>Xác nhận xóa</ModalHeader>
-                            <ModalBody>
-                                Bạn có chắc chắn muốn xóa?
-                            </ModalBody>
+                            <ModalBody>Bạn có chắc chắn muốn xóa?</ModalBody>
                             <ModalFooter>
                                 <Button
                                     danger bold rounded_4 maxContent

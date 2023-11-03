@@ -69,9 +69,9 @@ export default function AddNewItemModal({
                 </ModalBody>
                 <div className={styles["modal-footer"]}>
                     <ModalFooter>
-                        <Button small primary bold rounded_6>
+                        <Button color="primary">
                             Lưu
-                        </Button>
+                        </Button>{" "}
                         <Button color="secondary" onClick={onClose}>
                             Đóng
                         </Button>

@@ -8,6 +8,8 @@ import hopTacXaSevices from "~/services/hopTacXaSevices";
 import vatNuoiSevices from "~/services/vatNuoiSevices";
 import sanXuatVatNuoiSevices from "~/services/sanXuatVatNuoiSevices";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import kyBaoCaoSevices from "~/services/kyBaoCaoSevices";
+import ReactSelect from "react-select";
 
 interface ModalEditProps {
     isOpen: boolean;
@@ -25,6 +27,7 @@ export default function ModalEdit({
     const router = useRouter();
     const [listVatNuoi, setListVatNuoi] = useState<any>([]);
     const [listHopTacXa, setListHopTacXa] = useState<any>([]);
+    const [listKyBaoCao, setListKyBaoCao] = useState<any>([]);
     const [form, setForm] = useState({ ...editedData })
 
     useEffect(() => {
@@ -42,6 +45,12 @@ export default function ModalEdit({
                     value: item.id,
                 }));
                 setListHopTacXa(options1);
+                const res2 = await kyBaoCaoSevices.displayKyBaoCao(listKyBaoCao);
+                const options3 = res2.data.map((item: any) => ({
+                    label: item.tenBaoCao,
+                    value: item.id,
+                }));
+                setListKyBaoCao(options3);
             } catch (error) {
                 console.error(error);
             }
@@ -51,7 +60,7 @@ export default function ModalEdit({
 
     const handleSubmit = async () => {
         try {
-            if (!form.vatNuoiId || !form.caNhanHtxId) {
+            if (!form.vatNuoiId || !form.caNhanHtxId || !form.kyBaoCaoId) {
                 alert("Vui lòng chọn vật nuôi, hợp tác xã!");
                 return;
             }
@@ -72,13 +81,19 @@ export default function ModalEdit({
     const handleVatNuoiChange = (selectedOption: any) => {
         setForm({
             ...form,
-            vatNuoiId: selectedOption.target.value,
+            vatNuoiId: selectedOption.value,
         });
     };
     const handleHopTacXaChange = (selectedOption: any) => {
         setForm({
             ...form,
-            caNhanHtxId: selectedOption.target.value,
+            caNhanHtxId: selectedOption.value,
+        });
+    };
+    const handleKyBaoCaoChange = (selectedOption: any) => {
+        setForm({
+            ...form,
+            kyBaoCaoId: selectedOption.value,
         });
     };
     return (
@@ -88,26 +103,22 @@ export default function ModalEdit({
                 <ModalBody>
                     <div className={styles["modal-body"]}>
                         <div style={{ marginBottom: '10px' }}>Vật nuôi</div>
-                        <Select
-                            value={form.vatNuoi.id}
-                            placeholder="Chọn vật nuôi"
+                        <ReactSelect
+                            options={listVatNuoi}
                             onChange={handleVatNuoiChange}
-                        >
-                            {listVatNuoi.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <div style={{ marginBottom: '10px' }}>Hợp tác xã</div>
-                        <Select
-                            value={form.caNhanHtx.id}
-                            placeholder="Chọn "
+                        <ReactSelect
+                            options={listHopTacXa}
                             onChange={handleHopTacXaChange}
-                        >
-                            {listHopTacXa.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
+                        <div style={{ marginBottom: '13px' }}></div>
+                        <div style={{ marginBottom: '10px' }}>Kỳ báo cáo:</div>
+                        <ReactSelect
+                            options={listKyBaoCao}
+                            onChange={handleKyBaoCaoChange}
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <Input
                             type="string"
@@ -135,6 +146,18 @@ export default function ModalEdit({
                             name="tinhTrang"
                             label="Tình trạng:"
                             placeholder="Nhập tình trạng:"
+                            isRequired
+                        />
+                        <Input
+                            name="toaDo"
+                            label="Tọa độ: Point(X Y)"
+                            placeholder="Nhập tọa độ"
+                            isRequired
+                        />
+                        <Input
+                            name="icon"
+                            label="Icon"
+                            placeholder="Nhập icon"
                             isRequired
                         />
                     </div>

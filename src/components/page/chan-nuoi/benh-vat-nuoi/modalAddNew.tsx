@@ -10,6 +10,8 @@ import donViHanhChinhSevices from "~/services/donViHanhChinhSevices";
 import loaiBenhSevices from "~/services/loaiBenhSevices";
 import benhVatNuoiSevices from "~/services/benhVatNuoiSevices";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import kyBaoCaoSevices from "~/services/kyBaoCaoSevices";
+import ReactSelect from "react-select";
 
 interface AddNewItemModalProps {
     isOpen: boolean;
@@ -21,6 +23,7 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
     const [listHanhChinh, setListHanhChinh] = useState<any>([]);
     const [listVatNuoi, setListVatNuoi] = useState<any>([]);
     const [listLoaiBenh, setListLoaiBenh] = useState<any>([]);
+    const [listKyBaoCao, setListKyBaoCao] = useState<any>([]);
     const [form, setForm] = useState({
         vatNuoiId: '',
         administrativeUnitId: '',
@@ -29,6 +32,9 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
         nguyenNhan: "",
         dienTich: "",
         ngayGhiNhan: "",
+        kyBaoCaoId: '',
+        toaDo: '',
+        icon: ''
     })
     useEffect(() => {
         async function fetchData() {
@@ -51,6 +57,12 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                     value: item.id,
                 }));
                 setListLoaiBenh(options2);
+                const res2 = await kyBaoCaoSevices.displayKyBaoCao(listKyBaoCao);
+                const options3 = res2.data.map((item: any) => ({
+                    label: item.tenBaoCao,
+                    value: item.id,
+                }));
+                setListKyBaoCao(options3);
             } catch (error) {
                 console.error(error);
             }
@@ -59,7 +71,7 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
     }, []);
     const handleSubmit = async () => {
         try {
-            if (!form.administrativeUnitId || !form.vatNuoiId || !form.loaiBenhId) {
+            if (!form.administrativeUnitId || !form.vatNuoiId || !form.loaiBenhId || !form.kyBaoCaoId) {
                 alert("Vui lòng chọn đơn vị hành chính, vật nuôi, loại bệnh!");
                 return;
             }
@@ -76,6 +88,9 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                     nguyenNhan: "",
                     dienTich: "",
                     ngayGhiNhan: "",
+                    kyBaoCaoId: '',
+                    toaDo: '',
+                    icon: ''
                 });
             } else {
                 toastError({ msg: "Không thành công" });
@@ -90,22 +105,27 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
     const handleDVHanhChinhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            administrativeUnitId: selectedOption.target.value,
+            administrativeUnitId: selectedOption.value,
         });
     };
     const handleVatNuoiChange = (selectedOption: any) => {
         setForm({
             ...form,
-            vatNuoiId: selectedOption.target.value,
+            vatNuoiId: selectedOption.value,
         });
     };
     const handleLoaiBenhChange = (selectedOption: any) => {
         setForm({
             ...form,
-            loaiBenhId: selectedOption.target.value,
+            loaiBenhId: selectedOption.value,
         });
     };
-
+    const handleKyBaoCaoChange = (selectedOption: any) => {
+        setForm({
+            ...form,
+            kyBaoCaoId: selectedOption.value,
+        });
+    };
     return (
         <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>
             <Form form={form} setForm={setForm} onSubmit={handleSubmit}>
@@ -113,37 +133,28 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                 <ModalBody>
                     <div className={styles["modal-body"]}>
                         <div style={{ marginBottom: '10px' }}>Đơn vị hành chính</div>
-                        <Select
-                            value={listHanhChinh.length > 0 ? listHanhChinh[0].value : null}
-                            placeholder="Chọn đơn vị hành chính"
+                        <ReactSelect
+                            options={listHanhChinh}
                             onChange={handleDVHanhChinhChange}
-                        >
-                            {listHanhChinh.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <div style={{ marginBottom: '10px' }}>Vật nuôi:</div>
-                        <Select
-                            value={listVatNuoi.length > 0 ? listVatNuoi[0].value : null}
-                            placeholder="Chọn vật nuôi"
+                        <ReactSelect
+                            options={listVatNuoi}
                             onChange={handleVatNuoiChange}
-                        >
-                            {listVatNuoi.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <div style={{ marginBottom: '10px' }}>Loại bệnh</div>
-                        <Select
-                            value={listLoaiBenh.length > 0 ? listLoaiBenh[0].value : null}
-                            placeholder="Chọn loại bệnh"
+                        <ReactSelect
+                            options={listLoaiBenh}
                             onChange={handleLoaiBenhChange}
-                        >
-                            {listLoaiBenh.map((item: any) => (
-                                <Option key={item.value} value={item.value} title={item.label} />
-                            ))}
-                        </Select>
+                        />
+                        <div style={{ marginBottom: '13px' }}></div>
+                        <div style={{ marginBottom: '10px' }}>Kỳ báo cáo:</div>
+                        <ReactSelect
+                            options={listKyBaoCao}
+                            onChange={handleKyBaoCaoChange}
+                        />
                         <div style={{ marginBottom: '13px' }}></div>
                         <Input
                             type="string"
@@ -171,6 +182,18 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
                             name="ngayGhiNhan"
                             label="Ngày ghi nhận"
                             placeholder="Ngày ghi nhận"
+                            isRequired
+                        />
+                        <Input
+                            name="toaDo"
+                            label="Tọa độ: Point(X Y)"
+                            placeholder="Nhập tọa độ"
+                            isRequired
+                        />
+                        <Input
+                            name="icon"
+                            label="Icon"
+                            placeholder="Nhập icon"
                             isRequired
                         />
                     </div>

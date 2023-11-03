@@ -12,6 +12,9 @@ import { useRouter } from "next/router";
 import Button from "~/components/common/Button";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import Pagination from "~/components/common/Pagination";
+import CheckPermission from "~/components/common/CheckPermission";
+import { PageKey, PermissionID } from "~/constants/config/enum";
 
 export default function Page() {
     const router = useRouter();
@@ -24,12 +27,20 @@ export default function Page() {
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
+    const [total, setTotal] = useState(0);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const dataToDisplay = data.slice(startIndex, endIndex);
+
     useEffect(() => {
         async function fetchData() {
             try {
                 const response = await coSoKinhDoanhSevices.displayCoSoKinhDoanh(data);
                 const newData = response.data;
                 setData(newData);
+                setTotal(newData.length);
             } catch (error) {
                 console.error(error)
             }
@@ -67,22 +78,21 @@ export default function Page() {
         setIsConfirmDeleteOpen(false);
         setItemToDelete(null);
     };
-
+    const handlePageChange = (page: any) => {
+        setCurrentPage(page);
+    };
     return (
         <Fragment>
             <Head>
                 <title>{i18n.t("Farming.businessEstablishment")}</title>
             </Head>
             <div>
-                <Button
-                    primary
-                    bold
-                    rounded_4
-                    maxContent
-                    onClick={() => setIsAddModalOpen(true)}
+                <CheckPermission
+                    pageKey={PageKey.Co_so_kinh_doanh}
+                    permissionId={PermissionID.Them}
                 >
-                    &#x002B; Thêm
-                </Button>
+                    <Button primary bold rounded_4 maxContent onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</Button>
+                </CheckPermission>
                 {/* Render modal nếu isModalOpen là true */}
                 {isAddModalOpen && (
                     <AddNewItemModal
@@ -104,13 +114,13 @@ export default function Page() {
                         <th>Đăng ký kinh doanh</th>
                         <th>Số điện thoại</th>
                         <th>Trạng thái</th>
+                        <th>Tọa độ</th>
+                        <th>icon</th>
                         <th>Hoạt động</th>
-
-
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((item: any) => (
+                    {dataToDisplay.map((item: any) => (
                         <tr key={item.id}>
                             <td>{item.administrativeUnit.ten}</td>
                             <td>{item.loaiKinhDoanh.loaiKinhDoanh}</td>
@@ -120,9 +130,21 @@ export default function Page() {
                             <td>{item.dangKyKinhDoanh}</td>
                             <td>{item.sdt}</td>
                             <td>{item.trangThai}</td>
+                            <td>{item.toaDo}</td>
+                            <td>{item.icon}</td>
                             <td>
-                                <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
-                                <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
+                                <CheckPermission
+                                    pageKey={PageKey.Co_so_kinh_doanh}
+                                    permissionId={PermissionID.Sua}
+                                >
+                                    <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
+                                </CheckPermission>
+                                <CheckPermission
+                                    pageKey={PageKey.Co_so_kinh_doanh}
+                                    permissionId={PermissionID.Xoa}
+                                >
+                                    <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
+                                </CheckPermission>
                             </td>
                         </tr>
                     ))}
@@ -159,6 +181,12 @@ export default function Page() {
                     )}
                 </tbody>
             </table>
+            <Pagination
+                total={total}
+                pageSize={pageSize}
+                currentPage={currentPage}
+                onSetPage={handlePageChange}
+            />
         </Fragment>
     );
 }

@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import ReactSelect from "react-select";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import { toastSuccess, toastError } from "~/common/func/toast";
 import DatePicker from "~/components/common/DatePicker";
@@ -66,7 +67,7 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
   const handleHopTacXaChange = (selectedOption: any) => {
     setForm({
       ...form,
-      caNhanHtxId: selectedOption.target.value,
+      caNhanHtxId: selectedOption.value,
     });
   };
 
@@ -77,15 +78,10 @@ export default function AddNewItemModal({ isOpen, onClose }: AddNewItemModalProp
         <ModalBody>
           <div className={styles["modal-body"]}>
             <div style={{ marginBottom: '10px' }}>Hợp tác xã</div>
-            <Select
-              value={listHopTacXa.length > 0 ? listHopTacXa[0].value : null}
-              placeholder="Chọn hợp tác xã"
+            <ReactSelect
+              options={listHopTacXa}
               onChange={handleHopTacXaChange}
-            >
-              {listHopTacXa.map((item: any) => (
-                <Option key={item.value} value={item.value} title={item.label} />
-              ))}
-            </Select>
+            />
             <div style={{ marginBottom: '13px' }}></div>
             <Input
               type="string"

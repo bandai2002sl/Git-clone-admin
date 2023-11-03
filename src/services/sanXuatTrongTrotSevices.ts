@@ -3,12 +3,15 @@ import axiosClient from ".";
 const sanXuatTrongTrotSevices = {
     displaySanXuatTrongTrot(data:
         {
-            "dienTichTrong": number,
-            "dienTichTrongMoi": number,
-            "dienTichChoSanPham": number,
-            "nangSuat": number,
-            "sanLuong": number,
-            "thoiDiemBaoCao": string
+            dienTichTrong: number,
+            dienTichTrongMoi: number,
+            dienTichChoSanPham: number,
+            nangSuat: number,
+            sanLuong: number,
+            thoiDiemBaoCao: string,
+            diaChi: string
+            toaDo: string,
+            icon: string,
         }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/san-xuat-trong-trot`,

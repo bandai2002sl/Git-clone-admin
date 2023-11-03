@@ -3,8 +3,8 @@ import { useState } from "react";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
 import { toastSuccess, toastError } from "~/common/func/toast";
 import Form, { Input } from "~/components/common/Form";
-import styles from "~/pages/modal-custom.module.scss"
-import cayTrongSevices from "~/services/cayTrongSevices";
+import styles from "~/pages/modal-custom.module.scss";
+import kyBaoCaoSevices from "~/services/kyBaoCaoSevices";
 
 interface ModalEditProps {
     isOpen: boolean;
@@ -20,11 +20,13 @@ export default function ModalEdit({
     setEditedData,
 }: ModalEditProps) {
     const router = useRouter();
-    const [form, setForm] = useState({ ...editedData });
+    const [form, setForm] = useState({ ...editedData })
+
+
 
     const handleSubmit = async () => {
         try {
-            let res: any = await cayTrongSevices.updateCayTrong(form.id, form);
+            let res: any = await kyBaoCaoSevices.updateKyBaoCao(form.id, form);
             if (res.statusCode === 200) {
                 toastSuccess({ msg: "Thành công" });
                 onClose();
@@ -37,55 +39,50 @@ export default function ModalEdit({
         } catch (error) {
             console.error(error);
         }
-    }
+    };
+
     return (
-        <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} size='lg'>
+        <Modal isOpen={isOpen} toggle={onClose} className={styles["modal-container"]} backdrop={false} size='lg'>
             <Form form={form} setForm={setForm} onSubmit={handleSubmit}>
                 <ModalHeader toggle={onClose}>SỬA THÔNG TIN</ModalHeader>
                 <ModalBody>
                     <div className={styles["modal-body"]}>
                         <Input
-                            name="name"
-                            label="Tên cây trồng"
-                            placeholder="Tên cây trồng"
+                            name="tenBaoCao"
+                            label="Tên báo cáo"
+                            placeholder="Nhập tên báo cáo"
                             isRequired
                         />
                         <Input
-                            name="moTa"
-                            label="Mô tả"
-                            placeholder="Nhập mô tả"
+                            type="datetime-local"
+                            name="thoiDiemBatDau"
+                            label="Thời điểm bắt đầu"
+                            placeholder="Nhập thời điểm bắt đầu"
                             isRequired
                         />
                         <Input
-                            name="image"
-                            label="Hình ảnh"
-                            placeholder="Nhập link hình ảnh"
+                            type="datetime-local"
+                            name="thoiDiemKetThuc"
+                            label="Thời điểm kết thúc"
+                            placeholder="Nhập thời điểm kết thúc"
                             isRequired
                         />
                         <Input
-                            name="tamNgung"
-                            label="Tạm Ngừng"
-                            placeholder="Tạm Ngừng"
-                            isRequired
-                        />
-                        <Input
-                            name="icon"
-                            label="icon"
-                            placeholder="Nhập icon"
+                            name="trangThai"
+                            label="Trạng thái"
+                            placeholder="Nhập trạng thái"
                             isRequired
                         />
                     </div>
                 </ModalBody>
-                <div className={styles["modal-footer"]}>
-                    <ModalFooter>
-                        <Button small primary bold rounded_6>
-                            Lưu
-                        </Button>
-                        <Button color="secondary" onClick={onClose}>
-                            Đóng
-                        </Button>
-                    </ModalFooter>
-                </div>
+                <ModalFooter>
+                    <Button color="primary">
+                        Lưu thay đổi
+                    </Button>
+                    <Button color="secondary" onClick={onClose}>
+                        Đóng
+                    </Button>
+                </ModalFooter>
             </Form>
         </Modal >
     );

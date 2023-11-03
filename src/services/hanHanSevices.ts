@@ -6,6 +6,8 @@ const hanHanSevices = {
             diaChi: string,
             dienTich: number,
             ngayGhiNhan: string,
+            toaDo: number,
+            icon: string,
         }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/han-han`,

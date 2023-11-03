@@ -7,6 +7,8 @@ const sanXuatVatNuoiSevices = {
             moTa: string,
             hinhAnh: string,
             tinhTrang: string,
+            toaDo: string,
+            icon: string,
         }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/san-xuat-vat-nuoi`,

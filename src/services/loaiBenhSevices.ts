@@ -6,7 +6,8 @@ const loaiBenhSevices = {
             tenBenh: string,
             moTa: string,
             doiTuong: string,
-            hinhAnh: string
+            hinhAnh: string,
+            icon: string
         }) {
         return axiosClient.get(
             `${process.env.NEXT_PUBLIC_API_ALL}/loai-benh`,

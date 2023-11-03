@@ -12,6 +12,9 @@ import { MdDelete, MdEdit } from "react-icons/md";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import ModalEdit from "~/components/page/ql-don-vi-hanh-chinh/vung-don-vi-hanh-chinh/modalEdit";
 import { toastSuccess, toastError } from "~/common/func/toast";
+import Pagination from "~/components/common/Pagination";
+import CheckPermission from "~/components/common/CheckPermission";
+import { PageKey, PermissionID } from "~/constants/config/enum";
 
 export default function Page() {
     const router = useRouter();
@@ -23,6 +26,13 @@ export default function Page() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
+    const [total, setTotal] = useState(0);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const dataToDisplay = data.slice(startIndex, endIndex);
+
     useEffect(() => {
         async function fetchData() {
             try {
@@ -31,6 +41,7 @@ export default function Page() {
                 );
                 const newData = response.data;
                 setData(newData);
+                setTotal(newData.length);
             } catch (error) {
                 console.error(error);
             }
@@ -46,6 +57,7 @@ export default function Page() {
         setItemToDelete(deleteItem);
         setIsConfirmDeleteOpen(true);
     };
+
 
     const handleConfirmDelete = async (deleteItem: any) => {
         try {
@@ -67,13 +79,21 @@ export default function Page() {
         setIsConfirmDeleteOpen(false);
         setItemToDelete(null);
     };
+    const handlePageChange = (page: any) => {
+        setCurrentPage(page);
+    };
     return (
         <Fragment>
             <Head>
                 <title>{i18n.t("Administrativeunits.administrativeunitregion")}</title>
             </Head>
             <div>
-                <Button primary bold rounded_4 maxContent onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</Button>
+                <CheckPermission
+                    pageKey={PageKey.Vung_don_vi_hanh_chinh}
+                    permissionId={PermissionID.Them}
+                >
+                    <Button primary bold rounded_4 maxContent onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</Button>
+                </CheckPermission>
                 {/* Render modal nếu isModalOpen là true */}
                 {isAddModalOpen && (
                     <AddNewItemModal
@@ -95,14 +115,24 @@ export default function Page() {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((item: any) => (
+                    {dataToDisplay.map((item: any) => (
                         <tr key={item.id}>
                             <td>{item.administrativeUnit.ten}</td>
                             <td>{item.moTa}</td>
                             <td>{item.vung}</td>
                             <td>
-                                <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
-                                <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
+                                <CheckPermission
+                                    pageKey={PageKey.Vung_don_vi_hanh_chinh}
+                                    permissionId={PermissionID.Sua}
+                                >
+                                    <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
+                                </CheckPermission>
+                                <CheckPermission
+                                    pageKey={PageKey.Vung_don_vi_hanh_chinh}
+                                    permissionId={PermissionID.Xoa}
+                                >
+                                    <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
+                                </CheckPermission>
                             </td>
                         </tr>
                     ))}
@@ -137,6 +167,12 @@ export default function Page() {
                     )}
                 </tbody>
             </table>
+            <Pagination
+                total={total}
+                pageSize={pageSize}
+                currentPage={currentPage}
+                onSetPage={handlePageChange}
+            />
         </Fragment>
     );
 }

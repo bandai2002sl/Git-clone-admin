@@ -1,74 +1,97 @@
-import { Fragment, ReactElement, useEffect, useState } from "react";
-import BaseLayout from "~/components/layout/BaseLayout";
-import Head from "next/head";
-import i18n from "~/locale/i18n";
-import styles from "../../manage.module.scss"
-import "bootstrap/dist/css/bootstrap.min.css";
-import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import coSoKinhDoanhSevices from "~/services/coSoKinhDoanhSevices";
-import { useRouter } from "next/router";
+import React, { Fragment, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
+import BaseLayout from '~/components/layout/BaseLayout';
+import Head from 'next/head';
+import i18n from '~/locale/i18n';
+import styles from '../../manage.module.scss';
+import AddNewItemModal from '../../../components/page/thuy-san/quan-ly-tau-ca/modalAddNew';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import ModalEdit from '../../../components/page/thuy-san/quan-ly-tau-ca/modalEdit';
+import coSoKinhDoanhServices from "~/services/coSoKinhDoanhSevices"; // Import coSoKinhDoanhServices
 import Button from "~/components/common/Button";
-import { MdDelete, MdEdit } from "react-icons/md";
-import { toastSuccess, toastError } from "~/common/func/toast";
-import Pagination from "~/components/common/Pagination";
-import CheckPermission from "~/components/common/CheckPermission";
-import { PageKey, PermissionID } from "~/constants/config/enum";
-import AddNewItemModal from "../co-so-che-bien/addNewModal";
-import ModalEdit from "../co-so-che-bien/EditModal";
 
 export default function Page() {
-    const router = useRouter();
     const [data, setData] = useState<any>([]);
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false); // State để kiểm soát hiển thị modal thêm
 
-    const [editedData, setEditedData] = useState<any>({}); // State để lưu dữ liệu cần sửa
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State để kiểm soát hiển thị modal sửa
-
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [newItem, setNewItem] = useState<any>({
+        diaDiem: 'string',
+        hinhAnh: 'string',
+        dangKyKinhDoanh: 'string',
+        sdt: 'string',
+        trangThai: 'string',
+        toaDo: 'string',
+        icon: 'string',
+    });
+    const [editedData, setEditedData] = useState<any>({});
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 10;
-    const [total, setTotal] = useState(0);
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const dataToDisplay = data.slice(startIndex, endIndex);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await coSoKinhDoanhSevices.displayCoSoKinhDoanh(data);
+                const response = await coSoKinhDoanhServices.displayCoSoKinhDoanh(data); // Use coSoKinhDoanhServices to fetch data
                 const newData = response.data;
                 setData(newData);
-                setTotal(newData.length);
             } catch (error) {
-                console.error(error)
+                console.error(error);
             }
         }
-        fetchData()
-    }, [router])
+        fetchData();
+    }, []);
+
+    const handleAdd = async () => {
+        try {
+            const response = await coSoKinhDoanhServices.createCoSoKinhDoanh(newItem); // Use coSoKinhDoanhServices to create a new item
+            setData([...data, response.data]);
+            setIsAddModalOpen(false);
+            setNewItem({
+                diaDiem: 'string',
+                hinhAnh: 'string',
+                dangKyKinhDoanh: 'string',
+                sdt: 'string',
+                trangThai: 'string',
+                toaDo: 'string',
+                icon: 'string',
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const handleEdit = (item: any) => {
         setEditedData(item);
         setIsEditModalOpen(true);
     };
 
+    const handleUpdate = async (editedItem: any) => {
+        try {
+            const response = await coSoKinhDoanhServices.updateCoSoKinhDoanh(editedItem.id, editedItem); // Use coSoKinhDoanhServices to update an item
+            const updatedData = data.map((item: any) =>
+                item.id === editedItem.id ? editedItem : item
+            );
+            setData(updatedData);
+            setIsEditModalOpen(false);
+            setEditedData(null);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const handleDelete = (deleteItem: any) => {
         setItemToDelete(deleteItem);
         setIsConfirmDeleteOpen(true);
     };
+
     const handleConfirmDelete = async (deleteItem: any) => {
         try {
-            let res: any = await coSoKinhDoanhSevices.deleteCoSoKinhDoanh(deleteItem.id);
-            if (res.statusCode === 200) {
-                toastSuccess({ msg: "Thành công" });
-                router.replace(router.pathname);
-                setIsConfirmDeleteOpen(false);
-                setItemToDelete(null);
-            } else {
-                toastError({ msg: "Không thành công" });
-                setIsConfirmDeleteOpen(false);
-            }
+            const response = await coSoKinhDoanhServices.deleteCoSoKinhDoanh(deleteItem.id); // Use coSoKinhDoanhServices to delete an item
+            const updatedData = data.filter((dataItem: any) => dataItem.id !== deleteItem.id);
+            setData(updatedData);
+            setIsConfirmDeleteOpen(false);
+            setItemToDelete(null);
         } catch (error) {
             console.error(error);
         }
@@ -78,119 +101,90 @@ export default function Page() {
         setIsConfirmDeleteOpen(false);
         setItemToDelete(null);
     };
-    const handlePageChange = (page: any) => {
-        setCurrentPage(page);
-    };
+
     return (
         <Fragment>
             <Head>
-                <title>{i18n.t("Cơ sở chế biến")}</title>
+                <title>{i18n.t('Quản lý cơ sở kinh doanh')}</title>
             </Head>
             <div>
-                <CheckPermission
-                    pageKey={PageKey.Co_so_kinh_doanh}
-                    permissionId={PermissionID.Them}
-                >
-                    <Button primary bold rounded_4 maxContent onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm</Button>
-                </CheckPermission>
-                {/* Render modal nếu isModalOpen là true */}
+                <Button primary bold rounded_4 maxContent onClick={() => setIsAddModalOpen(true)}>&#x002B; Thêm </Button>
+
                 {isAddModalOpen && (
                     <AddNewItemModal
-              isOpen={isAddModalOpen}
-              onClose={() => {
-                setIsAddModalOpen(false);
-              } } onSubmit={function (newItem: any): void {
-                throw new Error("Function not implemented.");
-              } } newItem={undefined} setNewItem={function (item: any): void {
-                throw new Error("Function not implemented.");
-              } }                    />
+                        isOpen={isAddModalOpen}
+                        onClose={() => {
+                            setIsAddModalOpen(false);
+                        }}
+                        onSubmit={handleAdd}
+                        newItem={newItem}
+                        setNewItem={setNewItem}
+                    />
                 )}
             </div>
-            <table className={styles["customers"]}>
+            <table className={styles['customers']}>
                 <thead>
-                    <tr>
-                        <th>DV Hành chính</th>
-                        <th>Loại kinh doanh</th>
-                        <th>Hợp tác xã</th>
-                        <th>Địa điểm</th>
-                        <th>Hình ảnh</th>
-                        <th>Đăng ký kinh doanh</th>
-                        <th>Số điện thoại</th>
-                        <th>Trạng thái</th>
-                        <th>Tọa độ</th>
-                        <th>icon</th>
-                        <th>Hoạt động</th>
-                    </tr>
+                <tr>
+                    <th>Địa điểm</th>
+                    <th>Hình ảnh</th>
+                    <th>Đăng ký kinh doanh</th>
+                    <th>Số điện thoại</th>
+                    <th>Trạng thái</th>
+                    <th>Tọa độ</th>
+                    <th>Biểu tượng</th>
+                    <th>Hoạt động</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {dataToDisplay.map((item: any) => (
-                        <tr key={item.id}>
-                            <td>{item.administrativeUnit.ten}</td>
-                            <td>{item.loaiKinhDoanh.loaiKinhDoanh}</td>
-                            <td>{item.caNhanHtx.name}</td>
-                            <td>{item.diaDiem}</td>
-                            <td>{item.hinhAnh}</td>
-                            <td>{item.dangKyKinhDoanh}</td>
-                            <td>{item.sdt}</td>
-                            <td>{item.trangThai}</td>
-                            <td>{item.toaDo}</td>
-                            <td>{item.icon}</td>
-                            <td>
-                                <CheckPermission
-                                    pageKey={PageKey.Co_so_kinh_doanh}
-                                    permissionId={PermissionID.Sua}
-                                >
-                                    <button onClick={() => handleEdit(item)} style={{ border: 'none', marginRight: '10px', }}><MdEdit /></button>
-                                </CheckPermission>
-                                <CheckPermission
-                                    pageKey={PageKey.Co_so_kinh_doanh}
-                                    permissionId={PermissionID.Xoa}
-                                >
-                                    <button onClick={() => handleDelete(item)} style={{ border: 'none' }} ><MdDelete /></button>
-                                </CheckPermission>
-                            </td>
-                        </tr>
-                    ))}
-                    {/* Render modal sửa chi tiết */}
-                    {isEditModalOpen && (
-                        <ModalEdit
-                isOpen={isEditModalOpen}
-                onClose={() => {
-                  setIsEditModalOpen(false);
-                } }
-                setEditedData={setEditedData}
-                editedData={editedData} onUpdate={function (editedItem: any): void {
-                  throw new Error("Function not implemented.");
-                } } editedItemId={0}                        />
-                    )}
-                    {/* Render modal xác nhận xóa nếu isConfirmDeleteOpen là true */}
-                    {isConfirmDeleteOpen && (
-                        <Modal isOpen={isConfirmDeleteOpen} >
-                            <ModalHeader>Xác nhận xóa</ModalHeader>
-                            <ModalBody>
-                                Bạn có chắc chắn muốn xóa?
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button
-                                    danger bold rounded_4 maxContent
-                                    onClick={() => handleConfirmDelete(itemToDelete)}
-                                >
-                                    Có
-                                </Button>
-                                <Button secondary bold rounded_4 maxContent onClick={handleCancelDelete}>
-                                    Không
-                                </Button>
-                            </ModalFooter>
-                        </Modal>
-                    )}
+                {data.map((item: any) => (
+                    <tr key={item.id}>
+                        <td>{item.diaDiem}</td>
+                        <td>{item.hinhAnh}</td>
+                        <td>{item.dangKyKinhDoanh}</td>
+                        <td>{item.sdt}</td>
+                        <td>{item.trangThai}</td>
+                        <td>{item.toaDo}</td>
+                        <td>{item.icon}</td>
+                        <td>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Button primary bold rounded_4 maxContent onClick={() => handleEdit(item)}>&#9998; Sửa</Button>
+
+                                {isEditModalOpen && (
+                                    <ModalEdit
+                                        isOpen={isEditModalOpen}
+                                        onClose={() => {
+                                            setIsEditModalOpen(false);
+                                        }}
+                                        onUpdate={handleUpdate}
+                                        editedItemId={editedData.id}
+                                        setEditedData={setEditedData}
+                                        editedData={editedData}
+                                    />
+                                )}
+                                <div style={{ marginLeft: '10px' }}>
+                                    <Button primary bold rounded_4 maxContent onClick={() => handleDelete(item)}>&#10060; </Button>
+                                </div>
+                            </div>
+
+                            {isConfirmDeleteOpen && (
+                                <Modal isOpen={isConfirmDeleteOpen} backdrop={false}>
+                                    <ModalHeader>Xác nhận xóa</ModalHeader>
+                                    <ModalBody>Bạn có chắc chắn muốn xóa?</ModalBody>
+                                    <ModalFooter>
+                                        <Button color="primary" onClick={() => handleConfirmDelete(itemToDelete)}>
+                                            Có
+                                        </Button>
+                                        <Button color="secondary" onClick={handleCancelDelete}>
+                                            Không
+                                        </Button>
+                                    </ModalFooter>
+                                </Modal>
+                            )}
+                        </td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
-            <Pagination
-                total={total}
-                pageSize={pageSize}
-                currentPage={currentPage}
-                onSetPage={handlePageChange}
-            />
         </Fragment>
     );
 }
